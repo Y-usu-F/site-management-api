@@ -1,0 +1,525 @@
+openapi: 3.0.3
+info:
+  title: SiteBYS API
+  version: v1
+  description: |
+    Foundation (starter kit) API v1 OpenAPI dokumani.
+servers:
+  - url: /
+tags:
+  - name: Auth
+  - name: Profile
+paths:
+  /api/v1/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '500':
+          $ref: '#/components/responses/Error500'
+  /api/v1/auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '500':
+          $ref: '#/components/responses/Error500'
+  /api/v1/auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Forgot password request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          $ref: '#/components/responses/Error500'
+  /api/v1/auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Reset password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          $ref: '#/components/responses/Error500'
+  /api/v1/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '500':
+          $ref: '#/components/responses/Error500'
+  /api/v1/auth/sessions:
+    get:
+      tags: [Auth]
+      summary: List sessions
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '500':
+          $ref: '#/components/responses/Error500'
+  /api/v1/auth/sessions/{id}:
+    delete:
+      tags: [Auth]
+      summary: Revoke a session
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '500':
+          $ref: '#/components/responses/Error500'
+  /api/v1/auth/sessions/revoke-all:
+    post:
+      tags: [Auth]
+      summary: Revoke all sessions
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '500':
+          $ref: '#/components/responses/Error500'
+  /api/v1/auth/me:
+    get:
+      tags: [Auth]
+      summary: Authenticated user profile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '500':
+          $ref: '#/components/responses/Error500'
+
+  /api/v1/profile:
+    get:
+      tags: [Profile]
+      summary: Profile detail
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '500':
+          $ref: '#/components/responses/Error500'
+    put:
+      tags: [Profile]
+      summary: Profile update
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '500':
+          $ref: '#/components/responses/Error500'
+  /api/v1/profile/change-password:
+    post:
+      tags: [Profile]
+      summary: Change password
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Basarili
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '500':
+          $ref: '#/components/responses/Error500'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PerPage:
+      name: per_page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    Search:
+      name: search
+      in: query
+      schema:
+        type: string
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+    Direction:
+      name: direction
+      in: query
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+  responses:
+    Error401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          examples:
+            unauthorized:
+              $ref: '#/components/examples/Error401Example'
+    Error403:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          examples:
+            forbidden:
+              $ref: '#/components/examples/Error403Example'
+    Error422:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          examples:
+            validation:
+              $ref: '#/components/examples/Error422Example'
+    Error500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          examples:
+            internal:
+              $ref: '#/components/examples/Error500Example'
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    RefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token:
+          type: string
+    PaginationMeta:
+      type: object
+      required: [page, per_page, total, total_pages]
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
+        total_pages:
+          type: integer
+    SuccessEnvelope:
+      type: object
+      required: [success, message, data, errors, meta]
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+        data:
+          nullable: true
+        errors:
+          nullable: true
+        meta:
+          type: object
+          properties:
+            request_id:
+              type: string
+              nullable: true
+    PaginatedEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/SuccessEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [items, meta]
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                meta:
+                  $ref: '#/components/schemas/PaginationMeta'
+    ErrorEnvelope:
+      type: object
+      required: [success, message, data, errors, meta]
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+        data:
+          nullable: true
+          example: null
+        errors:
+          type: object
+          required: [error_code]
+          properties:
+            error_code:
+              type: string
+            details:
+              nullable: true
+        meta:
+          type: object
+          properties:
+            request_id:
+              type: string
+              nullable: true
+    AuthSuccessEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/SuccessEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                token_type:
+                  type: string
+                  example: Bearer
+                expires_in:
+                  type: integer
+                refresh_token:
+                  type: string
+                refresh_expires_in:
+                  type: integer
+                user:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    company_id:
+                      type: integer
+                    email:
+                      type: string
+                    roles:
+                      type: array
+                      items:
+                        type: string
+  examples:
+    Error401Example:
+      value:
+        success: false
+        message: Kimlik dogrulama gerekli
+        data: null
+        errors:
+          error_code: UNAUTHORIZED
+        meta:
+          request_id: req-401-example
+    Error403Example:
+      value:
+        success: false
+        message: Yetkisiz islem
+        data: null
+        errors:
+          error_code: FORBIDDEN
+        meta:
+          request_id: req-403-example
+    Error422Example:
+      value:
+        success: false
+        message: Validation failed
+        data: null
+        errors:
+          error_code: VALIDATION_ERROR
+          details:
+            email:
+              - Gecerli bir email giriniz
+        meta:
+          request_id: req-422-example
+    Error500Example:
+      value:
+        success: false
+        message: Islem su anda gerceklestirilemiyor
+        data: null
+        errors:
+          error_code: INTERNAL_SERVER_ERROR
+        meta:
+          request_id: req-500-example

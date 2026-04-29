@@ -1,0 +1,88 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - "backend/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/ci.yml"
+
+jobs:
+  backend-ci:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: sitebys_ci
+          MYSQL_USER: sitebys_ci
+          MYSQL_PASSWORD: sitebys_ci
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: intl, mbstring, mysqli, pdo_mysql
+          coverage: none
+
+      - name: Prepare CI environment file
+        run: |
+          cat > .env <<'EOF'
+          CI_ENVIRONMENT = testing
+          app.baseURL = 'http://localhost/'
+          app.forceGlobalSecureRequests = false
+
+          database.default.hostname = 127.0.0.1
+          database.default.database = sitebys_ci
+          database.default.username = sitebys_ci
+          database.default.password = sitebys_ci
+          database.default.DBDriver = MySQLi
+          database.default.DBPrefix =
+          database.default.port = 3306
+          database.default.charset = utf8mb4
+          database.default.DBCollat = utf8mb4_unicode_ci
+
+          JWT_SECRET = 'ci-dummy-jwt-secret-at-least-32-characters-long'
+          JWT_ACCESS_TTL = 900
+          JWT_REFRESH_TTL = 1209600
+
+          API_DOCS_ENABLED = false
+          EOF
+
+      - name: Composer validate
+        run: composer validate --strict
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: PHP syntax check
+        run: |
+          git ls-files '*.php' | while IFS= read -r file; do
+            php -l "$file"
+          done
+
+      - name: Migration smoke test
+        run: php spark migrate --all --no-header
+
+      - name: Run tests
+        run: php spark test
