@@ -21,7 +21,7 @@ class CreatePasswordResetTokensTable extends Migration
             ],
             'token_hash' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
+                'constraint' => 191,
                 'null' => false,
             ],
             'expires_at' => [

@@ -20,14 +20,11 @@ class CreateCoreTables extends Migration
 
     public function down()
     {
-        $this->forge->dropTable('audit_logs', true);
-        $this->forge->dropTable('token_blacklist', true);
-        $this->forge->dropTable('user_roles', true);
-        $this->forge->dropTable('role_permissions', true);
-        $this->forge->dropTable('permissions', true);
-        $this->forge->dropTable('roles', true);
-        $this->forge->dropTable('users', true);
-        $this->forge->dropTable('companies', true);
+        foreach (['audit_logs', 'token_blacklist', 'user_roles', 'role_permissions', 'permissions', 'roles', 'users', 'companies'] as $table) {
+            if ($this->tableExists($table)) {
+                $this->forge->dropTable($table, true);
+            }
+        }
     }
 
     private function addStandardFields(bool $tenantRequired = true): void
@@ -46,6 +43,10 @@ class CreateCoreTables extends Migration
 
     private function createCompanies(): void
     {
+        if ($this->tableExists('companies')) {
+            return;
+        }
+
         $this->forge->addField([
             'id' => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
             'public_id' => ['type' => 'CHAR', 'constraint' => 36, 'null' => false],
@@ -60,6 +61,10 @@ class CreateCoreTables extends Migration
 
     private function createUsers(): void
     {
+        if ($this->tableExists('users')) {
+            return;
+        }
+
         $this->forge->addField([
             'id' => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
             'public_id' => ['type' => 'CHAR', 'constraint' => 36, 'null' => false],
@@ -80,6 +85,10 @@ class CreateCoreTables extends Migration
 
     private function createRoles(): void
     {
+        if ($this->tableExists('roles')) {
+            return;
+        }
+
         $this->forge->addField([
             'id' => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
             'company_id' => ['type' => 'INT', 'unsigned' => true, 'null' => true],
@@ -94,6 +103,10 @@ class CreateCoreTables extends Migration
 
     private function createPermissions(): void
     {
+        if ($this->tableExists('permissions')) {
+            return;
+        }
+
         $this->forge->addField([
             'id' => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
             'code' => ['type' => 'VARCHAR', 'constraint' => 80, 'null' => false],
@@ -107,6 +120,10 @@ class CreateCoreTables extends Migration
 
     private function createRolePermissions(): void
     {
+        if ($this->tableExists('role_permissions')) {
+            return;
+        }
+
         $this->forge->addField([
             'id' => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
             'role_id' => ['type' => 'INT', 'unsigned' => true, 'null' => false],
@@ -122,6 +139,10 @@ class CreateCoreTables extends Migration
 
     private function createUserRoles(): void
     {
+        if ($this->tableExists('user_roles')) {
+            return;
+        }
+
         $this->forge->addField([
             'id' => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
             'company_id' => ['type' => 'INT', 'unsigned' => true, 'null' => false],
@@ -138,10 +159,14 @@ class CreateCoreTables extends Migration
 
     private function createTokenBlacklist(): void
     {
+        if ($this->tableExists('token_blacklist')) {
+            return;
+        }
+
         $this->forge->addField([
             'id' => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
             'company_id' => ['type' => 'INT', 'unsigned' => true, 'null' => false],
-            'token_hash' => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => false],
+            'token_hash' => ['type' => 'VARCHAR', 'constraint' => 191, 'null' => false],
             'expires_at' => ['type' => 'DATETIME', 'null' => false],
         ]);
         $this->addStandardFields(false);
@@ -153,6 +178,10 @@ class CreateCoreTables extends Migration
 
     private function createAuditLogs(): void
     {
+        if ($this->tableExists('audit_logs')) {
+            return;
+        }
+
         $this->forge->addField([
             'id' => ['type' => 'BIGINT', 'unsigned' => true, 'auto_increment' => true],
             'company_id' => ['type' => 'INT', 'unsigned' => true, 'null' => true],
@@ -168,5 +197,28 @@ class CreateCoreTables extends Migration
         $this->forge->addKey('action');
         $this->forge->addKey('created_at');
         $this->forge->createTable('audit_logs', true);
+    }
+
+    private function tableExists(string $table): bool
+    {
+        if ($this->db->DBDriver === 'SQLite3') {
+            $row = $this->db->query(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name = ?",
+                [$table]
+            )->getRowArray();
+
+            return is_array($row);
+        }
+
+        $database = method_exists($this->db, 'getDatabase') ? (string) $this->db->getDatabase() : '';
+        $prefix = method_exists($this->db, 'getPrefix') ? (string) $this->db->getPrefix() : '';
+        $tableName = $prefix . $table;
+        $row = $this->db->table('information_schema.tables')
+            ->select('TABLE_NAME')
+            ->where('TABLE_SCHEMA', $database)
+            ->where('TABLE_NAME', $tableName)
+            ->get(1)
+            ->getRowArray();
+        return is_array($row);
     }
 }

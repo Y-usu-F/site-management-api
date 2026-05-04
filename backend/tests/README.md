@@ -34,18 +34,49 @@ for code coverage to be calculated successfully. After installing `XDebug`, you 
 ## Setting Up
 
 A number of the tests use a running database.
-In order to set up the database edit the details for the `tests` group in
-**app/Config/Database.php** or **.env**.
-Make sure that you provide a database engine that is currently running on your machine.
+This project uses **MySQL** for the `tests` database group (not SQLite), to keep local and CI behavior aligned.
+Configure these values in your environment:
+
+- `database.tests.hostname`
+- `database.tests.database`
+- `database.tests.username`
+- `database.tests.password`
+- `database.tests.DBDriver=MySQLi`
+
+You can also rely on `database.default.*` values, since test config falls back to default DB settings.
+
+Make sure that MySQL is running and the test database exists before executing PHPUnit.
+For stable local/CI behavior, use MySQL 8 users with `caching_sha2_password` authentication.
 More details on a test database setup are in the
 [Testing Your Database](https://codeigniter.com/user_guide/testing/database.html) section of the documentation.
+
+### Windows + MySQL User Setup
+
+Open MySQL shell as admin and run:
+
+```sql
+CREATE DATABASE IF NOT EXISTS bys CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'bys'@'%' IDENTIFIED WITH caching_sha2_password BY 'bys';
+ALTER USER 'bys'@'%' IDENTIFIED WITH caching_sha2_password BY 'bys';
+GRANT ALL PRIVILEGES ON bys.* TO 'bys'@'%';
+FLUSH PRIVILEGES;
+```
+
+If your local MySQL listens only on localhost:
+
+```sql
+CREATE USER IF NOT EXISTS 'bys'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'bys';
+ALTER USER 'bys'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'bys';
+GRANT ALL PRIVILEGES ON bys.* TO 'bys'@'localhost';
+FLUSH PRIVILEGES;
+```
 
 ## Running the tests
 
 The entire test suite can be run by simply typing one command-line command from the main directory.
 
 ```console
-> ./phpunit
+> ./vendor/bin/phpunit
 ```
 
 If you are using Windows, use the following command.

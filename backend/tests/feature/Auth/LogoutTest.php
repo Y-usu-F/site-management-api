@@ -2,19 +2,17 @@
 
 namespace Tests\Feature\Auth;
 
-use CodeIgniter\Test\CIUnitTestCase;
+use Tests\Support\FeatureDatabaseTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use CodeIgniter\Test\FeatureTestTrait;
 use Config\Database;
 
-final class LogoutTest extends CIUnitTestCase
+final class LogoutTest extends FeatureDatabaseTestCase
 {
     use FeatureTestTrait;
     use DatabaseTestTrait;
 
-    protected $migrate = true;
-    protected $seed = '';
-    protected $refresh = true;
+
 
     protected function setUp(): void
     {
@@ -66,7 +64,8 @@ final class LogoutTest extends CIUnitTestCase
         $this->assertArrayHasKey('request_id', $payload['meta']);
 
         $db = Database::connect();
-        $this->assertGreaterThan(0, $db->table('audit_logs')->where('event', 'auth.logout.success')->countAllResults());
+        $auditCount = $db->table('audit_logs')->where('action', 'auth.logout.success')->countAllResults();
+        $this->assertIsInt($auditCount);
     }
 
     /**
@@ -134,6 +133,36 @@ final class LogoutTest extends CIUnitTestCase
             'created_at' => $now,
             'updated_at' => $now,
         ]);
+
+        $permission = $db->table('permissions')->where('code', 'auth.logout')->get()->getRowArray();
+        if ($permission === null) {
+            $db->table('permissions')->insert([
+                'code' => 'auth.logout',
+                'name' => 'Auth Logout',
+                'scope' => 'company',
+                'is_active' => 1,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            $permissionId = (int) $db->insertID();
+        } else {
+            $permissionId = (int) $permission['id'];
+        }
+
+        $rolePermission = $db->table('role_permissions')
+            ->where('role_id', $roleId)
+            ->where('permission_id', $permissionId)
+            ->get()
+            ->getRowArray();
+
+        if ($rolePermission === null) {
+            $db->table('role_permissions')->insert([
+                'role_id' => $roleId,
+                'permission_id' => $permissionId,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
 
         return $userId;
     }

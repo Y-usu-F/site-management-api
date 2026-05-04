@@ -2,19 +2,17 @@
 
 namespace Tests\Feature\Profile;
 
-use CodeIgniter\Test\CIUnitTestCase;
+use Tests\Support\FeatureDatabaseTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use CodeIgniter\Test\FeatureTestTrait;
 use Config\Database;
 
-final class ProfileTest extends CIUnitTestCase
+final class ProfileTest extends FeatureDatabaseTestCase
 {
     use FeatureTestTrait;
     use DatabaseTestTrait;
 
-    protected $migrate = true;
-    protected $seed = '';
-    protected $refresh = true;
+
 
     protected function setUp(): void
     {

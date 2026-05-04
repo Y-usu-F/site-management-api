@@ -33,4 +33,9 @@ defined('SHOW_DEBUG_BACKTRACE') || define('SHOW_DEBUG_BACKTRACE', true);
  */
 defined('CI_DEBUG') || define('CI_DEBUG', true);
 
-\Config\EnvValidator::validateOrFail();
+if (PHP_SAPI !== 'cli') {
+    if (! class_exists(\Config\EnvValidator::class, false)) {
+        require_once APPPATH . 'Config/EnvValidator.php';
+    }
+    \Config\EnvValidator::validateOrFail();
+}

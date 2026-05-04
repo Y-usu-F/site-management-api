@@ -32,13 +32,16 @@ class UserModel extends TenantAwareModel
      */
     public function findByEmailGlobal(string $email, ?int $exceptUserId = null, bool $includeDeleted = true): ?array
     {
-        $builder = $includeDeleted ? $this->withDeleted() : $this;
-        $builder = $builder->where('email', strtolower(trim($email)));
+        $builder = $this->db->table($this->table)
+            ->where('email', strtolower(trim($email)));
+        if (! $includeDeleted) {
+            $builder->where('deleted_at', null);
+        }
         if ($exceptUserId !== null) {
-            $builder = $builder->where('id !=', $exceptUserId);
+            $builder->where('id !=', $exceptUserId);
         }
 
-        $row = $builder->first();
+        $row = $builder->get()->getRowArray();
 
         return is_array($row) ? $row : null;
     }
@@ -50,9 +53,27 @@ class UserModel extends TenantAwareModel
         ]);
     }
 
+    /**
+     * Users may share the same email across companies (unique index is company_id + email).
+     * Resolve ordered newest-first so callers can disambiguate (login verifies password per row).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function findLoginCandidatesOrderedDesc(string $identity): array
+    {
+        return $this->db->table($this->table)
+            ->where('email', strtolower(trim($identity)))
+            ->where('deleted_at', null)
+            ->orderBy('id', 'DESC')
+            ->get()
+            ->getResultArray();
+    }
+
     public function findForLogin(string $identity): ?array
     {
-        return $this->where('email', strtolower(trim($identity)))->first();
+        $rows = $this->findLoginCandidatesOrderedDesc($identity);
+
+        return $rows[0] ?? null;
     }
 
     /**
@@ -73,19 +94,23 @@ class UserModel extends TenantAwareModel
 
     public function markLoginFailed(int $userId, int $failedCount, ?string $lockedUntil): bool
     {
-        return $this->update($userId, [
-            'failed_login_count' => $failedCount,
-            'locked_until' => $lockedUntil,
-        ]);
+        return (bool) $this->db->table($this->table)
+            ->where('id', $userId)
+            ->set('failed_login_count', $failedCount)
+            ->set('locked_until', $lockedUntil)
+            ->set('updated_at', date('Y-m-d H:i:s'))
+            ->update();
     }
 
     public function markLoginSuccess(int $userId): bool
     {
-        return $this->update($userId, [
-            'failed_login_count' => 0,
-            'locked_until' => null,
-            'last_login_at' => date('Y-m-d H:i:s'),
-        ]);
+        return (bool) $this->db->table($this->table)
+            ->where('id', $userId)
+            ->set('failed_login_count', 0)
+            ->set('locked_until', null)
+            ->set('last_login_at', date('Y-m-d H:i:s'))
+            ->set('updated_at', date('Y-m-d H:i:s'))
+            ->update();
     }
 
     public function findLatestRefreshTokenId(int $userId, int $companyId): ?int

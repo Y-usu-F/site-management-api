@@ -27,7 +27,7 @@ final class PermissionCatalogTest extends CIUnitTestCase
     {
         $catalog = new PermissionCatalog();
         foreach ($catalog->codes() as $code) {
-            $this->assertSame(1, preg_match('/^[a-z]+\.[a-z]+(\.[a-z]+)*$/', $code), $code);
+            $this->assertSame(1, preg_match('/^[a-z][a-z_]*\.[a-z][a-z_]*(\.[a-z][a-z_]*)*$/', $code), $code);
         }
     }
 
@@ -56,6 +56,84 @@ final class PermissionCatalogTest extends CIUnitTestCase
         $this->assertTrue($catalog->exists('profile.view'));
         $this->assertTrue($catalog->exists('profile.update'));
         $this->assertTrue($catalog->exists('profile.password.change'));
+        $this->assertTrue($catalog->exists('site.list'));
+        $this->assertTrue($catalog->exists('block.list'));
+        $this->assertTrue($catalog->exists('floor.list'));
+        $this->assertTrue($catalog->exists('unit.list'));
+        $this->assertTrue($catalog->exists('resident.list'));
+        $this->assertTrue($catalog->exists('unit_occupancy.list'));
+        $this->assertTrue($catalog->exists('resident_contact.list'));
+        $this->assertTrue($catalog->exists('resident_vehicle.list'));
+        $this->assertTrue($catalog->exists('due_definition.list'));
+        $this->assertTrue($catalog->exists('due_period.list'));
+        $this->assertTrue($catalog->exists('due_batch.list'));
+        $this->assertTrue($catalog->exists('due_item.list'));
+        $this->assertTrue($catalog->exists('due_period.close'));
+        $this->assertTrue($catalog->exists('due_period.lock'));
+        $this->assertTrue($catalog->exists('due_item.cancel'));
+        $this->assertTrue($catalog->exists('payment.list'));
+        $this->assertTrue($catalog->exists('payment.create_manual'));
+        $this->assertTrue($catalog->exists('payment.view'));
+        $this->assertTrue($catalog->exists('payment.cancel'));
+        $this->assertTrue($catalog->exists('payment_event.list'));
+        $this->assertTrue($catalog->exists('payment_event.view'));
+        $this->assertTrue($catalog->exists('request_category.list'));
+        $this->assertTrue($catalog->exists('request_category.create'));
+        $this->assertTrue($catalog->exists('request_category.view'));
+        $this->assertTrue($catalog->exists('request_category.update'));
+        $this->assertTrue($catalog->exists('request_category.delete'));
+        $this->assertTrue($catalog->exists('service_request.list'));
+        $this->assertTrue($catalog->exists('service_request.create'));
+        $this->assertTrue($catalog->exists('service_request.view'));
+        $this->assertTrue($catalog->exists('service_request.update'));
+        $this->assertTrue($catalog->exists('service_request.assign'));
+        $this->assertTrue($catalog->exists('service_request.resolve'));
+        $this->assertTrue($catalog->exists('service_request.close'));
+        $this->assertTrue($catalog->exists('service_request.cancel'));
+        $this->assertTrue($catalog->exists('service_request_comment.list'));
+        $this->assertTrue($catalog->exists('service_request_comment.create'));
+        $this->assertTrue($catalog->exists('service_request_file.list'));
+        $this->assertTrue($catalog->exists('service_request_file.create'));
+        $this->assertTrue($catalog->exists('service_request_file.delete'));
+        $this->assertTrue($catalog->exists('work_order.list'));
+        $this->assertTrue($catalog->exists('work_order.create'));
+        $this->assertTrue($catalog->exists('work_order.view'));
+        $this->assertTrue($catalog->exists('work_order.update'));
+        $this->assertTrue($catalog->exists('work_order.start'));
+        $this->assertTrue($catalog->exists('work_order.complete'));
+        $this->assertTrue($catalog->exists('work_order.cancel'));
+        $this->assertTrue($catalog->exists('notification_template.list'));
+        $this->assertTrue($catalog->exists('notification_template.create'));
+        $this->assertTrue($catalog->exists('notification_template.view'));
+        $this->assertTrue($catalog->exists('notification_template.update'));
+        $this->assertTrue($catalog->exists('notification_template.delete'));
+        $this->assertTrue($catalog->exists('notification_message.list'));
+        $this->assertTrue($catalog->exists('notification_message.create'));
+        $this->assertTrue($catalog->exists('notification_message.view'));
+        $this->assertTrue($catalog->exists('notification_message.queue'));
+        $this->assertTrue($catalog->exists('notification_message.cancel'));
+        $this->assertTrue($catalog->exists('notification_recipient.list'));
+        $this->assertTrue($catalog->exists('notification_recipient.view'));
+        $this->assertTrue($catalog->exists('notification_recipient.mark_read'));
+        $this->assertTrue($catalog->exists('notification_delivery_log.list'));
+        $this->assertTrue($catalog->exists('notification_delivery_log.view'));
+        $this->assertTrue($catalog->exists('communication_provider.list'));
+        $this->assertTrue($catalog->exists('communication_provider.create'));
+        $this->assertTrue($catalog->exists('communication_provider.view'));
+        $this->assertTrue($catalog->exists('communication_provider.update'));
+        $this->assertTrue($catalog->exists('communication_provider.delete'));
+        $this->assertTrue($catalog->exists('communication_provider.set_default'));
+        $this->assertTrue($catalog->exists('announcement.list'));
+        $this->assertTrue($catalog->exists('announcement.create'));
+        $this->assertTrue($catalog->exists('announcement.view'));
+        $this->assertTrue($catalog->exists('announcement.update'));
+        $this->assertTrue($catalog->exists('announcement.delete'));
+        $this->assertTrue($catalog->exists('announcement.publish'));
+        $this->assertTrue($catalog->exists('announcement.archive'));
+        $this->assertTrue($catalog->exists('announcement.cancel'));
+        $this->assertTrue($catalog->exists('announcement.mark_read'));
+        $this->assertTrue($catalog->exists('announcement.reads.list'));
+        $this->assertTrue($catalog->exists('announcement.targets.list'));
     }
 
     public function testExistsBilinmeyenPermissionIcinFalseDoner(): void

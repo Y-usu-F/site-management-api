@@ -9,6 +9,7 @@ servers:
 tags:
   - name: Auth
   - name: Profile
+  - name: SiteManagement
 paths:
   /api/v1/auth/login:
     post:
@@ -279,6 +280,530 @@ paths:
           $ref: '#/components/responses/Error422'
         '500':
           $ref: '#/components/responses/Error500'
+  /api/v1/sites:
+    get:
+      tags: [SiteManagement]
+      summary: List sites
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Direction'
+      responses:
+        '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+    post:
+      tags: [SiteManagement]
+      summary: Create site
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SitePayload' }
+      responses:
+        '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '422': { $ref: '#/components/responses/Error422' }
+  /api/v1/sites/{id}:
+    get:
+      tags: [SiteManagement]
+      summary: Site detail
+      security: [{ BearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/IdPath' }]
+      responses:
+        '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '404': { $ref: '#/components/responses/Error422' }
+    put:
+      tags: [SiteManagement]
+      summary: Update site
+      security: [{ BearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/IdPath' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SitePayload' }
+      responses:
+        '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+        '422': { $ref: '#/components/responses/Error422' }
+    delete:
+      tags: [SiteManagement]
+      summary: Delete site
+      security: [{ BearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/IdPath' }]
+      responses:
+        '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }
+        '401': { $ref: '#/components/responses/Error401' }
+        '403': { $ref: '#/components/responses/Error403' }
+  /api/v1/blocks:
+    get: { tags: [SiteManagement], summary: List blocks, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    post: { tags: [SiteManagement], summary: Create block, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BlockPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+  /api/v1/blocks/{id}:
+    get: { tags: [SiteManagement], summary: Block detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    put: { tags: [SiteManagement], summary: Update block, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BlockPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+    delete: { tags: [SiteManagement], summary: Delete block, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+  /api/v1/floors:
+    get: { tags: [SiteManagement], summary: List floors, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    post: { tags: [SiteManagement], summary: Create floor, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FloorPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+  /api/v1/floors/{id}:
+    get: { tags: [SiteManagement], summary: Floor detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    put: { tags: [SiteManagement], summary: Update floor, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FloorPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+    delete: { tags: [SiteManagement], summary: Delete floor, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+  /api/v1/units:
+    get: { tags: [SiteManagement], summary: List units, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    post: { tags: [SiteManagement], summary: Create unit, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/UnitPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+  /api/v1/units/{id}:
+    get: { tags: [SiteManagement], summary: Unit detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    put: { tags: [SiteManagement], summary: Update unit, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/UnitPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+    delete: { tags: [SiteManagement], summary: Delete unit, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+  /api/v1/residents:
+    get: { tags: [SiteManagement], summary: List residents, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    post: { tags: [SiteManagement], summary: Create resident, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ResidentProfilePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+  /api/v1/residents/{id}:
+    get: { tags: [SiteManagement], summary: Resident detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    put: { tags: [SiteManagement], summary: Update resident, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ResidentProfilePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+    delete: { tags: [SiteManagement], summary: Delete resident, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+  /api/v1/unit-occupancies:
+    get: { tags: [SiteManagement], summary: List unit occupancies, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    post: { tags: [SiteManagement], summary: Create unit occupancy, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/UnitOccupancyPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+  /api/v1/unit-occupancies/{id}:
+    get: { tags: [SiteManagement], summary: Unit occupancy detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    put: { tags: [SiteManagement], summary: Update unit occupancy, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/UnitOccupancyPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+    delete: { tags: [SiteManagement], summary: Delete unit occupancy, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+  /api/v1/resident-contacts:
+    get: { tags: [SiteManagement], summary: List resident contacts, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    post: { tags: [SiteManagement], summary: Create resident contact, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ResidentContactPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+  /api/v1/resident-contacts/{id}:
+    put: { tags: [SiteManagement], summary: Update resident contact, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ResidentContactPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+    delete: { tags: [SiteManagement], summary: Delete resident contact, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+  /api/v1/resident-vehicles:
+    get: { tags: [SiteManagement], summary: List resident vehicles, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    post: { tags: [SiteManagement], summary: Create resident vehicle, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ResidentVehiclePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+  /api/v1/resident-vehicles/{id}:
+    get: { tags: [SiteManagement], summary: Resident vehicle detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    put: { tags: [SiteManagement], summary: Update resident vehicle, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ResidentVehiclePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' }, '422': { $ref: '#/components/responses/Error422' } } }
+    delete: { tags: [SiteManagement], summary: Delete resident vehicle, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+  /api/v1/due-definitions:
+    get: { tags: [SiteManagement], summary: List due definitions, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+    post: { tags: [SiteManagement], summary: Create due definition, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DueDefinitionPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '422': { $ref: '#/components/responses/Error422' } } }
+  /api/v1/due-definitions/{id}:
+    get: { tags: [SiteManagement], summary: Due definition detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update due definition, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DueDefinitionPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete due definition, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/due-periods:
+    get: { tags: [SiteManagement], summary: List due periods, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create due period, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DuePeriodPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/due-periods/{id}:
+    get: { tags: [SiteManagement], summary: Due period detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update due period, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DuePeriodPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete due period, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/due-periods/{id}/close:
+    post: { tags: [SiteManagement], summary: Close due period, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/due-periods/{id}/lock:
+    post: { tags: [SiteManagement], summary: Lock due period, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/due-batches:
+    get: { tags: [SiteManagement], summary: List due batches, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create due batch, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DueBatchPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/due-batches/{id}:
+    get: { tags: [SiteManagement], summary: Due batch detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/due-items:
+    get: { tags: [SiteManagement], summary: List due items, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+  /api/v1/due-items/{id}:
+    get: { tags: [SiteManagement], summary: Due item detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update due item, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DueItemPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/due-items/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel due item, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/payments:
+    get: { tags: [SiteManagement], summary: List payments, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } }, '401': { $ref: '#/components/responses/Error401' }, '403': { $ref: '#/components/responses/Error403' } } }
+  /api/v1/payments/manual:
+    post: { tags: [SiteManagement], summary: Create manual payment, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PaymentManualPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } }, '422': { $ref: '#/components/responses/Error422' } } }
+  /api/v1/payments/{id}:
+    get: { tags: [SiteManagement], summary: Payment detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/payments/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel payment, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/payment-events:
+    get: { tags: [SiteManagement], summary: List payment events, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+  /api/v1/payment-events/{id}:
+    get: { tags: [SiteManagement], summary: Payment event detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/request-categories:
+    get: { tags: [SiteManagement], summary: List request categories, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create request category, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/RequestCategoryPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/request-categories/{id}:
+    get: { tags: [SiteManagement], summary: Request category detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update request category, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/RequestCategoryPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete request category, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/service-requests:
+    get: { tags: [SiteManagement], summary: List service requests, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create service request, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ServiceRequestPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/service-requests/{id}:
+    get: { tags: [SiteManagement], summary: Service request detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update service request, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ServiceRequestPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/service-requests/{id}/assign:
+    post: { tags: [SiteManagement], summary: Assign service request, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { assigned_to_user_id: { type: integer } } } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/service-requests/{id}/resolve:
+    post: { tags: [SiteManagement], summary: Resolve service request, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/service-requests/{id}/close:
+    post: { tags: [SiteManagement], summary: Close service request, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/service-requests/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel service request, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/service-requests/{id}/comments:
+    get: { tags: [SiteManagement], summary: List service request comments, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create service request comment, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ServiceRequestCommentPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/service-requests/{id}/files:
+    get: { tags: [SiteManagement], summary: List service request files, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create service request file metadata, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ServiceRequestFilePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/service-request-files/{id}:
+    delete: { tags: [SiteManagement], summary: Delete service request file, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/work-orders:
+    get: { tags: [SiteManagement], summary: List work orders, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create work order, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/WorkOrderPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/work-orders/{id}:
+    get: { tags: [SiteManagement], summary: Work order detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update work order, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/WorkOrderPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/work-orders/{id}/start:
+    post: { tags: [SiteManagement], summary: Start work order, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/work-orders/{id}/complete:
+    post: { tags: [SiteManagement], summary: Complete work order, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/work-orders/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel work order, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/notification-templates:
+    get: { tags: [SiteManagement], summary: List notification templates, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create notification template, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/NotificationTemplatePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/notification-templates/{id}:
+    get: { tags: [SiteManagement], summary: Notification template detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update notification template, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/NotificationTemplatePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete notification template, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/notification-messages:
+    get: { tags: [SiteManagement], summary: List notification messages, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create notification message, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/NotificationMessagePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/notification-messages/{id}:
+    get: { tags: [SiteManagement], summary: Notification message detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/notification-messages/{id}/queue:
+    post: { tags: [SiteManagement], summary: Queue notification message, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/notification-messages/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel notification message, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/notification-recipients:
+    get: { tags: [SiteManagement], summary: List notification recipients, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+  /api/v1/notification-recipients/{id}:
+    get: { tags: [SiteManagement], summary: Notification recipient detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/notification-recipients/{id}/mark-read:
+    post: { tags: [SiteManagement], summary: Mark notification recipient as read, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/notification-delivery-logs:
+    get: { tags: [SiteManagement], summary: List notification delivery logs, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+  /api/v1/notification-delivery-logs/{id}:
+    get: { tags: [SiteManagement], summary: Notification delivery log detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/communication-providers:
+    get: { tags: [SiteManagement], summary: List communication providers, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create communication provider, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CommunicationProviderPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/communication-providers/{id}:
+    get: { tags: [SiteManagement], summary: Communication provider detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update communication provider, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CommunicationProviderPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete communication provider, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/communication-providers/{id}/set-default:
+    post: { tags: [SiteManagement], summary: Set communication provider default, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/announcements:
+    get: { tags: [SiteManagement], summary: List announcements, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create announcement, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AnnouncementPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/announcements/{id}:
+    get: { tags: [SiteManagement], summary: Announcement detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update announcement, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AnnouncementPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete announcement, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/announcements/{id}/publish:
+    post: { tags: [SiteManagement], summary: Publish announcement, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/announcements/{id}/archive:
+    post: { tags: [SiteManagement], summary: Archive announcement, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/announcements/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel announcement, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/announcements/{id}/mark-read:
+    post: { tags: [SiteManagement], summary: Mark announcement as read, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/announcements/{id}/reads:
+    get: { tags: [SiteManagement], summary: List announcement reads, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+  /api/v1/announcements/{id}/targets:
+    get: { tags: [SiteManagement], summary: List announcement targets, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+  /api/v1/common-areas:
+    get: { tags: [SiteManagement], summary: List common areas, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create common area, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CommonAreaPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/common-areas/{id}:
+    get: { tags: [SiteManagement], summary: Common area detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update common area, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CommonAreaPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete common area, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/common-area-reservations:
+    get: { tags: [SiteManagement], summary: List common area reservations, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create common area reservation, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CommonAreaReservationPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/common-area-reservations/{id}:
+    get: { tags: [SiteManagement], summary: Common area reservation detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update common area reservation, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CommonAreaReservationPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/common-area-reservations/{id}/approve:
+    post: { tags: [SiteManagement], summary: Approve common area reservation, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/common-area-reservations/{id}/reject:
+    post: { tags: [SiteManagement], summary: Reject common area reservation, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: false, content: { application/json: { schema: { type: object, properties: { rejected_reason: { type: string } } } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/common-area-reservations/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel common area reservation, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: false, content: { application/json: { schema: { type: object, properties: { cancelled_reason: { type: string } } } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/common-area-reservations/{id}/complete:
+    post: { tags: [SiteManagement], summary: Complete common area reservation, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meters:
+    get: { tags: [SiteManagement], summary: List meters, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create meter, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeterPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meters/{id}:
+    get: { tags: [SiteManagement], summary: Meter detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update meter, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeterPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete meter, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meter-reading-periods:
+    get: { tags: [SiteManagement], summary: List meter reading periods, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create meter reading period, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeterReadingPeriodPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meter-reading-periods/{id}:
+    get: { tags: [SiteManagement], summary: Meter reading period detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update meter reading period, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeterReadingPeriodPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meter-reading-periods/{id}/close:
+    post: { tags: [SiteManagement], summary: Close meter reading period, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meter-reading-periods/{id}/lock:
+    post: { tags: [SiteManagement], summary: Lock meter reading period, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meter-readings:
+    get: { tags: [SiteManagement], summary: List meter readings, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create meter reading, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeterReadingPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meter-readings/{id}:
+    get: { tags: [SiteManagement], summary: Meter reading detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update meter reading, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeterReadingPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meter-readings/{id}/approve:
+    post: { tags: [SiteManagement], summary: Approve meter reading, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meter-readings/{id}/reject:
+    post: { tags: [SiteManagement], summary: Reject meter reading, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: false, content: { application/json: { schema: { type: object, properties: { rejected_reason: { type: string } } } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meter-readings/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel meter reading, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meter-readings/{id}/generate-consumption-report:
+    post: { tags: [SiteManagement], summary: Generate consumption report from reading, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/consumption-reports:
+    get: { tags: [SiteManagement], summary: List consumption reports, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+  /api/v1/consumption-reports/{id}:
+    get: { tags: [SiteManagement], summary: Consumption report detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/consumption-reports/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel consumption report, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/assets:
+    get: { tags: [SiteManagement], summary: List assets, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create asset, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AssetPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/assets/{id}:
+    get: { tags: [SiteManagement], summary: Asset detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update asset, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AssetPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete asset, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/asset-maintenance-plans:
+    get: { tags: [SiteManagement], summary: List asset maintenance plans, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create asset maintenance plan, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AssetMaintenancePlanPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/asset-maintenance-plans/{id}:
+    get: { tags: [SiteManagement], summary: Asset maintenance plan detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update asset maintenance plan, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AssetMaintenancePlanPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/asset-maintenance-plans/{id}/pause:
+    post: { tags: [SiteManagement], summary: Pause asset maintenance plan, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/asset-maintenance-plans/{id}/resume:
+    post: { tags: [SiteManagement], summary: Resume asset maintenance plan, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/asset-maintenance-plans/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel asset maintenance plan, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/asset-maintenance-records:
+    get: { tags: [SiteManagement], summary: List asset maintenance records, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create asset maintenance record, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AssetMaintenanceRecordPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/asset-maintenance-records/{id}:
+    get: { tags: [SiteManagement], summary: Asset maintenance record detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/asset-maintenance-records/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel asset maintenance record, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/visitor-invites:
+    get: { tags: [SiteManagement], summary: List visitor invites, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create visitor invite, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/VisitorInvitePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/visitor-invites/{id}:
+    get: { tags: [SiteManagement], summary: Visitor invite detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/visitor-invites/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel visitor invite, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/visitor-entries:
+    get: { tags: [SiteManagement], summary: List visitor entries, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+  /api/v1/visitor-entries/check-in:
+    post: { tags: [SiteManagement], summary: Visitor check-in, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/VisitorEntryCheckInPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/visitor-entries/check-out:
+    post: { tags: [SiteManagement], summary: Visitor check-out, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/VisitorEntryCheckOutPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/visitor-entries/{id}:
+    get: { tags: [SiteManagement], summary: Visitor entry detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/security-incidents:
+    get: { tags: [SiteManagement], summary: List security incidents, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create security incident, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SecurityIncidentPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/security-incidents/{id}:
+    get: { tags: [SiteManagement], summary: Security incident detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update security incident, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SecurityIncidentPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/security-incidents/{id}/resolve:
+    post: { tags: [SiteManagement], summary: Resolve security incident, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/security-incidents/{id}/close:
+    post: { tags: [SiteManagement], summary: Close security incident, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/security-incidents/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel security incident, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/vehicle-access-lists:
+    get: { tags: [SiteManagement], summary: List vehicle access lists, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create vehicle access list, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/VehicleAccessListPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/vehicle-access-lists/{id}:
+    get: { tags: [SiteManagement], summary: Vehicle access list detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update vehicle access list, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/VehicleAccessListPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete vehicle access list, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-profiles:
+    get: { tags: [SiteManagement], summary: List staff profiles, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create staff profile, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StaffProfilePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-profiles/{id}:
+    get: { tags: [SiteManagement], summary: Staff profile detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update staff profile, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StaffProfilePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete staff profile, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-assignments:
+    get: { tags: [SiteManagement], summary: List staff assignments, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create staff assignment, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StaffAssignmentPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-assignments/{id}:
+    get: { tags: [SiteManagement], summary: Staff assignment detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update staff assignment, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StaffAssignmentPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete staff assignment, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-shifts:
+    get: { tags: [SiteManagement], summary: List staff shifts, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create staff shift, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StaffShiftPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-shifts/{id}:
+    get: { tags: [SiteManagement], summary: Staff shift detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update staff shift, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StaffShiftPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-shifts/{id}/start:
+    post: { tags: [SiteManagement], summary: Start staff shift, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-shifts/{id}/complete:
+    post: { tags: [SiteManagement], summary: Complete staff shift, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-shifts/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel staff shift, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-tasks:
+    get: { tags: [SiteManagement], summary: List staff tasks, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create staff task, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StaffTaskPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-tasks/{id}:
+    get: { tags: [SiteManagement], summary: Staff task detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update staff task, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StaffTaskPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-tasks/{id}/assign:
+    post: { tags: [SiteManagement], summary: Assign staff task, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { staff_profile_id: { type: integer, minimum: 1 } } } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-tasks/{id}/start:
+    post: { tags: [SiteManagement], summary: Start staff task, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-tasks/{id}/complete:
+    post: { tags: [SiteManagement], summary: Complete staff task, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: false, content: { application/json: { schema: { type: object, properties: { proof_note: { type: string, nullable: true }, proof_file_path: { type: string, nullable: true } } } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/staff-tasks/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel staff task, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/document-categories:
+    get: { tags: [SiteManagement], summary: List document categories, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create document category, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DocumentCategoryPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/document-categories/{id}:
+    get: { tags: [SiteManagement], summary: Document category detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update document category, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DocumentCategoryPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete document category, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/documents:
+    get: { tags: [SiteManagement], summary: List documents, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create document, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DocumentPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/documents/{id}:
+    get: { tags: [SiteManagement], summary: Document detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update document, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DocumentPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete document, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/documents/{id}/archive:
+    post: { tags: [SiteManagement], summary: Archive document, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/documents/{id}/restore:
+    post: { tags: [SiteManagement], summary: Restore document, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/documents/{id}/versions:
+    get: { tags: [SiteManagement], summary: List document versions, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create document version, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DocumentVersionPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/document-versions/{id}:
+    get: { tags: [SiteManagement], summary: Document version detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/documents/{id}/access-rules:
+    get: { tags: [SiteManagement], summary: List document access rules, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create document access rule, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DocumentAccessRulePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/document-access-rules/{id}:
+    delete: { tags: [SiteManagement], summary: Delete document access rule, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meetings:
+    get: { tags: [SiteManagement], summary: List meetings, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create meeting, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeetingPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meetings/{id}:
+    get: { tags: [SiteManagement], summary: Meeting detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update meeting, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeetingPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meetings/{id}/publish:
+    post: { tags: [SiteManagement], summary: Publish meeting, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meetings/{id}/complete:
+    post: { tags: [SiteManagement], summary: Complete meeting, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meetings/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel meeting, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meetings/{id}/lock:
+    post: { tags: [SiteManagement], summary: Lock meeting, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meetings/{id}/agenda:
+    get: { tags: [SiteManagement], summary: List meeting agenda, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create meeting agenda item, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeetingAgendaPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meeting-agenda-items/{id}:
+    put: { tags: [SiteManagement], summary: Update meeting agenda item, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeetingAgendaPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete meeting agenda item, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meetings/{id}/attendees:
+    get: { tags: [SiteManagement], summary: List meeting attendees, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create meeting attendee, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeetingAttendeePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meeting-attendees/{id}:
+    put: { tags: [SiteManagement], summary: Update meeting attendee, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MeetingAttendeePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    delete: { tags: [SiteManagement], summary: Delete meeting attendee, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/meeting-attendees/{id}/sign:
+    post: { tags: [SiteManagement], summary: Sign meeting attendee, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/decision-book-entries:
+    get: { tags: [SiteManagement], summary: List decision book entries, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create decision book entry, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DecisionBookPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/decision-book-entries/{id}:
+    get: { tags: [SiteManagement], summary: Decision book entry detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update decision book entry, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DecisionBookPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/decision-book-entries/{id}/approve:
+    post: { tags: [SiteManagement], summary: Approve decision book entry, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/decision-book-entries/{id}/lock:
+    post: { tags: [SiteManagement], summary: Lock decision book entry, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/decision-book-entries/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel decision book entry, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/deposits:
+    get: { tags: [SiteManagement], summary: List deposits, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create deposit, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DepositPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/deposits/{id}:
+    get: { tags: [SiteManagement], summary: Deposit detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update deposit, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DepositPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/deposits/{id}/receive:
+    post: { tags: [SiteManagement], summary: Receive deposit, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/DepositReceivePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/deposits/{id}/refund:
+    post: { tags: [SiteManagement], summary: Refund deposit, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DepositAmountPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/deposits/{id}/deduct:
+    post: { tags: [SiteManagement], summary: Deduct deposit, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DepositAmountPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/deposits/{id}/apply-to-debt:
+    post: { tags: [SiteManagement], summary: Apply deposit to debt, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DepositApplyToDebtPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/deposits/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel deposit, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/DepositReceivePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/deposits/{id}/transactions:
+    get: { tags: [SiteManagement], summary: List deposit transactions, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+  /api/v1/deposit-transactions/{id}:
+    get: { tags: [SiteManagement], summary: Deposit transaction detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-cases:
+    get: { tags: [SiteManagement], summary: List legal cases, security: [{ BearerAuth: [] }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create legal case, security: [{ BearerAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/LegalCasePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-cases/{id}:
+    get: { tags: [SiteManagement], summary: Legal case detail, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+    put: { tags: [SiteManagement], summary: Update legal case, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/LegalCasePayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-cases/{id}/send-to-lawyer:
+    post: { tags: [SiteManagement], summary: Send legal case to lawyer, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-cases/{id}/file:
+    post: { tags: [SiteManagement], summary: File legal case, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-cases/{id}/mark-paid:
+    post: { tags: [SiteManagement], summary: Mark legal case paid, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-cases/{id}/close:
+    post: { tags: [SiteManagement], summary: Close legal case, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-cases/{id}/cancel:
+    post: { tags: [SiteManagement], summary: Cancel legal case, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-cases/{id}/debts:
+    get: { tags: [SiteManagement], summary: List legal case debts, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create legal case debt, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/LegalCaseDebtPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-case-debts/{id}:
+    delete: { tags: [SiteManagement], summary: Delete legal case debt, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-cases/{id}/events:
+    get: { tags: [SiteManagement], summary: List legal case events, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create legal case event, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/LegalCaseEventPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-cases/{id}/documents:
+    get: { tags: [SiteManagement], summary: List legal case documents, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedEnvelope' } } } } } }
+    post: { tags: [SiteManagement], summary: Create legal case document, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/LegalCaseDocumentPayload' } } } }, responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
+  /api/v1/legal-case-documents/{id}:
+    delete: { tags: [SiteManagement], summary: Delete legal case document, security: [{ BearerAuth: [] }], parameters: [{ $ref: '#/components/parameters/IdPath' }], responses: { '200': { description: Basarili, content: { application/json: { schema: { $ref: '#/components/schemas/SuccessEnvelope' } } } } } }
 
 components:
   securitySchemes:
@@ -483,6 +1008,514 @@ components:
                       type: array
                       items:
                         type: string
+    SitePayload:
+      type: object
+      properties:
+        name: { type: string }
+        code: { type: string }
+        address: { type: string }
+        status: { type: string, enum: [active, passive] }
+    BlockPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        name: { type: string }
+        code: { type: string }
+        sort_order: { type: integer }
+        status: { type: string, enum: [active, passive] }
+    FloorPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        block_id: { type: integer, minimum: 1 }
+        number: { type: integer }
+        label: { type: string }
+        sort_order: { type: integer }
+        status: { type: string, enum: [active, passive] }
+    UnitPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        block_id: { type: integer, minimum: 1 }
+        floor_id: { type: integer, minimum: 1 }
+        unit_no: { type: string }
+        type: { type: string }
+        gross_area: { type: number, format: float }
+        net_area: { type: number, format: float }
+        occupant_name: { type: string }
+        status: { type: string, enum: [active, passive] }
+    ResidentProfilePayload:
+      type: object
+      properties:
+        user_id: { type: integer, minimum: 1 }
+        first_name: { type: string }
+        last_name: { type: string }
+        identity_number: { type: string }
+        phone: { type: string }
+        email: { type: string }
+        birth_date: { type: string, format: date }
+        status: { type: string, enum: [active, passive] }
+    UnitOccupancyPayload:
+      type: object
+      properties:
+        unit_id: { type: integer, minimum: 1 }
+        resident_profile_id: { type: integer, minimum: 1 }
+        relationship_type: { type: string, enum: [owner, tenant, resident, family_member] }
+        start_date: { type: string, format: date }
+        end_date: { type: string, format: date }
+        is_primary: { type: boolean }
+        status: { type: string, enum: [active, passive] }
+    ResidentContactPayload:
+      type: object
+      properties:
+        resident_profile_id: { type: integer, minimum: 1 }
+        type: { type: string, enum: [phone, email, emergency] }
+        label: { type: string }
+        value: { type: string }
+        is_primary: { type: boolean }
+    ResidentVehiclePayload:
+      type: object
+      properties:
+        resident_profile_id: { type: integer, minimum: 1 }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        plate_number: { type: string }
+        brand: { type: string }
+        model: { type: string }
+        color: { type: string }
+        parking_slot: { type: string }
+        status: { type: string, enum: [active, passive] }
+    DueDefinitionPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1, nullable: true }
+        block_id: { type: integer, minimum: 1, nullable: true }
+        name: { type: string }
+        code: { type: string }
+        calculation_type: { type: string, enum: [fixed, unit_area, land_share, resident_count] }
+        amount: { type: number, format: float }
+        currency: { type: string }
+        status: { type: string, enum: [active, passive] }
+    DuePeriodPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        period_key: { type: string, example: "2026-05" }
+        start_date: { type: string, format: date }
+        end_date: { type: string, format: date }
+        due_date: { type: string, format: date }
+        status: { type: string, enum: [draft, open, closed, locked] }
+    DueBatchPayload:
+      type: object
+      properties:
+        due_definition_id: { type: integer, minimum: 1 }
+        due_period_id: { type: integer, minimum: 1 }
+    DueItemPayload:
+      type: object
+      properties:
+        description: { type: string }
+        paid_amount: { type: number, format: float }
+    PaymentManualPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        resident_profile_id: { type: integer, minimum: 1, nullable: true }
+        idempotency_key: { type: string }
+        amount: { type: number, format: float }
+        currency: { type: string }
+        payment_date: { type: string, format: date-time }
+        method: { type: string, enum: [cash, bank_transfer, credit_card, online] }
+        description: { type: string }
+    RequestCategoryPayload:
+      type: object
+      properties:
+        name: { type: string }
+        code: { type: string }
+        status: { type: string, enum: [active, passive] }
+    ServiceRequestPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        block_id: { type: integer, minimum: 1, nullable: true }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        resident_profile_id: { type: integer, minimum: 1, nullable: true }
+        category_id: { type: integer, minimum: 1, nullable: true }
+        title: { type: string }
+        description: { type: string }
+        priority: { type: string, enum: [low, normal, high, urgent] }
+        source: { type: string, enum: [panel, mobile, admin] }
+    ServiceRequestCommentPayload:
+      type: object
+      properties:
+        comment: { type: string }
+        visibility: { type: string, enum: [internal, public] }
+    ServiceRequestFilePayload:
+      type: object
+      properties:
+        file_name: { type: string }
+        file_path: { type: string }
+        mime_type: { type: string }
+        size_bytes: { type: integer }
+    WorkOrderPayload:
+      type: object
+      properties:
+        service_request_id: { type: integer, minimum: 1 }
+        assigned_to_user_id: { type: integer, minimum: 1, nullable: true }
+        vendor_name: { type: string }
+        planned_start_at: { type: string, format: date-time }
+        planned_end_at: { type: string, format: date-time }
+        cost_amount: { type: number, format: float }
+        currency: { type: string }
+        notes: { type: string }
+    NotificationTemplatePayload:
+      type: object
+      properties:
+        code: { type: string }
+        channel: { type: string, enum: [in_app, email, sms] }
+        locale: { type: string, example: "tr" }
+        subject: { type: string, nullable: true }
+        body: { type: string }
+        status: { type: string, enum: [active, passive] }
+    NotificationMessagePayload:
+      type: object
+      properties:
+        template_id: { type: integer, minimum: 1, nullable: true }
+        channel: { type: string, enum: [in_app, email, sms] }
+        subject: { type: string, nullable: true }
+        body: { type: string }
+        payload_json: { type: object, nullable: true }
+        scheduled_at: { type: string, format: date-time, nullable: true }
+    CommunicationProviderPayload:
+      type: object
+      properties:
+        channel: { type: string, enum: [email, sms] }
+        provider_name: { type: string }
+        config_json: { type: object, nullable: true }
+        is_default: { type: boolean }
+        status: { type: string, enum: [active, passive] }
+    AnnouncementPayload:
+      type: object
+      properties:
+        title: { type: string }
+        body: { type: string }
+        publish_at: { type: string, format: date-time, nullable: true }
+        expires_at: { type: string, format: date-time, nullable: true }
+        targets:
+          type: array
+          items:
+            type: object
+            properties:
+              target_type: { type: string, enum: [site, block, unit, role, resident, all] }
+              target_id: { type: string, nullable: true }
+    CommonAreaPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        name: { type: string }
+        code: { type: string, nullable: true }
+        description: { type: string, nullable: true }
+        capacity: { type: integer, minimum: 1, nullable: true }
+        requires_approval: { type: boolean }
+        is_paid: { type: boolean }
+        fee_amount: { type: number, format: float, nullable: true }
+        currency: { type: string }
+        status: { type: string, enum: [active, passive] }
+    CommonAreaReservationPayload:
+      type: object
+      properties:
+        common_area_id: { type: integer, minimum: 1 }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        resident_profile_id: { type: integer, minimum: 1, nullable: true }
+        start_at: { type: string, format: date-time }
+        end_at: { type: string, format: date-time }
+        participant_count: { type: integer, minimum: 1, nullable: true }
+        notes: { type: string, nullable: true }
+    MeterPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        block_id: { type: integer, minimum: 1, nullable: true }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        meter_no: { type: string, nullable: true }
+        meter_type: { type: string, enum: [electricity, water, natural_gas, heat, other] }
+        scope: { type: string, enum: [site, block, unit] }
+        name: { type: string, nullable: true }
+        status: { type: string, enum: [active, passive] }
+    MeterReadingPeriodPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        period_key: { type: string, example: "2026-05" }
+        start_date: { type: string, format: date }
+        end_date: { type: string, format: date }
+        status: { type: string, enum: [draft, open, closed, locked] }
+    MeterReadingPayload:
+      type: object
+      properties:
+        meter_id: { type: integer, minimum: 1 }
+        reading_period_id: { type: integer, minimum: 1 }
+        previous_index: { type: number, format: float }
+        current_index: { type: number, format: float }
+        unit_price: { type: number, format: float, nullable: true }
+        reading_date: { type: string, format: date }
+        source: { type: string, enum: [admin, resident, import] }
+        status: { type: string, enum: [pending, approved] }
+        photo_path: { type: string, nullable: true }
+    AssetPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        block_id: { type: integer, minimum: 1, nullable: true }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        asset_no: { type: string, nullable: true }
+        asset_type: { type: string, enum: [elevator, generator, camera, fire_system, hydrophore, door_system, garden_equipment, cleaning_equipment, other] }
+        name: { type: string }
+        brand: { type: string, nullable: true }
+        model: { type: string, nullable: true }
+        serial_number: { type: string, nullable: true }
+        purchase_date: { type: string, format: date, nullable: true }
+        warranty_until: { type: string, format: date, nullable: true }
+        location_note: { type: string, nullable: true }
+        status: { type: string, enum: [active, maintenance, broken, retired] }
+    AssetMaintenancePlanPayload:
+      type: object
+      properties:
+        asset_id: { type: integer, minimum: 1 }
+        frequency_type: { type: string, enum: [daily, weekly, monthly, quarterly, yearly, custom] }
+        frequency_interval: { type: integer, minimum: 1 }
+        next_due_date: { type: string, format: date }
+        vendor_name: { type: string, nullable: true }
+        notes: { type: string, nullable: true }
+        status: { type: string, enum: [active, paused, cancelled] }
+    AssetMaintenanceRecordPayload:
+      type: object
+      properties:
+        asset_id: { type: integer, minimum: 1 }
+        maintenance_plan_id: { type: integer, minimum: 1, nullable: true }
+        work_order_id: { type: integer, minimum: 1, nullable: true }
+        performed_at: { type: string, format: date-time }
+        performed_by: { type: string, nullable: true }
+        vendor_name: { type: string, nullable: true }
+        cost_amount: { type: number, format: float, nullable: true }
+        currency: { type: string }
+        description: { type: string, nullable: true }
+        next_due_date: { type: string, format: date, nullable: true }
+        status: { type: string, enum: [completed, cancelled] }
+    VisitorInvitePayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        unit_id: { type: integer, minimum: 1 }
+        resident_profile_id: { type: integer, minimum: 1, nullable: true }
+        visitor_name: { type: string }
+        visitor_phone: { type: string, nullable: true }
+        vehicle_plate: { type: string, nullable: true }
+        valid_from: { type: string, format: date-time }
+        valid_until: { type: string, format: date-time }
+        max_uses: { type: integer, minimum: 1 }
+        notes: { type: string, nullable: true }
+    VisitorEntryCheckInPayload:
+      type: object
+      properties:
+        visitor_invite_id: { type: integer, minimum: 1, nullable: true }
+        site_id: { type: integer, minimum: 1, nullable: true }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        visitor_name: { type: string, nullable: true }
+        visitor_phone: { type: string, nullable: true }
+        vehicle_plate: { type: string, nullable: true }
+        entry_type: { type: string, enum: [invite, manual] }
+        recorded_by: { type: string, nullable: true }
+        notes: { type: string, nullable: true }
+    VisitorEntryCheckOutPayload:
+      type: object
+      properties:
+        entry_id: { type: integer, minimum: 1 }
+        recorded_by: { type: string, nullable: true }
+        notes: { type: string, nullable: true }
+    SecurityIncidentPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        severity: { type: string, enum: [low, normal, high, critical] }
+        reported_by: { type: string, nullable: true }
+    VehicleAccessListPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        plate_number: { type: string }
+        list_type: { type: string, enum: [whitelist, blacklist] }
+        reason: { type: string, nullable: true }
+        status: { type: string, enum: [active, passive] }
+    StaffProfilePayload:
+      type: object
+      properties:
+        user_id: { type: integer, minimum: 1, nullable: true }
+        first_name: { type: string }
+        last_name: { type: string }
+        phone: { type: string, nullable: true }
+        email: { type: string, format: email, nullable: true }
+        staff_type: { type: string, enum: [security, cleaning, technical, garden, management, other] }
+        status: { type: string, enum: [active, passive] }
+    StaffAssignmentPayload:
+      type: object
+      properties:
+        staff_profile_id: { type: integer, minimum: 1 }
+        site_id: { type: integer, minimum: 1 }
+        block_id: { type: integer, minimum: 1, nullable: true }
+        role_note: { type: string, nullable: true }
+        start_date: { type: string, format: date }
+        end_date: { type: string, format: date, nullable: true }
+        status: { type: string, enum: [active, passive] }
+    StaffShiftPayload:
+      type: object
+      properties:
+        staff_profile_id: { type: integer, minimum: 1 }
+        site_id: { type: integer, minimum: 1 }
+        shift_date: { type: string, format: date }
+        start_at: { type: string, format: date-time }
+        end_at: { type: string, format: date-time }
+        status: { type: string, enum: [planned, started, completed, cancelled] }
+        notes: { type: string, nullable: true }
+    StaffTaskPayload:
+      type: object
+      properties:
+        staff_profile_id: { type: integer, minimum: 1, nullable: true }
+        site_id: { type: integer, minimum: 1 }
+        work_order_id: { type: integer, minimum: 1, nullable: true }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        priority: { type: string, enum: [low, normal, high, urgent] }
+        status: { type: string, enum: [open, assigned, in_progress, completed, cancelled] }
+        due_at: { type: string, format: date-time, nullable: true }
+        proof_note: { type: string, nullable: true }
+        proof_file_path: { type: string, nullable: true }
+    DocumentCategoryPayload:
+      type: object
+      properties:
+        name: { type: string }
+        code: { type: string, nullable: true }
+        status: { type: string, enum: [active, passive] }
+    DocumentPayload:
+      type: object
+      properties:
+        category_id: { type: integer, minimum: 1, nullable: true }
+        site_id: { type: integer, minimum: 1, nullable: true }
+        block_id: { type: integer, minimum: 1, nullable: true }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        resident_profile_id: { type: integer, minimum: 1, nullable: true }
+        staff_profile_id: { type: integer, minimum: 1, nullable: true }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        document_type: { type: string, enum: [contract, invoice, meeting, decision, maintenance, legal, staff, other] }
+        visibility: { type: string, enum: [private, management, residents, public] }
+        status: { type: string, enum: [active, archived, deleted] }
+    DocumentVersionPayload:
+      type: object
+      properties:
+        file_name: { type: string }
+        file_path: { type: string }
+        mime_type: { type: string, nullable: true }
+        size_bytes: { type: integer, nullable: true }
+        checksum: { type: string, nullable: true }
+    DocumentAccessRulePayload:
+      type: object
+      properties:
+        rule_type: { type: string, enum: [role, user, resident, unit, site] }
+        rule_value: { type: string }
+        permission: { type: string, enum: [view, download, manage] }
+    MeetingPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        meeting_type: { type: string, enum: [general_assembly, extraordinary_general_assembly, board_meeting] }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        meeting_date: { type: string, format: date-time }
+        location: { type: string, nullable: true }
+    MeetingAgendaPayload:
+      type: object
+      properties:
+        item_no: { type: integer, minimum: 1, nullable: true }
+        title: { type: string }
+        description: { type: string, nullable: true }
+    MeetingAttendeePayload:
+      type: object
+      properties:
+        resident_profile_id: { type: integer, minimum: 1, nullable: true }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        attendance_type: { type: string, enum: [owner, tenant, proxy, board_member, auditor, guest] }
+        proxy_for_resident_id: { type: integer, minimum: 1, nullable: true }
+        land_share: { type: number, format: float, nullable: true }
+        vote_weight: { type: number, format: float, nullable: true }
+        status: { type: string, enum: [invited, attended, absent, cancelled] }
+    DecisionBookPayload:
+      type: object
+      properties:
+        meeting_id: { type: integer, minimum: 1, nullable: true }
+        decision_date: { type: string, format: date }
+        subject: { type: string }
+        decision_text: { type: string }
+        vote_result: { type: string, enum: [unanimous, majority, rejected, informational] }
+        document_id: { type: integer, minimum: 1, nullable: true }
+    DepositPayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        unit_id: { type: integer, minimum: 1 }
+        resident_profile_id: { type: integer, minimum: 1 }
+        initial_amount: { type: number, format: float, nullable: true }
+        notes: { type: string, nullable: true }
+    DepositReceivePayload:
+      type: object
+      properties:
+        transaction_date: { type: string, format: date-time, nullable: true }
+        description: { type: string, nullable: true }
+    DepositAmountPayload:
+      type: object
+      properties:
+        amount: { type: number, format: float }
+        transaction_date: { type: string, format: date-time, nullable: true }
+        description: { type: string, nullable: true }
+    DepositApplyToDebtPayload:
+      type: object
+      properties:
+        due_item_id: { type: integer, minimum: 1 }
+        amount: { type: number, format: float }
+        transaction_date: { type: string, format: date-time, nullable: true }
+        description: { type: string, nullable: true }
+    LegalCasePayload:
+      type: object
+      properties:
+        site_id: { type: integer, minimum: 1 }
+        unit_id: { type: integer, minimum: 1, nullable: true }
+        resident_profile_id: { type: integer, minimum: 1, nullable: true }
+        case_type: { type: string, enum: [warning, legal_notice, enforcement, lawsuit] }
+        lawyer_name: { type: string, nullable: true }
+        enforcement_office: { type: string, nullable: true }
+        file_number: { type: string, nullable: true }
+        expense_amount: { type: number, format: float, nullable: true }
+        opened_at: { type: string, format: date-time, nullable: true }
+        notes: { type: string, nullable: true }
+    LegalCaseDebtPayload:
+      type: object
+      properties:
+        due_item_id: { type: integer, minimum: 1 }
+        interest_amount: { type: number, format: float, nullable: true }
+    LegalCaseEventPayload:
+      type: object
+      properties:
+        event_type: { type: string, enum: [created, notice_sent, lawyer_assigned, filed, payment_received, note, status_changed, closed, cancelled] }
+        event_date: { type: string, format: date-time }
+        description: { type: string, nullable: true }
+    LegalCaseDocumentPayload:
+      type: object
+      properties:
+        document_id: { type: integer, minimum: 1 }
+        document_type: { type: string, enum: [notice, debt_statement, power_of_attorney, court_document, enforcement_document, other] }
   examples:
     Error401Example:
       value:

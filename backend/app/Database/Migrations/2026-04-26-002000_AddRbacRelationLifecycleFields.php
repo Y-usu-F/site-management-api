@@ -3,6 +3,7 @@
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
+use Throwable;
 
 class AddRbacRelationLifecycleFields extends Migration
 {
@@ -57,16 +58,16 @@ class AddRbacRelationLifecycleFields extends Migration
             $this->dropUserRolesIndexes();
 
             if ($this->fieldExists('user_roles', 'role_version')) {
-                $this->forge->dropColumn('user_roles', 'role_version');
+                $this->safeDropColumn('user_roles', 'role_version');
             }
             if ($this->fieldExists('user_roles', 'is_active')) {
-                $this->forge->dropColumn('user_roles', 'is_active');
+                $this->safeDropColumn('user_roles', 'is_active');
             }
         }
 
         if ($this->tableExists('role_permissions')) {
             if ($this->fieldExists('role_permissions', 'is_active')) {
-                $this->forge->dropColumn('role_permissions', 'is_active');
+                $this->safeDropColumn('role_permissions', 'is_active');
             }
         }
     }
@@ -82,10 +83,10 @@ class AddRbacRelationLifecycleFields extends Migration
         }
 
         if (! $this->mysqlIndexExists('user_roles', 'idx_user_roles_is_active')) {
-            $this->db->query('CREATE INDEX idx_user_roles_is_active ON user_roles (is_active)');
+            $this->safeQuery('CREATE INDEX idx_user_roles_is_active ON user_roles (is_active)');
         }
         if (! $this->mysqlIndexExists('user_roles', 'idx_user_roles_role_version')) {
-            $this->db->query('CREATE INDEX idx_user_roles_role_version ON user_roles (role_version)');
+            $this->safeQuery('CREATE INDEX idx_user_roles_role_version ON user_roles (role_version)');
         }
     }
 
@@ -99,10 +100,10 @@ class AddRbacRelationLifecycleFields extends Migration
         }
 
         if ($this->mysqlIndexExists('user_roles', 'idx_user_roles_is_active')) {
-            $this->db->query('DROP INDEX idx_user_roles_is_active ON user_roles');
+            $this->safeQuery('DROP INDEX idx_user_roles_is_active ON user_roles');
         }
         if ($this->mysqlIndexExists('user_roles', 'idx_user_roles_role_version')) {
-            $this->db->query('DROP INDEX idx_user_roles_role_version ON user_roles');
+            $this->safeQuery('DROP INDEX idx_user_roles_role_version ON user_roles');
         }
     }
 
@@ -114,6 +115,24 @@ class AddRbacRelationLifecycleFields extends Migration
         )->getRowArray();
 
         return is_array($row);
+    }
+
+    private function safeDropColumn(string $table, string $field): void
+    {
+        try {
+            $this->forge->dropColumn($table, $field);
+        } catch (Throwable) {
+            // Keep rollback idempotent.
+        }
+    }
+
+    private function safeQuery(string $sql): void
+    {
+        try {
+            $this->db->query($sql);
+        } catch (Throwable) {
+            // Keep index operations idempotent on reruns.
+        }
     }
 
     private function tableExists(string $table): bool

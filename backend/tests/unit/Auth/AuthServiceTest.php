@@ -17,15 +17,17 @@ final class AuthServiceTest extends CIUnitTestCase
     public function testLoginBasariliOldugundaTokenDonderirVeSayaciSifirlar(): void
     {
         $userModel = $this->createMock(UserModel::class);
-        $userModel->method('findForLogin')->willReturn([
-            'id' => 10,
-            'company_id' => 2,
-            'email' => 'user@example.com',
-            'password_hash' => password_hash('Password123!', PASSWORD_DEFAULT),
-            'status' => 'active',
-            'is_active' => 1,
-            'failed_login_count' => 2,
-            'locked_until' => null,
+        $userModel->method('findLoginCandidatesOrderedDesc')->willReturn([
+            [
+                'id' => 10,
+                'company_id' => 2,
+                'email' => 'user@example.com',
+                'password_hash' => password_hash('Password123!', PASSWORD_DEFAULT),
+                'status' => 'active',
+                'is_active' => 1,
+                'failed_login_count' => 2,
+                'locked_until' => null,
+            ],
         ]);
         $userModel->method('getRoleCodes')->with(10, 2)->willReturn(['employee']);
         $userModel->method('findLatestRefreshTokenId')->with(10, 2)->willReturn(99);
@@ -58,11 +60,13 @@ final class AuthServiceTest extends CIUnitTestCase
     public function testDeaktifKullaniciLoginOlamaz(): void
     {
         $userModel = $this->createMock(UserModel::class);
-        $userModel->method('findForLogin')->willReturn([
-            'id' => 10,
-            'status' => 'inactive',
-            'is_active' => 0,
-            'password_hash' => password_hash('Password123!', PASSWORD_DEFAULT),
+        $userModel->method('findLoginCandidatesOrderedDesc')->willReturn([
+            [
+                'id' => 10,
+                'status' => 'inactive',
+                'is_active' => 0,
+                'password_hash' => password_hash('Password123!', PASSWORD_DEFAULT),
+            ],
         ]);
 
         $service = new AuthService(
@@ -81,13 +85,15 @@ final class AuthServiceTest extends CIUnitTestCase
     public function testHataliSifredeFailedLoginCountArtar(): void
     {
         $userModel = $this->createMock(UserModel::class);
-        $userModel->method('findForLogin')->willReturn([
-            'id' => 10,
-            'status' => 'active',
-            'is_active' => 1,
-            'password_hash' => password_hash('Password123!', PASSWORD_DEFAULT),
-            'failed_login_count' => 1,
-            'locked_until' => null,
+        $userModel->method('findLoginCandidatesOrderedDesc')->willReturn([
+            [
+                'id' => 10,
+                'status' => 'active',
+                'is_active' => 1,
+                'password_hash' => password_hash('Password123!', PASSWORD_DEFAULT),
+                'failed_login_count' => 1,
+                'locked_until' => null,
+            ],
         ]);
         $userModel->expects($this->once())
             ->method('markLoginFailed')
@@ -115,13 +121,15 @@ final class AuthServiceTest extends CIUnitTestCase
     public function testLockedUntilGelecekteyseLoginReddedilir(): void
     {
         $userModel = $this->createMock(UserModel::class);
-        $userModel->method('findForLogin')->willReturn([
-            'id' => 10,
-            'status' => 'active',
-            'is_active' => 1,
-            'password_hash' => password_hash('Password123!', PASSWORD_DEFAULT),
-            'failed_login_count' => 5,
-            'locked_until' => date('Y-m-d H:i:s', time() + 600),
+        $userModel->method('findLoginCandidatesOrderedDesc')->willReturn([
+            [
+                'id' => 10,
+                'status' => 'active',
+                'is_active' => 1,
+                'password_hash' => password_hash('Password123!', PASSWORD_DEFAULT),
+                'failed_login_count' => 5,
+                'locked_until' => date('Y-m-d H:i:s', time() + 600),
+            ],
         ]);
 
         $policy = $this->createMock(PasswordPolicyService::class);

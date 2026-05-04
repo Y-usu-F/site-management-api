@@ -4,6 +4,7 @@ namespace App\Core;
 
 use App\Exceptions\TenantAccessDeniedException;
 use CodeIgniter\Database\BaseBuilder;
+use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\Model;
 use Config\TenantConfig;
 
@@ -11,12 +12,13 @@ abstract class TenantAwareModel extends Model
 {
     protected bool $requiresTenant = true;
     protected bool $enforceTenantGuard = true;
-    protected ?int $resolvedCompanyId = null;
 
     protected function initialize(): void
     {
         parent::initialize();
         $this->beforeFind = array_values(array_unique(array_merge($this->beforeFind, ['applyTenantScopeCallback'])));
+        $this->beforeInsert = array_values(array_unique(array_merge($this->beforeInsert, ['applyTenantInsertCallback'])));
+        $this->beforeUpdate = array_values(array_unique(array_merge($this->beforeUpdate, ['applyTenantUpdateCallback'])));
     }
 
     public function builder(?string $table = null): BaseBuilder
@@ -55,16 +57,27 @@ abstract class TenantAwareModel extends Model
         return $this->applyTenantScope()->find($id);
     }
 
-    protected function beforeInsert(array $data)
+    protected function applyTenantInsertCallback(array $data): array
     {
         $request = service('request');
-        $companyId = $this->resolveContextCompanyId(false);
+        $contextCompanyId = $this->resolveContextCompanyId(false);
+        $payloadCompanyId = isset($data['data']['company_id']) ? (int) $data['data']['company_id'] : null;
         $userId = $request->user?->id ?? null;
 
         if ($this->requiresTenant) {
+            $companyId = $contextCompanyId;
+            if ($companyId === null && $payloadCompanyId !== null && $payloadCompanyId > 0) {
+                $companyId = $payloadCompanyId;
+            }
+
             if ($companyId === null) {
                 throw new TenantAccessDeniedException('Tenant baglami bulunamadi');
             }
+
+            if ($contextCompanyId !== null && $payloadCompanyId !== null && $payloadCompanyId > 0 && $payloadCompanyId !== $contextCompanyId) {
+                throw new TenantAccessDeniedException('Cross-tenant erisim engellendi');
+            }
+
             $data['data']['company_id'] = $companyId;
         }
 
@@ -73,10 +86,15 @@ abstract class TenantAwareModel extends Model
         return $data;
     }
 
-    protected function beforeUpdate(array $data)
+    protected function applyTenantUpdateCallback(array $data): array
     {
         $request = service('request');
-        $this->resolveContextCompanyId();
+        if ($this->shouldEnforceTenant()) {
+            $contextCompanyId = isset($request->company_id) ? (int) $request->company_id : 0;
+            if ($contextCompanyId > 0) {
+                $this->resolveContextCompanyId();
+            }
+        }
         $data['data']['updated_by'] = $request->user?->id ?? null;
         return $data;
     }
@@ -85,7 +103,7 @@ abstract class TenantAwareModel extends Model
     {
         return $this->requiresTenant
             && $this->enforceTenantGuard
-            && ! is_cli()
+            && ! $this->isCliRequest()
             && $this->isTenantEnforced()
             && ! $this->isSuperAdminContext();
     }
@@ -105,19 +123,14 @@ abstract class TenantAwareModel extends Model
 
     protected function resolveContextCompanyId(bool $throwOnMissing = true): ?int
     {
-        if ($this->resolvedCompanyId !== null) {
-            return $this->resolvedCompanyId;
-        }
-
-        if (! $this->requiresTenant || is_cli() || $this->isSuperAdminContext() || ! $this->isTenantEnforced()) {
+        if (! $this->requiresTenant || $this->isCliRequest() || $this->isSuperAdminContext() || ! $this->isTenantEnforced()) {
             return null;
         }
 
         $request = service('request');
         $companyId = isset($request->company_id) ? (int) $request->company_id : 0;
         if ($companyId > 0) {
-            $this->resolvedCompanyId = $companyId;
-            return $this->resolvedCompanyId;
+            return $companyId;
         }
 
         if ($throwOnMissing) {
@@ -138,7 +151,10 @@ abstract class TenantAwareModel extends Model
             return;
         }
 
-        $companyId = $this->resolveContextCompanyId();
+        $companyId = $this->resolveContextCompanyId(false);
+        if ($companyId === null) {
+            return;
+        }
         $builder->where($targetTable . '.company_id', $companyId);
     }
 
@@ -148,11 +164,17 @@ abstract class TenantAwareModel extends Model
             return $companyId;
         }
 
-        $contextCompanyId = $this->resolveContextCompanyId();
+        // Callers pass explicit company scope (RBAC, jobs). Require a match only when HTTP/JWT tenant is present.
+        $contextCompanyId = $this->resolveContextCompanyId(false);
         if ($contextCompanyId !== null && $companyId !== $contextCompanyId) {
             throw new TenantAccessDeniedException('Cross-tenant erisim engellendi');
         }
 
         return $contextCompanyId ?? $companyId;
+    }
+
+    private function isCliRequest(): bool
+    {
+        return service('request') instanceof CLIRequest;
     }
 }

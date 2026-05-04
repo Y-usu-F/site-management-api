@@ -123,8 +123,10 @@ class PermissionMatrixService
         $content = (string) file_get_contents($this->routesPath);
         $errors = [];
 
+        // Non-greedy `[^\n]+?\[` so we anchor at the route row's option array (`[..., [`),
+        // not at an inner `['filter' => [` bracket on the same line (would blind-match a later group).
         preg_match_all(
-            '/\$routes->(?:get|post|put|patch|delete)\([^\n]+\[(?:.|\n)*?\'filter\'\s*=>\s*\[(.*?)\](?:.|\n)*?\]\);/m',
+            '/\$routes->(?:get|post|put|patch|delete)\([^\n]+?\[(?:.|\n)*?\'filter\'\s*=>\s*\[(.*?)\](?:.|\n)*?\]\);/m',
             $content,
             $matches
         );

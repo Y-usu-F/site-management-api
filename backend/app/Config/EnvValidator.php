@@ -37,7 +37,7 @@ final class EnvValidator
 
     private function validateAppEnv(): void
     {
-        $appEnv = strtolower(trim((string) (env('APP_ENV') ?? ENVIRONMENT)));
+        $appEnv = strtolower(trim((string) ($this->readEnv('APP_ENV') ?? ENVIRONMENT)));
         if ($appEnv === '') {
             $this->fail('APP_ENV tanimli degil.');
         }
@@ -45,7 +45,7 @@ final class EnvValidator
 
     private function validateBaseUrl(): void
     {
-        $baseUrl = trim((string) (env('APP_BASE_URL') ?? env('app.baseURL') ?? config(App::class)->baseURL));
+        $baseUrl = trim((string) ($this->readEnv('APP_BASE_URL') ?? $this->readEnv('app.baseURL') ?? ''));
         if ($baseUrl === '') {
             $this->fail('APP_BASE_URL tanimli degil.');
         }
@@ -87,19 +87,15 @@ final class EnvValidator
 
     private function validateDatabase(): void
     {
-        $database = config(Database::class);
-        $group = (string) ($database->defaultGroup ?? 'default');
-        $active = is_array($database->{$group} ?? null) ? $database->{$group} : $database->default;
-        $driver = strtolower((string) ($active['DBDriver'] ?? ''));
         $isTesting = ENVIRONMENT === 'testing';
-
+        $driver = strtolower((string) ($this->envFirst(['DB_CONNECTION', 'database.default.DBDriver']) ?? 'mysqli'));
         if ($isTesting && $driver === 'sqlite3') {
             return;
         }
 
-        $host = trim((string) ($this->envFirst(['DB_HOST', 'database.default.hostname']) ?? ($active['hostname'] ?? '')));
-        $name = trim((string) ($this->envFirst(['DB_DATABASE', 'database.default.database']) ?? ($active['database'] ?? '')));
-        $user = trim((string) ($this->envFirst(['DB_USERNAME', 'database.default.username']) ?? ($active['username'] ?? '')));
+        $host = trim((string) ($this->envFirst(['DB_HOST', 'database.default.hostname']) ?? ''));
+        $name = trim((string) ($this->envFirst(['DB_DATABASE', 'database.default.database']) ?? ''));
+        $user = trim((string) ($this->envFirst(['DB_USERNAME', 'database.default.username']) ?? ''));
 
         if ($host === '' || $name === '' || $user === '') {
             $this->fail('DATABASE baglanti degerleri eksik. DB_HOST, DB_DATABASE ve DB_USERNAME zorunludur.');
@@ -109,13 +105,24 @@ final class EnvValidator
     private function envFirst(array $keys): mixed
     {
         foreach ($keys as $key) {
-            $value = env($key);
+            $value = $this->readEnv($key);
             if ($value !== null && $value !== '') {
                 return $value;
             }
         }
 
         return null;
+    }
+
+    private function readEnv(string $key): ?string
+    {
+        $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
+        if ($value === false || $value === null) {
+            return null;
+        }
+
+        $normalized = trim((string) $value);
+        return $normalized === '' ? null : $normalized;
     }
 
     private function isPositiveInt(mixed $value): bool

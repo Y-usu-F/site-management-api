@@ -38,6 +38,7 @@
         "sort-packages": true
     },
     "scripts": {
-        "test": "@php vendor/bin/phpunit -c phpunit.xml.dist"
+        "test": "@php vendor/bin/phpunit -c phpunit.xml.dist",
+        "test:reset-db": "@php scripts/test-reset-db.php"
     }
 }

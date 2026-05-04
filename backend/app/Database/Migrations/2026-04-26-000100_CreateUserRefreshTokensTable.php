@@ -13,7 +13,7 @@ class CreateUserRefreshTokensTable extends Migration
             'company_id' => ['type' => 'INT', 'unsigned' => true, 'null' => false],
             'user_id' => ['type' => 'INT', 'unsigned' => true, 'null' => false],
             'family_id' => ['type' => 'VARCHAR', 'constraint' => 64, 'null' => false],
-            'token_hash' => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => false],
+            'token_hash' => ['type' => 'VARCHAR', 'constraint' => 191, 'null' => false],
             'expires_at' => ['type' => 'DATETIME', 'null' => false],
             'issued_at' => ['type' => 'DATETIME', 'null' => false],
             'revoked_at' => ['type' => 'DATETIME', 'null' => true],

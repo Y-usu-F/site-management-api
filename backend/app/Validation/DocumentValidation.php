@@ -1,0 +1,7 @@
+<?php
+namespace App\Validation;
+class DocumentValidation
+{
+    public static function createRules(): array { return ['category_id'=>'permit_empty|is_natural_no_zero','site_id'=>'permit_empty|is_natural_no_zero','block_id'=>'permit_empty|is_natural_no_zero','unit_id'=>'permit_empty|is_natural_no_zero','resident_profile_id'=>'permit_empty|is_natural_no_zero','staff_profile_id'=>'permit_empty|is_natural_no_zero','title'=>'required|string|min_length[2]|max_length[220]','description'=>'permit_empty|string','document_type'=>'required|in_list[contract,invoice,meeting,decision,maintenance,legal,staff,other]','visibility'=>'required|in_list[private,management,residents,public]','status'=>'permit_empty|in_list[active,archived,deleted]']; }
+    public static function updateRules(): array { return ['category_id'=>'permit_empty|is_natural_no_zero','site_id'=>'permit_empty|is_natural_no_zero','block_id'=>'permit_empty|is_natural_no_zero','unit_id'=>'permit_empty|is_natural_no_zero','resident_profile_id'=>'permit_empty|is_natural_no_zero','staff_profile_id'=>'permit_empty|is_natural_no_zero','title'=>'permit_empty|string|min_length[2]|max_length[220]','description'=>'permit_empty|string','document_type'=>'permit_empty|in_list[contract,invoice,meeting,decision,maintenance,legal,staff,other]','visibility'=>'permit_empty|in_list[private,management,residents,public]','status'=>'permit_empty|in_list[active,archived,deleted]']; }
+}

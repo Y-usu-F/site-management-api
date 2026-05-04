@@ -3,6 +3,8 @@
 namespace Config;
 
 use CodeIgniter\Config\BaseService;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Database\MigrationRunner;
 
 /**
  * Services Configuration file.
@@ -19,6 +21,25 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
+    /**
+     * Connect MigrationRunner to {@see Database::$tests} when {@see getenv()} `SPARK_USE_TESTS_DB` is `1`
+     * (used by `scripts/test-reset-db.php` so CLI migrations hit the dedicated test database).
+     */
+    public static function migrations(?Migrations $config = null, ConnectionInterface|string|null $db = null, bool $getShared = true): MigrationRunner
+    {
+        if ($db === null && getenv('SPARK_USE_TESTS_DB') === '1') {
+            $db = 'tests';
+        }
+
+        if ($getShared) {
+            return static::getSharedInstance('migrations', $config, $db);
+        }
+
+        $config ??= config('Migrations');
+
+        return new MigrationRunner($config, $db);
+    }
+
     /*
      * public static function example($getShared = true)
      * {

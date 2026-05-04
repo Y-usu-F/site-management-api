@@ -2,19 +2,17 @@
 
 namespace Tests\Feature\Audit;
 
-use CodeIgniter\Test\CIUnitTestCase;
+use Tests\Support\FeatureDatabaseTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use CodeIgniter\Test\FeatureTestTrait;
 use Config\Database;
 
-final class AuthAuditEventTest extends CIUnitTestCase
+final class AuthAuditEventTest extends FeatureDatabaseTestCase
 {
     use FeatureTestTrait;
     use DatabaseTestTrait;
 
-    protected $migrate = true;
-    protected $seed = '';
-    protected $refresh = true;
+
 
     /** @var list<string> */
     private const FORBIDDEN_META_KEYS = [
@@ -322,7 +320,10 @@ final class AuthAuditEventTest extends CIUnitTestCase
     {
         $db = Database::connect();
         $row = $db->table('audit_logs')
-            ->where('event', $event)
+            ->groupStart()
+                ->where('event', $event)
+                ->orWhere('action', $event)
+            ->groupEnd()
             ->orderBy('id', 'DESC')
             ->get(1)
             ->getRowArray();

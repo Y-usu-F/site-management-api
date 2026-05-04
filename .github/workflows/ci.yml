@@ -19,12 +19,13 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: sitebys_ci
-          MYSQL_USER: sitebys_ci
-          MYSQL_PASSWORD: sitebys_ci
+          MYSQL_DATABASE: bys
+          MYSQL_USER: bys
+          MYSQL_PASSWORD: bys
         ports:
           - 3306:3306
         options: >-
+          --default-authentication-plugin=caching_sha2_password
           --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"
           --health-interval=5s
           --health-timeout=5s
@@ -53,14 +54,22 @@ jobs:
           app.forceGlobalSecureRequests = false
 
           database.default.hostname = 127.0.0.1
-          database.default.database = sitebys_ci
-          database.default.username = sitebys_ci
-          database.default.password = sitebys_ci
+          database.default.database = bys
+          database.default.username = bys
+          database.default.password = bys
           database.default.DBDriver = MySQLi
           database.default.DBPrefix =
           database.default.port = 3306
           database.default.charset = utf8mb4
           database.default.DBCollat = utf8mb4_unicode_ci
+          database.tests.hostname = 127.0.0.1
+          database.tests.database = bys
+          database.tests.username = bys
+          database.tests.password = bys
+          database.tests.DBDriver = MySQLi
+          database.tests.port = 3306
+          database.tests.charset = utf8mb4
+          database.tests.DBCollat = utf8mb4_unicode_ci
 
           JWT_SECRET = 'ci-dummy-jwt-secret-at-least-32-characters-long'
           JWT_ACCESS_TTL = 900
@@ -85,4 +94,4 @@ jobs:
         run: php spark migrate --all --no-header
 
       - name: Run tests
-        run: php spark test
+        run: vendor/bin/phpunit

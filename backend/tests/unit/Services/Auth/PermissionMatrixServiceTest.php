@@ -12,6 +12,17 @@ final class PermissionMatrixServiceTest extends CIUnitTestCase
 {
     public function testMatrisKatalogUyumuPass(): void
     {
+        $routesFile = tempnam(sys_get_temp_dir(), 'routes_');
+        file_put_contents(
+            $routesFile,
+            <<<'PHP'
+<?php
+$routes->get('api/v1/protected', 'Api\V1\Foo::bar', [
+    'filter' => ['auth-token', 'active-user', 'permission:auth.session.list'],
+]);
+PHP
+        );
+
         $catalog = $this->createMock(PermissionCatalog::class);
         $catalog->method('all')->willReturn([
             ['code' => 'auth.session.list', 'is_active' => true],
@@ -27,8 +38,9 @@ final class PermissionMatrixServiceTest extends CIUnitTestCase
             ['permission_id' => 1, 'role_permission_active' => 1, 'permission_code' => 'auth.session.list', 'permission_active' => 1, 'permission_deprecated_at' => null],
         ]);
 
-        $service = new PermissionMatrixService($catalog, $model);
+        $service = new PermissionMatrixService($catalog, $model, $routesFile);
         $result = $service->validateAll();
+        @unlink($routesFile);
 
         $this->assertTrue($result['valid']);
         $this->assertSame([], $result['errors']);

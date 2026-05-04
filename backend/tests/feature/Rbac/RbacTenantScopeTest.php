@@ -6,19 +6,17 @@ use App\Exceptions\PermissionNotFoundException;
 use App\Libraries\Auth\JwtManager;
 use App\Services\Auth\AuthorizationService;
 use App\Services\Auth\PermissionService;
-use CodeIgniter\Test\CIUnitTestCase;
+use Tests\Support\FeatureDatabaseTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use CodeIgniter\Test\FeatureTestTrait;
 use Config\Database;
 
-final class RbacTenantScopeTest extends CIUnitTestCase
+final class RbacTenantScopeTest extends FeatureDatabaseTestCase
 {
     use FeatureTestTrait;
     use DatabaseTestTrait;
 
-    protected $migrate = true;
-    protected $seed = '';
-    protected $refresh = true;
+
 
     protected function setUp(): void
     {

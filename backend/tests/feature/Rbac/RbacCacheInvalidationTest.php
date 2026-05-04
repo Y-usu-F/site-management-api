@@ -7,20 +7,18 @@ use App\Services\Auth\PermissionMatrixService;
 use App\Services\Auth\PermissionService;
 use App\Services\Auth\RoleAssignmentService;
 use CodeIgniter\Cache\CacheInterface;
-use CodeIgniter\Test\CIUnitTestCase;
+use Tests\Support\FeatureDatabaseTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use CodeIgniter\Test\FeatureTestTrait;
 use Config\AuthConfig;
 use Config\Database;
 
-final class RbacCacheInvalidationTest extends CIUnitTestCase
+final class RbacCacheInvalidationTest extends FeatureDatabaseTestCase
 {
     use FeatureTestTrait;
     use DatabaseTestTrait;
 
-    protected $migrate = true;
-    protected $seed = '';
-    protected $refresh = true;
+
 
     protected function setUp(): void
     {

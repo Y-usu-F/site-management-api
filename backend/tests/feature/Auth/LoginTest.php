@@ -3,19 +3,17 @@
 namespace Tests\Feature\Auth;
 
 use App\Libraries\Auth\JwtManager;
-use CodeIgniter\Test\CIUnitTestCase;
+use Tests\Support\FeatureDatabaseTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use CodeIgniter\Test\FeatureTestTrait;
 use Config\Database;
 
-final class LoginTest extends CIUnitTestCase
+final class LoginTest extends FeatureDatabaseTestCase
 {
     use FeatureTestTrait;
     use DatabaseTestTrait;
 
-    protected $migrate = true;
-    protected $seed = '';
-    protected $refresh = true;
+
 
     protected function setUp(): void
     {
@@ -116,8 +114,18 @@ final class LoginTest extends CIUnitTestCase
         ]);
 
         $db = Database::connect();
-        $successCount = $db->table('audit_logs')->where('event', 'auth.login.success')->countAllResults();
-        $failCount = $db->table('audit_logs')->where('event', 'auth.login.failed')->countAllResults();
+        $successCount = $db->table('audit_logs')
+            ->groupStart()
+                ->where('event', 'auth.login.success')
+                ->orWhere('action', 'auth.login.success')
+            ->groupEnd()
+            ->countAllResults();
+        $failCount = $db->table('audit_logs')
+            ->groupStart()
+                ->where('event', 'auth.login.failed')
+                ->orWhere('action', 'auth.login.failed')
+            ->groupEnd()
+            ->countAllResults();
 
         $this->assertGreaterThan(0, $successCount);
         $this->assertGreaterThan(0, $failCount);

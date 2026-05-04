@@ -3,6 +3,7 @@
 namespace App\Filters;
 
 use App\Models\UserModel;
+use Config\Database;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -23,9 +24,20 @@ class ActiveUserFilter implements FilterInterface
             ], 401);
         }
 
-        $user = $this->userModel->find($userId);
+        $user = Database::connect()->table('users')
+            ->where('id', $userId)
+            ->where('deleted_at', null)
+            ->get()
+            ->getRowArray();
         if (! is_array($user)) {
             return api_response(service('response'), false, 'Kullanici bulunamadi', null, [
+                'error_code' => 'TOKEN_INVALID',
+            ], 401);
+        }
+
+        $requestCompanyId = isset($request->company_id) ? (int) $request->company_id : 0;
+        if ($requestCompanyId > 0 && (int) ($user['company_id'] ?? 0) !== $requestCompanyId) {
+            return api_response(service('response'), false, 'Kullanici tenant baglami gecersiz', null, [
                 'error_code' => 'TOKEN_INVALID',
             ], 401);
         }

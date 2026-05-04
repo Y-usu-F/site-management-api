@@ -3,6 +3,7 @@
 namespace App\Filters;
 
 use App\Exceptions\UnauthorizedException;
+use Config\Database;
 use App\Services\Auth\TokenService;
 use App\Services\RateLimitKeyService;
 use CodeIgniter\Filters\FilterInterface;
@@ -44,14 +45,27 @@ class AuthTokenFilter implements FilterInterface
             ], 401);
         }
 
+        $userId = (int) ($tokenContext['user_id'] ?? 0);
+        $companyId = (int) ($tokenContext['company_id'] ?? 0);
+        if ($companyId <= 0 && $userId > 0) {
+            $userRow = Database::connect()->table('users')
+                ->select('company_id')
+                ->where('id', $userId)
+                ->where('deleted_at', null)
+                ->get()
+                ->getRowArray();
+            $companyId = (int) ($userRow['company_id'] ?? 0);
+        }
+
         $request->user = (object) [
-            'id' => $tokenContext['user_id'],
+            'id' => $userId,
             'roles' => is_array($tokenContext['roles'] ?? null) ? $tokenContext['roles'] : [],
             'permissions' => is_array($tokenContext['permissions'] ?? null) ? $tokenContext['permissions'] : [],
         ];
         $request->roles = $tokenContext['roles'];
         $request->permissions = is_array($tokenContext['permissions'] ?? null) ? $tokenContext['permissions'] : [];
-        $request->company_id = $tokenContext['company_id'];
+        $request->user_id = $userId;
+        $request->company_id = $companyId;
         $request->session_id = $tokenContext['session_id'] ?? null;
         $request->rate_limit_key = $this->rateLimitKeyService->build();
 

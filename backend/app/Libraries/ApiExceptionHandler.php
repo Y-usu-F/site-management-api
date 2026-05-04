@@ -4,19 +4,21 @@ namespace App\Libraries;
 
 use App\Services\Common\AuditLogService;
 use CodeIgniter\Debug\ExceptionHandler;
+use CodeIgniter\Debug\ExceptionHandlerInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Exceptions;
 use Throwable;
 
-final class ApiExceptionHandler extends ExceptionHandler
+final class ApiExceptionHandler implements ExceptionHandlerInterface
 {
     private ApiExceptionMapper $mapper;
     private AuditLogService $auditLogService;
+    private ExceptionHandler $defaultHandler;
 
     public function __construct(Exceptions $config)
     {
-        parent::__construct($config);
+        $this->defaultHandler = new ExceptionHandler($config);
         $this->mapper = new ApiExceptionMapper();
         $this->auditLogService = new AuditLogService();
     }
@@ -29,7 +31,7 @@ final class ApiExceptionHandler extends ExceptionHandler
         int $exitCode
     ): void {
         if (! $this->isApiRequest($request)) {
-            parent::handle($exception, $request, $response, $statusCode, $exitCode);
+            $this->defaultHandler->handle($exception, $request, $response, $statusCode, $exitCode);
             return;
         }
 

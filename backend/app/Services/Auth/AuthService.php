@@ -8,6 +8,7 @@ use App\Exceptions\UnauthorizedException;
 use App\Models\PasswordResetTokenModel;
 use App\Models\UserModel;
 use App\Models\UserRefreshTokenModel;
+use Config\Database;
 use Config\AuthConfig;
 
 class AuthService extends BaseService
@@ -27,8 +28,8 @@ class AuthService extends BaseService
 
     public function login(string $identity, string $password): array
     {
-        $user = $this->userModel->findForLogin($identity);
-        if ($user === null) {
+        $candidates = $this->userModel->findLoginCandidatesOrderedDesc($identity);
+        if ($candidates === []) {
             $this->audit('auth.login.failed', [
                 'status' => 'failed',
                 'meta' => ['reason' => 'user_not_found', 'identity' => $identity],
@@ -36,21 +37,52 @@ class AuthService extends BaseService
             throw new UnauthorizedException('Email veya sifre hatali', 'UNAUTHORIZED');
         }
 
-        if (! $this->isUserActive($user)) {
-            $this->audit('auth.login.blocked_inactive_user', [
-                'status' => 'failed',
-                'target_user_id' => (int) $user['id'],
-                'meta' => ['reason' => 'inactive_user'],
-            ]);
-            throw new UnauthorizedException('Kullanici aktif degil', 'UNAUTHORIZED');
+        $bumpTarget = null;
+        $user = null;
+
+        foreach ($candidates as $candidate) {
+            if (! $this->isUserActive($candidate)) {
+                continue;
+            }
+
+            if ($this->passwordPolicyService->isLocked($candidate['locked_until'] ?? null)) {
+                throw new UnauthorizedException('Hesap gecici olarak kilitlendi', 'UNAUTHORIZED');
+            }
+
+            if ($bumpTarget === null) {
+                $bumpTarget = $candidate;
+            }
+
+            if (! password_verify($password, (string) ($candidate['password_hash'] ?? ''))) {
+                continue;
+            }
+
+            $user = $candidate;
+            break;
         }
 
-        if ($this->passwordPolicyService->isLocked($user['locked_until'] ?? null)) {
-            throw new UnauthorizedException('Hesap gecici olarak kilitlendi', 'UNAUTHORIZED');
-        }
+        if ($user === null) {
+            $anyActive = false;
+            foreach ($candidates as $candidate) {
+                if ($this->isUserActive($candidate)) {
+                    $anyActive = true;
+                    break;
+                }
+            }
 
-        if (! password_verify($password, (string) ($user['password_hash'] ?? ''))) {
-            $this->handleFailedLogin((int) $user['id'], (int) ($user['failed_login_count'] ?? 0));
+            if (! $anyActive) {
+                $newest = $candidates[0];
+                $this->audit('auth.login.blocked_inactive_user', [
+                    'status' => 'failed',
+                    'target_user_id' => (int) ($newest['id'] ?? 0),
+                    'meta' => ['reason' => 'inactive_user'],
+                ]);
+                throw new UnauthorizedException('Kullanici aktif degil', 'UNAUTHORIZED');
+            }
+
+            if ($bumpTarget !== null) {
+                $this->handleFailedLogin((int) $bumpTarget['id'], (int) ($bumpTarget['failed_login_count'] ?? 0));
+            }
             throw new UnauthorizedException('Email veya sifre hatali', 'UNAUTHORIZED');
         }
 
@@ -189,7 +221,11 @@ class AuthService extends BaseService
         }
 
         $userId = (int) $tokenRow['user_id'];
-        $user = $this->userModel->find($userId);
+        $user = Database::connect()->table('users')
+            ->where('id', $userId)
+            ->where('deleted_at', null)
+            ->get()
+            ->getRowArray();
         if (! is_array($user)) {
             $this->auditResetFailure('user_not_found', $userId);
             throw new UnauthorizedException('Reset token gecersiz', 'TOKEN_INVALID');
@@ -203,7 +239,13 @@ class AuthService extends BaseService
         }
 
         $this->passwordPolicyService->validateNewPassword($newPassword);
-        $this->userModel->updatePassword($userId, password_hash($newPassword, PASSWORD_DEFAULT));
+        Database::connect()->table('users')
+            ->where('id', $userId)
+            ->update([
+                'password_hash' => password_hash($newPassword, PASSWORD_DEFAULT),
+                'password_changed_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
         $this->passwordResetTokenModel->update((int) $tokenRow['id'], ['used_at' => date('Y-m-d H:i:s')]);
 
         $revokedSessions = $this->userRefreshTokenModel->revokeAllSessionsWithReason(

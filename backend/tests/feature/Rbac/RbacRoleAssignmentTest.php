@@ -4,19 +4,17 @@ namespace Tests\Feature\Rbac;
 
 use App\Libraries\Auth\JwtManager;
 use App\Services\Auth\PermissionService;
-use CodeIgniter\Test\CIUnitTestCase;
+use Tests\Support\FeatureDatabaseTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use CodeIgniter\Test\FeatureTestTrait;
 use Config\Database;
 
-final class RbacRoleAssignmentTest extends CIUnitTestCase
+final class RbacRoleAssignmentTest extends FeatureDatabaseTestCase
 {
     use FeatureTestTrait;
     use DatabaseTestTrait;
 
-    protected $migrate = true;
-    protected $seed = '';
-    protected $refresh = true;
+
 
     protected function setUp(): void
     {

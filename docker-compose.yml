@@ -26,12 +26,12 @@ services:
   mysql:
     image: mysql:8.0
     container_name: sitebys-mysql
-    command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=caching_sha2_password
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: sitebys
-      MYSQL_USER: sitebys
-      MYSQL_PASSWORD: sitebys
+      MYSQL_DATABASE: bys
+      MYSQL_USER: bys
+      MYSQL_PASSWORD: bys
     ports:
       - "3307:3306"
     volumes:

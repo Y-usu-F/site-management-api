@@ -104,7 +104,7 @@ Yararlı komutlar:
 - Migration calistirma:
   - `docker compose exec api php spark migrate --all`
 - Test calistirma:
-  - `docker compose exec api php spark test`
+  - `docker compose exec api vendor/bin/phpunit`
 - Servisleri durdurma:
   - `docker compose down`
 - Volume'lerle beraber sifirlama:
@@ -123,11 +123,23 @@ CI adimlari:
 - `composer install`
 - Tum backend PHP dosyalarinda syntax check (`php -l`)
 - Migration smoke test (`php spark migrate --all --no-header`)
-- Test calistirma (`php spark test`)
+- Test calistirma (`vendor/bin/phpunit`)
 
 Tetikleme:
 
 - Sadece `backend/**` ve workflow dosyasi degisikliklerinde calisir.
+
+## Test Database Reset
+
+Deterministik test state icin testleri calistirmadan once test DB'yi sifirlayin:
+
+- `composer test:reset-db`
+- `composer test -- --stop-on-failure`
+
+`test:reset-db` sadece `CI_ENVIRONMENT=testing` veya `APP_ENV=testing` iken calisir ve
+yalnizca `_test` ile biten DB adini resetler (ornek: `bys_test`).
+Migrations test calisirken `DatabaseTestTrait` tarafindan fresh uygulanir.
+Boylece development DB (`bys`) ve production DB korunur.
 
 ## Release Readiness
 

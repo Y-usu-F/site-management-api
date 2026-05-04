@@ -31,9 +31,11 @@ class AddScopeToPermissions extends Migration
         }
 
         // Legacy rows are scoped to company by default until catalog/seed alignment in RBAC-503.
-        $this->db->table('permissions')
-            ->where(self::SCOPE_COLUMN, null)
-            ->update([self::SCOPE_COLUMN => 'company']);
+        if ($this->fieldExists('permissions', self::SCOPE_COLUMN)) {
+            $this->db->table('permissions')
+                ->where(self::SCOPE_COLUMN, null)
+                ->update([self::SCOPE_COLUMN => 'company']);
+        }
 
         $this->applyScopeConstraint();
     }
@@ -47,7 +49,11 @@ class AddScopeToPermissions extends Migration
         $this->dropScopeConstraint();
 
         if ($this->fieldExists('permissions', self::SCOPE_COLUMN)) {
-            $this->forge->dropColumn('permissions', self::SCOPE_COLUMN);
+            try {
+                $this->forge->dropColumn('permissions', self::SCOPE_COLUMN);
+            } catch (Throwable) {
+                // Keep rollback idempotent when column is already absent.
+            }
         }
     }
 

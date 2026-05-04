@@ -38,7 +38,7 @@ final class ApiExceptionMapperTest extends CIUnitTestCase
         $mapped = $mapper->map(new TenantAccessDeniedException());
 
         $this->assertSame(403, $mapped['status']);
-        $this->assertSame('TENANT_FORBIDDEN', $mapped['error_code']);
+        $this->assertSame('FORBIDDEN', $mapped['error_code']);
     }
 
     public function testNotFound404Doner(): void

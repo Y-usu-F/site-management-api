@@ -5,6 +5,7 @@ namespace App\Services\Auth;
 use App\Exceptions\UnauthorizedException;
 use App\Libraries\Auth\JwtManager;
 use App\Models\UserRefreshTokenModel;
+use Config\Database;
 use Config\AuthConfig;
 use DateTimeImmutable;
 use Throwable;
@@ -152,9 +153,13 @@ class RefreshTokenService
 
     private function findByTokenHash(string $tokenHash): ?array
     {
-        return $this->userRefreshTokenModel
+        $row = Database::connect()->table('user_refresh_tokens')
             ->where('token_hash', $tokenHash)
-            ->first();
+            ->where('deleted_at', null)
+            ->get()
+            ->getRowArray();
+
+        return is_array($row) ? $row : null;
     }
 
     private function revokeTokenRow(int $id, ?int $replacedByTokenId = null, ?string $reason = null): void
