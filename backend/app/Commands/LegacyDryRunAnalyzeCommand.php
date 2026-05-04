@@ -27,9 +27,12 @@ class LegacyDryRunAnalyzeCommand extends BaseCommand
         $options = $this->parseOptions($params);
         $errors = $this->validateRequiredOptions($options);
         if ($errors !== []) {
-            foreach ($errors as $error) {
-                CLI::error($error);
+            if (! defined('ENVIRONMENT') || ENVIRONMENT !== 'testing') {
+                foreach ($errors as $error) {
+                    CLI::error($error);
+                }
             }
+
             return 1;
         }
 
