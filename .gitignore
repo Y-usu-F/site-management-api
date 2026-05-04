@@ -130,3 +130,9 @@ _modules/*
 .env.*
 !*.env.example
 !backend/.env.docker.example
+
+writable/*
+!writable/index.html
+!writable/.htaccess
+
+build/
