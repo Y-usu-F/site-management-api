@@ -6,10 +6,14 @@ use App\Core\BaseService;
 use App\Exceptions\ConflictApiException;
 use App\Exceptions\NotFoundApiException;
 use App\Exceptions\TenantAccessDeniedException;
+use App\Exceptions\ValidationApiException;
 use App\Libraries\ListQuery;
 use App\Models\SiteModel;
+use App\Services\Common\ExcelImportService;
+use App\Validation\SiteValidation;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use Config\Database;
+use Config\Services;
 
 class SiteService extends BaseService
 {
@@ -115,6 +119,109 @@ class SiteService extends BaseService
         $current = $this->show($id);
         $this->siteModel->delete($id);
         $this->audit('site.site.delete.success', ['entity_type' => 'site', 'entity_id' => $id, 'old_values' => $current]);
+    }
+
+    /**
+     * @param list<int> $ids
+     * @return array{deleted_count:int,skipped_count:int,errors:list<array<string,mixed>>}
+     */
+    public function bulkDelete(array $ids): array
+    {
+        if ($ids === []) {
+            throw new ValidationApiException('Silinecek kayit secilmedi', ['ids' => 'ids zorunludur.']);
+        }
+
+        $db = Database::connect();
+        $db->transException(true)->transStart();
+        foreach ($ids as $id) {
+            $this->delete((int) $id);
+        }
+        $db->transComplete();
+
+        return [
+            'deleted_count' => count($ids),
+            'skipped_count' => 0,
+            'errors' => [],
+        ];
+    }
+
+    /**
+     * @return list<array<string,mixed>>
+     */
+    public function exportRows(array $query): array
+    {
+        $q = ListQuery::normalize($query, [
+            'sortable' => ['id', 'name', 'code', 'created_at'],
+            'filterable' => ['status'],
+            'default_sort' => 'id',
+            'default_direction' => 'desc',
+            'max_per_page' => 10000,
+        ]);
+
+        $table = $this->siteModel->getTable();
+        $builder = $this->siteModel->builder()
+            ->select("{$table}.id, {$table}.name, {$table}.code, {$table}.address, {$table}.status")
+            ->where("{$table}.deleted_at", null);
+
+        if ($q['search'] !== '') {
+            $builder->groupStart()
+                ->like("{$table}.name", $q['search'])
+                ->orLike("{$table}.code", $q['search'])
+                ->groupEnd();
+        }
+        foreach ($q['filters'] as $field => $value) {
+            $builder->where($field, $value);
+        }
+
+        return $builder->orderBy($q['sort'], $q['direction'])->get()->getResultArray();
+    }
+
+    /**
+     * @return array{inserted_count:int,updated_count:int,skipped_count:int,error_rows:list<array<string,mixed>>}
+     */
+    public function importRows(ExcelImportService $excelImportService, \CodeIgniter\HTTP\Files\UploadedFile $file): array
+    {
+        $parsed = $excelImportService->parseFirstSheet($file);
+        $excelImportService->assertRequiredHeaders(['name', 'code'], $parsed['headers']);
+
+        $validation = Services::validation();
+        $insertedCount = 0;
+        $skippedCount = 0;
+        $errorRows = [];
+
+        foreach ($parsed['rows'] as $index => $row) {
+            $payload = [
+                'name' => $row['name'] ?? '',
+                'code' => $row['code'] ?? '',
+                'address' => $row['address'] ?? null,
+                'status' => ($row['status'] ?? '') !== '' ? $row['status'] : 'active',
+            ];
+
+            $validation->reset();
+            if (! $validation->setRules(SiteValidation::createRules())->run($payload)) {
+                $skippedCount++;
+                $errorRows[] = ['row' => $index + 2, 'errors' => $validation->getErrors()];
+                continue;
+            }
+
+            try {
+                $this->create($payload);
+                $insertedCount++;
+            } catch (ConflictApiException $e) {
+                $skippedCount++;
+                $errorRows[] = ['row' => $index + 2, 'errors' => ['code' => 'Ayni kod zaten mevcut.']];
+            } catch (ValidationApiException $e) {
+                $skippedCount++;
+                $errorRows[] = ['row' => $index + 2, 'errors' => $e->getErrors()];
+            }
+        }
+
+        return [
+            'inserted_count' => $insertedCount,
+            'updated_count' => 0,
+            'skipped_count' => $skippedCount,
+            'error_rows' => $errorRows,
+        ];
     }
 
     private function assertAccessibleSite(int $id): void

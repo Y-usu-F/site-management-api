@@ -81,6 +81,22 @@ require FCPATH . '../app/Config/Paths.php';
 
 $paths = new Paths();
 
+/*
+ * When the shell exports CI_ENVIRONMENT=testing (e.g. leftover from PHPUnit),
+ * framework AutoloadConfig expects SUPPORTPATH — mirror PHPUnit bootstrap so Spark keeps working.
+ */
+$sparkCiEnv = $_SERVER['CI_ENVIRONMENT'] ?? getenv('CI_ENVIRONMENT');
+if (
+    ! defined('SUPPORTPATH')
+    && is_string($sparkCiEnv)
+    && strtolower(trim($sparkCiEnv)) === 'testing'
+) {
+    $supportReal = realpath(rtrim($paths->testsDirectory, '\\/ ') . DIRECTORY_SEPARATOR . '_support');
+    if ($supportReal !== false) {
+        define('SUPPORTPATH', $supportReal . DIRECTORY_SEPARATOR);
+    }
+}
+
 // LOAD THE FRAMEWORK BOOTSTRAP FILE
 require $paths->systemDirectory . '/Boot.php';
 

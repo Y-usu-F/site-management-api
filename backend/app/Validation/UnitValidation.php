@@ -14,6 +14,7 @@ class UnitValidation
             'type' => 'permit_empty|string|max_length[50]',
             'gross_area' => 'permit_empty|decimal',
             'net_area' => 'permit_empty|decimal',
+            'land_share' => 'permit_empty|decimal',
             'occupant_name' => 'permit_empty|string|max_length[150]',
             'status' => 'permit_empty|in_list[active,passive]',
         ];
@@ -29,6 +30,7 @@ class UnitValidation
             'type' => 'permit_empty|string|max_length[50]',
             'gross_area' => 'permit_empty|decimal',
             'net_area' => 'permit_empty|decimal',
+            'land_share' => 'permit_empty|decimal',
             'occupant_name' => 'permit_empty|string|max_length[150]',
             'status' => 'permit_empty|in_list[active,passive]',
         ];

@@ -21,7 +21,8 @@ class AuthService extends BaseService
         private readonly RefreshTokenService $refreshTokenService = new RefreshTokenService(),
         private readonly LogoutService $logoutService = new LogoutService(),
         private readonly PasswordPolicyService $passwordPolicyService = new PasswordPolicyService(),
-        private readonly AuthConfig $authConfig = new AuthConfig()
+        private readonly AuthConfig $authConfig = new AuthConfig(),
+        private readonly PermissionService $permissionService = new PermissionService(),
     ) {
         parent::__construct();
     }
@@ -130,12 +131,18 @@ class AuthService extends BaseService
             throw new UnauthorizedException('Kullanici bulunamadi veya pasif', 'UNAUTHORIZED');
         }
 
+        $permissions = $companyId > 0
+            ? $this->permissionService->getPermissionCodesForUser($userId, $companyId)
+            : [];
+
         return [
-            'id' => $userId,
+            'user' => [
+                'id' => $userId,
+                'email' => (string) ($user['email'] ?? ''),
+                'roles' => array_values($roles),
+            ],
             'company_id' => $companyId,
-            'email' => (string) ($user['email'] ?? ''),
-            'roles' => $roles,
-            'permissions' => [],
+            'permissions' => $permissions,
         ];
     }
 

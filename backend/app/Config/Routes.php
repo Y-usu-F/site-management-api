@@ -12,6 +12,14 @@ $routes->get('/docs', 'DocsController::swagger');
 $routes->get('/docs/openapi.yaml', 'DocsController::openapi');
 
 $routes->group('api/v1', ['filter' => ['request-id', 'request-context']], static function ($routes) {
+    /*
+     * CORS preflight uses OPTIONS on API URLs; REST routes often declare GET/POST only.
+     * This umbrella OPTIONS handler yields 204 so CorsFilter can attach ACAO / ACAH headers.
+     */
+    $routes->options('(:any)', static function () {
+        return service('response')->setStatusCode(204);
+    });
+
     // Public auth routes
     $routes->group('auth', static function ($routes) {
         $routes->post('login', 'Api\V1\AuthController::login', ['filter' => ['rate-limit:login', 'idempotency']]);
@@ -56,6 +64,10 @@ $routes->group('api/v1', ['filter' => ['request-id', 'request-context']], static
     $routes->group('sites', ['filter' => ['auth-token', 'active-user']], static function ($routes) {
         $routes->get('/', 'Api\V1\SiteController::index', ['filter' => ['auth-token', 'active-user', 'permission:site.list']]);
         $routes->post('/', 'Api\V1\SiteController::create', ['filter' => ['auth-token', 'active-user', 'permission:site.create', 'idempotency']]);
+        $routes->delete('bulk', 'Api\V1\SiteController::bulkDelete', ['filter' => ['auth-token', 'active-user', 'permission:site.delete', 'idempotency']]);
+        $routes->get('export', 'Api\V1\SiteController::export', ['filter' => ['auth-token', 'active-user', 'permission:site.export']]);
+        $routes->post('import', 'Api\V1\SiteController::import', ['filter' => ['auth-token', 'active-user', 'permission:site.import', 'idempotency']]);
+        $routes->get('import-template', 'Api\V1\SiteController::importTemplate', ['filter' => ['auth-token', 'active-user', 'permission:site.import']]);
         $routes->get('(:num)', 'Api\V1\SiteController::show/$1', ['filter' => ['auth-token', 'active-user', 'permission:site.view']]);
         $routes->put('(:num)', 'Api\V1\SiteController::update/$1', ['filter' => ['auth-token', 'active-user', 'permission:site.update', 'idempotency']]);
         $routes->delete('(:num)', 'Api\V1\SiteController::delete/$1', ['filter' => ['auth-token', 'active-user', 'permission:site.delete', 'idempotency']]);
@@ -64,6 +76,10 @@ $routes->group('api/v1', ['filter' => ['request-id', 'request-context']], static
     $routes->group('blocks', ['filter' => ['auth-token', 'active-user']], static function ($routes) {
         $routes->get('/', 'Api\V1\BlockController::index', ['filter' => ['auth-token', 'active-user', 'permission:block.list']]);
         $routes->post('/', 'Api\V1\BlockController::create', ['filter' => ['auth-token', 'active-user', 'permission:block.create', 'idempotency']]);
+        $routes->delete('bulk', 'Api\V1\BlockController::bulkDelete', ['filter' => ['auth-token', 'active-user', 'permission:block.delete', 'idempotency']]);
+        $routes->get('export', 'Api\V1\BlockController::export', ['filter' => ['auth-token', 'active-user', 'permission:block.export']]);
+        $routes->post('import', 'Api\V1\BlockController::import', ['filter' => ['auth-token', 'active-user', 'permission:block.import', 'idempotency']]);
+        $routes->get('import-template', 'Api\V1\BlockController::importTemplate', ['filter' => ['auth-token', 'active-user', 'permission:block.import']]);
         $routes->get('(:num)', 'Api\V1\BlockController::show/$1', ['filter' => ['auth-token', 'active-user', 'permission:block.view']]);
         $routes->put('(:num)', 'Api\V1\BlockController::update/$1', ['filter' => ['auth-token', 'active-user', 'permission:block.update', 'idempotency']]);
         $routes->delete('(:num)', 'Api\V1\BlockController::delete/$1', ['filter' => ['auth-token', 'active-user', 'permission:block.delete', 'idempotency']]);
@@ -72,6 +88,10 @@ $routes->group('api/v1', ['filter' => ['request-id', 'request-context']], static
     $routes->group('floors', ['filter' => ['auth-token', 'active-user']], static function ($routes) {
         $routes->get('/', 'Api\V1\FloorController::index', ['filter' => ['auth-token', 'active-user', 'permission:floor.list']]);
         $routes->post('/', 'Api\V1\FloorController::create', ['filter' => ['auth-token', 'active-user', 'permission:floor.create', 'idempotency']]);
+        $routes->delete('bulk', 'Api\V1\FloorController::bulkDelete', ['filter' => ['auth-token', 'active-user', 'permission:floor.delete', 'idempotency']]);
+        $routes->get('export', 'Api\V1\FloorController::export', ['filter' => ['auth-token', 'active-user', 'permission:floor.export']]);
+        $routes->post('import', 'Api\V1\FloorController::import', ['filter' => ['auth-token', 'active-user', 'permission:floor.import', 'idempotency']]);
+        $routes->get('import-template', 'Api\V1\FloorController::importTemplate', ['filter' => ['auth-token', 'active-user', 'permission:floor.import']]);
         $routes->get('(:num)', 'Api\V1\FloorController::show/$1', ['filter' => ['auth-token', 'active-user', 'permission:floor.view']]);
         $routes->put('(:num)', 'Api\V1\FloorController::update/$1', ['filter' => ['auth-token', 'active-user', 'permission:floor.update', 'idempotency']]);
         $routes->delete('(:num)', 'Api\V1\FloorController::delete/$1', ['filter' => ['auth-token', 'active-user', 'permission:floor.delete', 'idempotency']]);
@@ -80,6 +100,10 @@ $routes->group('api/v1', ['filter' => ['request-id', 'request-context']], static
     $routes->group('units', ['filter' => ['auth-token', 'active-user']], static function ($routes) {
         $routes->get('/', 'Api\V1\UnitController::index', ['filter' => ['auth-token', 'active-user', 'permission:unit.list']]);
         $routes->post('/', 'Api\V1\UnitController::create', ['filter' => ['auth-token', 'active-user', 'permission:unit.create', 'idempotency']]);
+        $routes->delete('bulk', 'Api\V1\UnitController::bulkDelete', ['filter' => ['auth-token', 'active-user', 'permission:unit.delete', 'idempotency']]);
+        $routes->get('export', 'Api\V1\UnitController::export', ['filter' => ['auth-token', 'active-user', 'permission:unit.export']]);
+        $routes->post('import', 'Api\V1\UnitController::import', ['filter' => ['auth-token', 'active-user', 'permission:unit.import', 'idempotency']]);
+        $routes->get('import-template', 'Api\V1\UnitController::importTemplate', ['filter' => ['auth-token', 'active-user', 'permission:unit.import']]);
         $routes->get('(:num)', 'Api\V1\UnitController::show/$1', ['filter' => ['auth-token', 'active-user', 'permission:unit.view']]);
         $routes->put('(:num)', 'Api\V1\UnitController::update/$1', ['filter' => ['auth-token', 'active-user', 'permission:unit.update', 'idempotency']]);
         $routes->delete('(:num)', 'Api\V1\UnitController::delete/$1', ['filter' => ['auth-token', 'active-user', 'permission:unit.delete', 'idempotency']]);

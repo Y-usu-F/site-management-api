@@ -190,7 +190,9 @@ final class OperationManagementTest extends FeatureDatabaseTestCase
     {
         $me = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->get('/api/v1/auth/me');
         $me->assertStatus(200);
-        return (int) json_decode($me->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['id'];
+        $payload = json_decode($me->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+
+        return (int) ($payload['data']['user']['id'] ?? 0);
     }
 
     private function uuid(): string

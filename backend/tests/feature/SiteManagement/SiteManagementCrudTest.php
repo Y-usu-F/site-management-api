@@ -74,7 +74,7 @@ final class SiteManagementCrudTest extends FeatureDatabaseTestCase
         $this->assertGreaterThan(0, $auditCount);
     }
 
-    public function testAyniSiteIcindeBlokAdiUniqueOlmali(): void
+    public function testAyniSiteIcindeBlokKoduUniqueOlmali(): void
     {
         [$email] = $this->createUserWithRole('block.unique@example.com', 'Password123!');
         $access = (string) $this->login($email, 'Password123!')['data']['access_token'];
@@ -87,8 +87,66 @@ final class SiteManagementCrudTest extends FeatureDatabaseTestCase
 
         $duplicate = $this->withHeaders(['Authorization' => 'Bearer ' . $access])
             ->withBodyFormat('json')
-            ->post('/api/v1/blocks/', ['site_id' => $siteId, 'name' => 'A Blok', 'code' => 'A2']);
+            ->post('/api/v1/blocks/', ['site_id' => $siteId, 'name' => 'B Blok', 'code' => 'A1']);
         $duplicate->assertStatus(409);
+    }
+
+    public function testAyniBlokKoduFarkliSitelerdeKullanilabilir(): void
+    {
+        [$email] = $this->createUserWithRole('block.cross.site@example.com', 'Password123!');
+        $access = (string) $this->login($email, 'Password123!')['data']['access_token'];
+        $siteA = $this->createSiteViaApi($access, 'Site A', 'SA-1');
+        $siteB = $this->createSiteViaApi($access, 'Site B', 'SB-1');
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $access])
+            ->withBodyFormat('json')
+            ->post('/api/v1/blocks/', ['site_id' => $siteA, 'name' => 'A Blok', 'code' => 'A-BLOK'])
+            ->assertStatus(200);
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $access])
+            ->withBodyFormat('json')
+            ->post('/api/v1/blocks/', ['site_id' => $siteB, 'name' => 'A Blok', 'code' => 'A-BLOK'])
+            ->assertStatus(200);
+    }
+
+    public function testAyniBlokKoduIleGuncellemedeAyniKayitGecer(): void
+    {
+        [$email] = $this->createUserWithRole('block.update.same.code@example.com', 'Password123!');
+        $access = (string) $this->login($email, 'Password123!')['data']['access_token'];
+        $siteId = $this->createSiteViaApi($access, 'Update Site', 'UP-1');
+
+        $create = $this->withHeaders(['Authorization' => 'Bearer ' . $access])
+            ->withBodyFormat('json')
+            ->post('/api/v1/blocks/', ['site_id' => $siteId, 'name' => 'A Blok', 'code' => 'A-BLOK']);
+        $create->assertStatus(200);
+        $blockId = (int) json_decode($create->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['id'];
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $access])
+            ->withBodyFormat('json')
+            ->put('/api/v1/blocks/' . $blockId, ['name' => 'A Blok Guncel', 'code' => 'A-BLOK'])
+            ->assertStatus(200);
+    }
+
+    public function testSoftDeletedBlokKoduTekrarKullanilabilir(): void
+    {
+        [$email] = $this->createUserWithRole('block.soft.delete.reuse@example.com', 'Password123!');
+        $access = (string) $this->login($email, 'Password123!')['data']['access_token'];
+        $siteId = $this->createSiteViaApi($access, 'Soft Block Site', 'SBR-1');
+
+        $create = $this->withHeaders(['Authorization' => 'Bearer ' . $access])
+            ->withBodyFormat('json')
+            ->post('/api/v1/blocks/', ['site_id' => $siteId, 'name' => 'A Blok', 'code' => 'A-BLOK']);
+        $create->assertStatus(200);
+        $blockId = (int) json_decode($create->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['id'];
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $access])
+            ->delete('/api/v1/blocks/' . $blockId)
+            ->assertStatus(200);
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $access])
+            ->withBodyFormat('json')
+            ->post('/api/v1/blocks/', ['site_id' => $siteId, 'name' => 'Yeni A Blok', 'code' => 'A-BLOK'])
+            ->assertStatus(200);
     }
 
     public function testAyniKattaUnitNoUniqueOlmali(): void

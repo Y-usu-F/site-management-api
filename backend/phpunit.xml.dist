@@ -39,6 +39,11 @@
         <env name="JWT_SECRET" value="ci4-testing-jwt-secret-please-change-123456"/>
         <env name="JWT_ACCESS_TTL" value="900"/>
         <env name="JWT_REFRESH_TTL" value="1209600"/>
+        <!-- SPA browser integration -->
+        <env name="CORS_ALLOWED_ORIGINS" value="http://localhost:5173"/>
+        <env name="CORS_ALLOWED_METHODS" value="GET,POST,PUT,PATCH,DELETE,OPTIONS"/>
+        <env name="CORS_ALLOWED_HEADERS" value="Authorization,Content-Type,X-Requested-With,X-Request-ID,Idempotency-Key"/>
+        <env name="CORS_ALLOW_CREDENTIALS" value="false"/>
         <!-- Directory containing phpunit.xml -->
         <const name="HOMEPATH" value="./"/>
         <!-- Directory containing the Paths config file -->
