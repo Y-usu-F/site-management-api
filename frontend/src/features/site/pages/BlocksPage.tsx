@@ -1,0 +1,328 @@
+import { useMemo, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import { bulkDeleteBlocks, downloadBlockTemplate, exportBlocksExcel, importBlocksExcel } from '@/features/site/api/blockApi'
+import { useBlocksQuery } from '@/features/site/hooks/useBlocksQuery'
+import { useSiteQuery } from '@/features/site/hooks/useSiteQuery'
+import { ApiClientError } from '@/shared/api/types'
+import { BulkActionBar } from '@/shared/components/BulkActionBar'
+import { ConfirmDialog } from '@/shared/components/ConfirmDialog'
+import { EmptyState } from '@/shared/components/EmptyState'
+import { ImportExcelDialog } from '@/shared/components/ImportExcelDialog'
+import { PermissionDeniedNotice } from '@/shared/components/PermissionDeniedNotice'
+import { useToast } from '@/shared/hooks/useToast'
+import { getErrorMessage } from '@/shared/lib/extractValidationErrors'
+import { formatDateTime } from '@/shared/lib/formatDateTime'
+import { parsePositiveInt } from '@/shared/lib/parseRouteId'
+import { useDebouncedValue } from '@/shared/hooks/useDebouncedValue'
+import { useEffectiveCan } from '@/shared/hooks/useEffectiveCan'
+import { useSelection } from '@/shared/hooks/useSelection'
+
+const SEARCH_DEBOUNCE_MS = 350
+
+export function BlocksPage() {
+  const toast = useToast()
+  const qc = useQueryClient()
+  const { siteId: siteIdRaw } = useParams<{ siteId: string }>()
+  const siteId = parsePositiveInt(siteIdRaw)
+
+  const canList = useEffectiveCan('block.list')
+  const canCreate = useEffectiveCan('block.create')
+  const canDelete = useEffectiveCan('block.delete')
+  const canExport = useEffectiveCan('block.export')
+  const canImport = useEffectiveCan('block.import')
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [importOpen, setImportOpen] = useState(false)
+
+  const { data: site } = useSiteQuery(siteId ?? 0, {
+    enabled: canList && siteId !== null,
+  })
+
+  const [searchInput, setSearchInput] = useState('')
+  const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS)
+
+  const filterKey =
+    debouncedSearch.trim() === '' ? '__all__' : debouncedSearch.trim()
+  const [pagesByFilter, setPagesByFilter] = useState<Record<string, number>>({})
+  const page = pagesByFilter[filterKey] ?? 1
+  const setPage = (next: number | ((prev: number) => number)) => {
+    setPagesByFilter((prev) => {
+      const current = prev[filterKey] ?? 1
+      const resolved = typeof next === 'function' ? next(current) : next
+      return { ...prev, [filterKey]: resolved }
+    })
+  }
+
+  const params = useMemo(
+    () => ({
+      page,
+      per_page: 20,
+      search: debouncedSearch.trim() === '' ? undefined : debouncedSearch.trim(),
+      site_id: siteId ?? 0,
+    }),
+    [page, debouncedSearch, siteId],
+  )
+
+  const { data, isPending, isError, error, isFetching } = useBlocksQuery(params, {
+    enabled: canList && siteId !== null,
+  })
+
+  const items = data?.items ?? []
+  const pageIds = items.map((x) => x.id)
+  const { selectedIds, selectedCount, allSelected, toggleOne, toggleAllCurrentPage, clearSelection } =
+    useSelection(pageIds)
+  const totalPages = data?.total_pages ?? 0
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: (ids: number[]) => bulkDeleteBlocks(ids),
+    onSuccess: () => {
+      toast.success('Selected blocks deleted.')
+      clearSelection()
+      void qc.invalidateQueries({ queryKey: ['blocks'] })
+    },
+    onError: (err) => {
+      if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
+        toast.error('Bulk delete endpoint is not available yet.')
+        return
+      }
+      toast.error(getErrorMessage(err, 'Could not delete selected blocks.'))
+    },
+  })
+  const exportMutation = useMutation({
+    mutationFn: () => exportBlocksExcel(params),
+    onSuccess: () => toast.success('Excel export started.'),
+    onError: (err) => {
+      if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
+        toast.error('Export endpoint is not available yet.')
+        return
+      }
+      toast.error(getErrorMessage(err, 'Could not export blocks.'))
+    },
+  })
+  const templateMutation = useMutation({
+    mutationFn: () => downloadBlockTemplate(),
+    onSuccess: () => toast.success('Template downloaded.'),
+    onError: (err) => {
+      if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
+        toast.error('Template endpoint is not available yet.')
+        return
+      }
+      toast.error(getErrorMessage(err, 'Could not download template.'))
+    },
+  })
+  const importMutation = useMutation({
+    mutationFn: (file: File) => importBlocksExcel(file),
+    onSuccess: (result) => {
+      toast.success(
+        `Import done: +${result.inserted_count ?? 0} / updated ${result.updated_count ?? 0} / skipped ${result.skipped_count ?? 0}`,
+      )
+      setImportOpen(false)
+      void qc.invalidateQueries({ queryKey: ['blocks'] })
+    },
+    onError: (err) => {
+      if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
+        toast.error('Import endpoint is not available yet.')
+        return
+      }
+      toast.error(getErrorMessage(err, 'Could not import blocks.'))
+    },
+  })
+
+  if (!canList) {
+    return <PermissionDeniedNotice permission="block.list" />
+  }
+
+  if (siteId === null) {
+    return (
+      <p className="text-sm text-zinc-600">
+        Invalid site. <Link to="/sites">Sites</Link>
+      </p>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      <nav className="text-xs text-zinc-500">
+        <Link to="/sites" className="hover:text-violet-600">
+          Sites
+        </Link>
+        <span className="mx-1">/</span>
+        <Link to={`/sites/${siteId}`} className="hover:text-violet-600">
+          {site?.code ?? site?.name ?? `Site ${siteId}`}
+        </Link>
+        <span className="mx-1">/</span>
+        <span className="text-zinc-700 dark:text-zinc-300">Blocks</span>
+      </nav>
+
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">Blocks</h1>
+          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+            Blocks for this site ({data?.total ?? 0} total).
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <input
+            type="search"
+            placeholder="Search name or code…"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950 sm:w-72"
+          />
+          {canCreate ? (
+            <Link
+              to={`/sites/${siteId}/blocks/new`}
+              className="inline-flex justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white"
+            >
+              New block
+            </Link>
+          ) : null}
+        </div>
+      </div>
+      <BulkActionBar
+        selectedCount={selectedCount}
+        canDelete={canDelete}
+        canExport={canExport}
+        canImport={canImport}
+        isBulkDeleting={bulkDeleteMutation.isPending}
+        isExporting={exportMutation.isPending || templateMutation.isPending}
+        onBulkDelete={() => setDeleteConfirmOpen(true)}
+        onExport={() => exportMutation.mutate()}
+        onImport={() => setImportOpen(true)}
+        onTemplateDownload={() => templateMutation.mutate()}
+        onClearSelection={clearSelection}
+      />
+
+      {isPending ? (
+        <div className="rounded-xl border p-12 text-center text-sm text-zinc-600">Loading…</div>
+      ) : null}
+
+      {isError ? (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
+          {error instanceof Error ? error.message : 'Failed to load'}
+        </div>
+      ) : null}
+
+      {!isPending && !isError && items.length === 0 ? (
+        <EmptyState
+          title="No blocks yet"
+          description={
+            canCreate ? (
+              <Link className="text-violet-600 underline" to={`/sites/${siteId}/blocks/new`}>
+                Create one
+              </Link>
+            ) : (
+              'Create permission required to add blocks.'
+            )
+          }
+        />
+      ) : null}
+
+      {!isPending && !isError && items.length > 0 ? (
+        <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+              <thead className="bg-zinc-50 dark:bg-zinc-800/80">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
+                    <input
+                      type="checkbox"
+                      checked={allSelected}
+                      onChange={toggleAllCurrentPage}
+                      aria-label="Select all blocks on page"
+                    />
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
+                    Code
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
+                    Name
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
+                    Updated
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-zinc-500">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
+                {items.map((row) => (
+                  <tr key={row.id}>
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(row.id)}
+                        onChange={() => toggleOne(row.id)}
+                        aria-label={`Select block ${row.code}`}
+                      />
+                    </td>
+                    <td className="px-4 py-3 font-mono text-sm">{row.code}</td>
+                    <td className="px-4 py-3 text-sm">{row.name}</td>
+                    <td className="px-4 py-3 text-sm">{row.status}</td>
+                    <td className="px-4 py-3 text-sm text-zinc-500">
+                      {formatDateTime(row.updated_at ?? row.created_at)}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link className="text-violet-600" to={`/blocks/${row.id}`}>
+                        Open
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {totalPages > 1 ? (
+            <div className="flex items-center justify-between border-t px-4 py-3 text-xs">
+              <span>
+                Page {data?.page ?? page} of {totalPages}
+                {isFetching ? ' · …' : ''}
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={page <= 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="rounded border px-2 py-1 disabled:opacity-40"
+                >
+                  Prev
+                </button>
+                <button
+                  type="button"
+                  disabled={page >= totalPages}
+                  onClick={() => setPage((p) => p + 1)}
+                  className="rounded border px-2 py-1 disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        title="Delete selected blocks"
+        description={`Delete ${selectedCount} selected block(s)?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={bulkDeleteMutation.isPending}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={() => bulkDeleteMutation.mutate(selectedIds)}
+      />
+      <ImportExcelDialog
+        isOpen={importOpen}
+        title="Import Blocks from Excel"
+        isSubmitting={importMutation.isPending}
+        onClose={() => setImportOpen(false)}
+        onSubmit={(file) => importMutation.mutate(file)}
+      />
+    </div>
+  )
+}
