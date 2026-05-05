@@ -37,7 +37,7 @@ class PermissionCacheService
                 return $cached;
             }
         } catch (Throwable $e) {
-            log_message('error', 'Permission cache read failed: {message}', ['message' => $e->getMessage()]);
+            $this->logSideEffectFailure('Permission cache read failed: {message}', $e);
             return $this->resolvePermissions($resolver);
         }
 
@@ -47,7 +47,7 @@ class PermissionCacheService
             $cache->save($key, $resolved, max(1, $this->authConfig->permissionCacheTtl));
         } catch (Throwable $e) {
             // Fail-open: cache problemi authorization davranisini bozmaz.
-            log_message('error', 'Permission cache write failed: {message}', ['message' => $e->getMessage()]);
+            $this->logSideEffectFailure('Permission cache write failed: {message}', $e);
         }
 
         return $resolved;
@@ -73,7 +73,7 @@ class PermissionCacheService
             $cache->deleteMatching(sprintf('perm_%d_%d_v*', $userId, $companyId));
         } catch (Throwable $e) {
             // Fail-open: invalidation hatasi ana auth akisini bozmamali.
-            log_message('error', 'Permission cache invalidate failed: {message}', ['message' => $e->getMessage()]);
+            $this->logSideEffectFailure('Permission cache invalidate failed: {message}', $e);
         }
     }
 
@@ -90,6 +90,20 @@ class PermissionCacheService
     private function resolveCache(): object
     {
         return $this->cacheHandler ?? cache();
+    }
+
+    private function isTestingEnvironment(): bool
+    {
+        return defined('ENVIRONMENT') && ENVIRONMENT === 'testing';
+    }
+
+    private function logSideEffectFailure(string $message, Throwable $exception): void
+    {
+        log_message(
+            $this->isTestingEnvironment() ? 'debug' : 'error',
+            $message,
+            ['message' => $exception->getMessage()]
+        );
     }
 }
 

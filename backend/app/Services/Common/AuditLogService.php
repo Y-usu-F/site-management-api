@@ -3,6 +3,7 @@
 namespace App\Services\Common;
 
 use App\Models\AuditLogModel;
+use App\Support\RequestRuntime;
 use Config\Database;
 use Throwable;
 
@@ -93,7 +94,7 @@ class AuditLogService
 
             return true;
         } catch (Throwable $e) {
-            log_message('error', 'Audit write failed: {message}', ['message' => $e->getMessage()]);
+            $this->logSideEffectFailure('Audit write failed: {message}', $e);
             return false;
         }
     }
@@ -139,11 +140,14 @@ class AuditLogService
             : (method_exists($request, 'getUserAgent') ? (string) $request->getUserAgent()->getAgentString() : null);
         $requestId = isset($context['request_id'])
             ? (string) $context['request_id']
-            : (string) ($request->request_id ?? (method_exists($request, 'getHeaderLine') ? $request->getHeaderLine('X-Request-Id') : ''));
+            : RequestRuntime::getRequestId();
+        if ($requestId === '' && method_exists($request, 'getHeaderLine')) {
+            $requestId = (string) $request->getHeaderLine('X-Request-Id');
+        }
 
         return [
-            'company_id' => isset($context['company_id']) ? (int) $context['company_id'] : ($request->company_id ?? null),
-            'actor_user_id' => isset($context['actor_user_id']) ? (int) $context['actor_user_id'] : ($request->user?->id ?? null),
+            'company_id' => isset($context['company_id']) ? (int) $context['company_id'] : (RequestRuntime::getCompanyId() ?: null),
+            'actor_user_id' => isset($context['actor_user_id']) ? (int) $context['actor_user_id'] : (RequestRuntime::getUserId() ?: null),
             'action' => $this->limit((string) ($context['action'] ?? $event), 120),
             'entity_type' => $this->limit((string) ($context['entity_type'] ?? 'system'), 120),
             'entity_id' => isset($context['entity_id']) ? $this->limit((string) $context['entity_id'], 64) : null,
@@ -202,5 +206,19 @@ class AuditLogService
         }
 
         return $result;
+    }
+
+    private function isTestingEnvironment(): bool
+    {
+        return defined('ENVIRONMENT') && ENVIRONMENT === 'testing';
+    }
+
+    private function logSideEffectFailure(string $message, Throwable $exception): void
+    {
+        log_message(
+            $this->isTestingEnvironment() ? 'debug' : 'error',
+            $message,
+            ['message' => $exception->getMessage()]
+        );
     }
 }

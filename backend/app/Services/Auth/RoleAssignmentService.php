@@ -51,7 +51,7 @@ class RoleAssignmentService
             $this->permissionCacheService->invalidateUserCompany($userId, $companyId);
         } catch (Throwable $e) {
             // Fail-open: invalidation patlasa da role update akisini bozma.
-            log_message('error', 'Role assignment invalidate failed: {message}', ['message' => $e->getMessage()]);
+            $this->logSideEffectFailure('Role assignment invalidate failed: {message}', $e);
         }
     }
 
@@ -79,8 +79,22 @@ class RoleAssignmentService
             ]);
         } catch (Throwable $e) {
             // Fail-safe: audit hatasi role assignment akisini bozmamali.
-            log_message('error', 'Role assignment audit failed: {message}', ['message' => $e->getMessage()]);
+            $this->logSideEffectFailure('Role assignment audit failed: {message}', $e);
         }
+    }
+
+    private function isTestingEnvironment(): bool
+    {
+        return defined('ENVIRONMENT') && ENVIRONMENT === 'testing';
+    }
+
+    private function logSideEffectFailure(string $message, Throwable $exception): void
+    {
+        log_message(
+            $this->isTestingEnvironment() ? 'debug' : 'error',
+            $message,
+            ['message' => $exception->getMessage()]
+        );
     }
 }
 
