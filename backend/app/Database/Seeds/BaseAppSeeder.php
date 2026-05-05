@@ -9,11 +9,17 @@ abstract class BaseAppSeeder extends Seeder
 {
     protected function logStart(string $seederName): void
     {
+        if ($this->shouldSkipRoutineInfoLogs()) {
+            return;
+        }
         log_message('info', sprintf('[seed] %s started (env=%s)', $seederName, ENVIRONMENT));
     }
 
     protected function logSuccess(string $seederName, string $message = ''): void
     {
+        if ($this->shouldSkipRoutineInfoLogs()) {
+            return;
+        }
         $suffix = $message !== '' ? ' - ' . $message : '';
         log_message('info', sprintf('[seed] %s success (env=%s)%s', $seederName, ENVIRONMENT, $suffix));
     }
@@ -36,6 +42,11 @@ abstract class BaseAppSeeder extends Seeder
     protected function now(): string
     {
         return date('Y-m-d H:i:s');
+    }
+
+    protected function shouldSkipRoutineInfoLogs(): bool
+    {
+        return defined('ENVIRONMENT') && ENVIRONMENT === 'testing';
     }
 
     protected function getSystemCompanyPublicId(): string
