@@ -32,6 +32,7 @@ export function SearchableLookupSelect({
     const selected = (lookupQuery.data ?? []).find((option) => String(option.id) === value)
     return selected?.label ?? ''
   }, [lookupQuery.data, value])
+  const hasSelectedButMissingOption = value !== '' && selectedLabel === ''
 
   return (
     <div className="space-y-1">
@@ -45,15 +46,19 @@ export function SearchableLookupSelect({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        disabled={lookupQuery.isLoading}
         className="w-full rounded border px-3 py-2 text-sm"
       >
         <option value="">{placeholder}</option>
+        {hasSelectedButMissingOption ? <option value={value}>#{value}</option> : null}
         {(lookupQuery.data ?? []).map((option) => (
           <option key={option.id} value={option.id}>
             {option.label}
           </option>
         ))}
       </select>
+      {lookupQuery.isLoading ? <p className="text-xs text-zinc-500">Secenekler yukleniyor...</p> : null}
+      {lookupQuery.isError ? <p className="text-xs text-red-600">Secenekler alinamadi.</p> : null}
       {value && selectedLabel ? <p className="text-xs text-zinc-500">Secili: {selectedLabel}</p> : null}
     </div>
   )
