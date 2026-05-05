@@ -3,6 +3,8 @@
 namespace App\Core;
 
 use App\Libraries\ApiExceptionMapper;
+use App\Exceptions\UnauthorizedException;
+use App\Support\RequestRuntime;
 use Config\ErrorCatalog;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\RESTful\ResourceController;
@@ -19,14 +21,15 @@ abstract class ApiController extends ResourceController
     {
         parent::initController($request, $response, $logger);
         $path = $request instanceof IncomingRequest ? trim($request->getPath(), '/') : '';
-        $timestamp = is_array($request->request_context ?? null)
-            ? (string) ($request->request_context['timestamp'] ?? gmdate('c'))
+        $requestContext = RequestRuntime::getRequestContext();
+        $timestamp = is_array($requestContext)
+            ? (string) ($requestContext['timestamp'] ?? gmdate('c'))
             : gmdate('c');
 
         $this->context = new RequestContext(
-            (string) ($request->request_id ?? $request->getHeaderLine('X-Request-Id')),
-            $request->user?->id ?? null,
-            $request->company_id ?? null,
+            RequestRuntime::getRequestId() ?: (string) $request->getHeaderLine('X-Request-Id'),
+            RequestRuntime::getUserId() > 0 ? RequestRuntime::getUserId() : null,
+            RequestRuntime::getCompanyId() > 0 ? RequestRuntime::getCompanyId() : null,
             $request->getIPAddress(),
             $request->getUserAgent()->getAgentString(),
             strtoupper($request->getMethod()),
@@ -62,8 +65,16 @@ abstract class ApiController extends ResourceController
             'error_code' => $mapped['error_code'],
             'request_id' => $this->context->requestId ?: null,
         ];
+        $isExpectedUnauthorizedInTesting = defined('ENVIRONMENT')
+            && ENVIRONMENT === 'testing'
+            && $exception instanceof UnauthorizedException
+            && in_array($mapped['error_code'], ['UNAUTHORIZED', 'TOKEN_INVALID', 'TOKEN_REUSED', 'TOKEN_EXPIRED', 'TOKEN_ALREADY_USED', 'USER_INACTIVE'], true);
+        $logLevel = $mapped['status'] >= 500
+            ? 'error'
+            : ($isExpectedUnauthorizedInTesting ? 'debug' : 'warning');
+
         log_message(
-            $mapped['status'] >= 500 ? 'error' : 'warning',
+            $logLevel,
             'API exception: {class} [{error_code}] {message}',
             array_merge($logContext, ['message' => $exception->getMessage()])
         );

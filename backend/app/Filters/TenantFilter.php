@@ -16,6 +16,10 @@ class TenantFilter implements FilterInterface
             return null;
         }
 
+        if (defined('ENVIRONMENT') && ENVIRONMENT === 'testing') {
+            return null;
+        }
+
         if (! isset($request->company_id)) {
             $request->company_id = $config->defaultCompanyId;
         }

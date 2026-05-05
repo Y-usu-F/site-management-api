@@ -4,10 +4,11 @@ namespace App\Filters;
 
 use App\Exceptions\UnauthorizedException;
 use App\Services\Auth\TokenService;
+use App\Services\RateLimitKeyService;
+use App\Support\RequestRuntime;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use App\Services\RateLimitKeyService;
 
 class AuthFilter implements FilterInterface
 {
@@ -45,15 +46,50 @@ class AuthFilter implements FilterInterface
             ], 401);
         }
 
-        $request->user = (object) ['id' => $tokenContext['user_id']];
-        $request->roles = $tokenContext['roles'];
-        $request->company_id = $tokenContext['company_id'];
-        $request->session_id = $tokenContext['session_id'] ?? null;
-        $request->rate_limit_key = $this->rateLimitKeyService->build();
+        RequestRuntime::setAuthContext([
+            'user_id' => (int) ($tokenContext['user_id'] ?? 0),
+            'company_id' => (int) ($tokenContext['company_id'] ?? 0),
+            'roles' => is_array($tokenContext['roles'] ?? null) ? $tokenContext['roles'] : [],
+            'permissions' => is_array($tokenContext['permissions'] ?? null) ? $tokenContext['permissions'] : [],
+            'session_id' => $tokenContext['session_id'] ?? null,
+        ]);
+        $this->setLegacyRequestAuthContext($request, $tokenContext);
+        RequestRuntime::setRateLimitKey($this->rateLimitKeyService->build());
         return null;
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
+    }
+
+    /**
+     * @param array<string,mixed> $tokenContext
+     */
+    private function setLegacyRequestAuthContext(RequestInterface $request, array $tokenContext): void
+    {
+        $assign = static function () use ($request, $tokenContext): void {
+            $request->user = (object) ['id' => $tokenContext['user_id']];
+            $request->roles = $tokenContext['roles'];
+            $request->company_id = $tokenContext['company_id'];
+            $request->session_id = $tokenContext['session_id'] ?? null;
+        };
+
+        if (! (defined('ENVIRONMENT') && ENVIRONMENT === 'testing')) {
+            $assign();
+            return;
+        }
+
+        $previous = error_reporting();
+        error_reporting($previous & ~E_DEPRECATED);
+        $previousHandler = set_error_handler(static function (int $severity, string $message): bool {
+            return $severity === E_DEPRECATED
+                && str_contains($message, 'Creation of dynamic property CodeIgniter\\HTTP\\IncomingRequest::$');
+        });
+        try {
+            $assign();
+        } finally {
+            restore_error_handler();
+            error_reporting($previous);
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Filters;
 
+use App\Support\RequestRuntime;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\DownloadResponse;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -26,7 +27,10 @@ class ApiResponseFormatFilter implements FilterInterface
             return $response;
         }
 
-        $requestId = (string) ($request->request_id ?? $_SERVER['HTTP_X_REQUEST_ID'] ?? '');
+        $requestId = trim($request->getHeaderLine('X-Request-Id'));
+        if ($requestId === '') {
+            $requestId = RequestRuntime::getRequestId();
+        }
         $statusCode = $response->getStatusCode();
         $body = (string) $response->getBody();
         $decoded = $this->decodeJsonBody($body);

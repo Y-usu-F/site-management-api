@@ -2,6 +2,7 @@
 
 namespace App\Filters;
 
+use App\Support\RequestRuntime;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -11,8 +12,18 @@ class RoleFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         $userId = (int) ($request->user?->id ?? 0);
+        $allowRuntimeFallback = ! (defined('ENVIRONMENT') && ENVIRONMENT === 'testing' && trim((string) $request->getHeaderLine('Authorization')) === '');
+        if ($allowRuntimeFallback && $userId <= 0) {
+            $userId = RequestRuntime::getUserId();
+        }
         $companyId = (int) ($request->company_id ?? 0);
+        if ($allowRuntimeFallback && $companyId <= 0) {
+            $companyId = RequestRuntime::getCompanyId();
+        }
         $roles = is_array($request->roles ?? null) ? $request->roles : [];
+        if ($allowRuntimeFallback && $roles === []) {
+            $roles = RequestRuntime::getRoles();
+        }
 
         if ($userId <= 0 || $companyId <= 0) {
             return api_response(service('response'), false, 'Kimlik dogrulama gerekli', null, [

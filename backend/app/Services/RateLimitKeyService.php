@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\RequestRuntime;
 use Config\SecurityConfig;
 
 class RateLimitKeyService
@@ -15,7 +16,8 @@ class RateLimitKeyService
         $request = service('request');
 
         $ip = (string) $request->getIPAddress();
-        $userId = (string) ($request->user?->id ?? 'guest');
+        $runtimeUserId = RequestRuntime::getUserId();
+        $userId = (string) ($runtimeUserId > 0 ? $runtimeUserId : 'guest');
         $endpoint = strtoupper($request->getMethod()) . ':' . trim($request->getPath(), '/');
 
         $raw = sprintf(

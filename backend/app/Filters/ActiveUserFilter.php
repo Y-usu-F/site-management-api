@@ -3,6 +3,7 @@
 namespace App\Filters;
 
 use App\Models\UserModel;
+use App\Support\RequestRuntime;
 use Config\Database;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
@@ -18,6 +19,10 @@ class ActiveUserFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         $userId = (int) ($request->user?->id ?? 0);
+        $allowRuntimeFallback = ! (defined('ENVIRONMENT') && ENVIRONMENT === 'testing' && trim((string) $request->getHeaderLine('Authorization')) === '');
+        if ($allowRuntimeFallback && $userId <= 0) {
+            $userId = RequestRuntime::getUserId();
+        }
         if ($userId <= 0) {
             return api_response(service('response'), false, 'Kimlik dogrulama gerekli', null, [
                 'error_code' => 'TOKEN_INVALID',
@@ -36,6 +41,9 @@ class ActiveUserFilter implements FilterInterface
         }
 
         $requestCompanyId = isset($request->company_id) ? (int) $request->company_id : 0;
+        if ($allowRuntimeFallback && $requestCompanyId <= 0) {
+            $requestCompanyId = RequestRuntime::getCompanyId();
+        }
         if ($requestCompanyId > 0 && (int) ($user['company_id'] ?? 0) !== $requestCompanyId) {
             return api_response(service('response'), false, 'Kullanici tenant baglami gecersiz', null, [
                 'error_code' => 'TOKEN_INVALID',

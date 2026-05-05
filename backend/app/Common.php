@@ -1,6 +1,7 @@
 <?php
 
 use CodeIgniter\HTTP\ResponseInterface;
+use App\Support\RequestRuntime;
 
 /**
  * The goal of this file is to allow developers a location
@@ -29,7 +30,10 @@ if (! function_exists('api_response')) {
         int $statusCode = 200
     ): ResponseInterface {
         $request = service('request');
-        $requestId = (string) ($request->request_id ?? $request->getHeaderLine('X-Request-Id'));
+        $requestId = RequestRuntime::getRequestId();
+        if ($requestId === '') {
+            $requestId = (string) $request->getHeaderLine('X-Request-Id');
+        }
 
         return $response->setStatusCode($statusCode)->setJSON([
             'success' => $success,

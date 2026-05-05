@@ -3,6 +3,7 @@
 namespace App\Libraries;
 
 use App\Services\Common\AuditLogService;
+use App\Support\RequestRuntime;
 use CodeIgniter\Debug\ExceptionHandler;
 use CodeIgniter\Debug\ExceptionHandlerInterface;
 use CodeIgniter\HTTP\RequestInterface;
@@ -36,14 +37,17 @@ final class ApiExceptionHandler implements ExceptionHandlerInterface
         }
 
         $mapped = $this->mapper->map($exception);
-        $requestId = (string) ($request->request_id ?? $request->getHeaderLine('X-Request-Id'));
+        $requestId = RequestRuntime::getRequestId();
+        if ($requestId === '') {
+            $requestId = (string) $request->getHeaderLine('X-Request-Id');
+        }
         $errors = ['error_code' => $mapped['error_code']];
         if ($mapped['details'] !== null) {
             $errors['details'] = $mapped['details'];
         }
 
         log_message(
-            $mapped['status'] >= 500 ? 'error' : 'warning',
+            $this->resolveExceptionLogLevel($mapped['status'], $mapped['error_code'], $exception),
             'API exception handled globally: {class} [{error_code}] {message}',
             [
                 'class' => $exception::class,
@@ -95,14 +99,14 @@ final class ApiExceptionHandler implements ExceptionHandlerInterface
         try {
             $this->auditLogService->recordEvent($event, [
                 'status' => 'failed',
-                'company_id' => $request->company_id ?? null,
-                'actor_user_id' => $request->user?->id ?? null,
+                'company_id' => RequestRuntime::getCompanyId() ?: null,
+                'actor_user_id' => RequestRuntime::getUserId() ?: null,
                 'action' => $event,
                 'entity_type' => 'security',
                 'entity_id' => null,
                 'old_values' => [],
                 'new_values' => [],
-                'request_id' => (string) ($request->request_id ?? $request->getHeaderLine('X-Request-Id')),
+                'request_id' => RequestRuntime::getRequestId() ?: (string) $request->getHeaderLine('X-Request-Id'),
                 'meta' => [
                     'http_status' => $status,
                     'error_code' => $errorCode,
@@ -112,5 +116,21 @@ final class ApiExceptionHandler implements ExceptionHandlerInterface
         } catch (Throwable) {
             // Audit failure must never break global exception response flow.
         }
+    }
+
+    private function resolveExceptionLogLevel(int $status, string $errorCode, Throwable $exception): string
+    {
+        if ($status >= 500) {
+            return 'error';
+        }
+
+        $isTesting = defined('ENVIRONMENT') && ENVIRONMENT === 'testing';
+        $isUnauthorized = $exception instanceof \App\Exceptions\UnauthorizedException;
+        $expectedAuthCodes = ['UNAUTHORIZED', 'TOKEN_INVALID', 'TOKEN_REUSED', 'TOKEN_EXPIRED', 'TOKEN_ALREADY_USED', 'USER_INACTIVE'];
+        if ($isTesting && $isUnauthorized && in_array($errorCode, $expectedAuthCodes, true)) {
+            return 'debug';
+        }
+
+        return 'warning';
     }
 }

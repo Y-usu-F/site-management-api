@@ -6,12 +6,19 @@ use App\Exceptions\PermissionNotFoundException;
 use App\Filters\PermissionFilter;
 use App\Services\Auth\AuthorizationService;
 use App\Services\Auth\PermissionMatrixService;
+use App\Support\RequestRuntime;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Test\CIUnitTestCase;
 
 final class PermissionFilterTest extends CIUnitTestCase
 {
+    protected function tearDown(): void
+    {
+        RequestRuntime::clearAuthContext();
+        parent::tearDown();
+    }
+
     public function testContextYoksa401Doner(): void
     {
         $request = $this->createMock(RequestInterface::class);
@@ -34,8 +41,11 @@ final class PermissionFilterTest extends CIUnitTestCase
     public function testInvalidPermissionParametresiFailFast(): void
     {
         $request = $this->createMock(RequestInterface::class);
-        $request->user = (object) ['id' => 10];
-        $request->company_id = 2;
+        $request->method('getHeaderLine')->willReturn('Bearer test-token');
+        RequestRuntime::setAuthContext([
+            'user_id' => 10,
+            'company_id' => 2,
+        ]);
 
         $matrix = $this->createMock(PermissionMatrixService::class);
         $matrix->expects($this->once())
@@ -52,8 +62,11 @@ final class PermissionFilterTest extends CIUnitTestCase
     public function testAuthorizationAllowedIseGecisYapar(): void
     {
         $request = $this->createMock(RequestInterface::class);
-        $request->user = (object) ['id' => 10];
-        $request->company_id = 2;
+        $request->method('getHeaderLine')->willReturn('Bearer test-token');
+        RequestRuntime::setAuthContext([
+            'user_id' => 10,
+            'company_id' => 2,
+        ]);
 
         $matrix = $this->createMock(PermissionMatrixService::class);
         $matrix->expects($this->once())->method('assertPermissionKnown')->with('auth.session.list');
@@ -77,8 +90,11 @@ final class PermissionFilterTest extends CIUnitTestCase
     public function testAuthorizationDeniedIse403Doner(): void
     {
         $request = $this->createMock(RequestInterface::class);
-        $request->user = (object) ['id' => 10];
-        $request->company_id = 2;
+        $request->method('getHeaderLine')->willReturn('Bearer test-token');
+        RequestRuntime::setAuthContext([
+            'user_id' => 10,
+            'company_id' => 2,
+        ]);
 
         $matrix = $this->createMock(PermissionMatrixService::class);
         $matrix->method('assertPermissionKnown');

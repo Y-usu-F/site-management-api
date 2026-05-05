@@ -3,12 +3,19 @@
 namespace Tests\Unit\Filters;
 
 use App\Filters\RoleFilter;
+use App\Support\RequestRuntime;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Test\CIUnitTestCase;
 
 final class RoleFilterTest extends CIUnitTestCase
 {
+    protected function tearDown(): void
+    {
+        RequestRuntime::clearAuthContext();
+        parent::tearDown();
+    }
+
     public function testContextYoksa401Doner(): void
     {
         $request = $this->createMock(RequestInterface::class);
@@ -28,9 +35,12 @@ final class RoleFilterTest extends CIUnitTestCase
     public function testKullaniciRoleSahipseGecisYapar(): void
     {
         $request = $this->createMock(RequestInterface::class);
-        $request->user = (object) ['id' => 10];
-        $request->company_id = 2;
-        $request->roles = ['company_admin', 'editor'];
+        $request->method('getHeaderLine')->willReturn('Bearer test-token');
+        RequestRuntime::setAuthContext([
+            'user_id' => 10,
+            'company_id' => 2,
+            'roles' => ['company_admin', 'editor'],
+        ]);
 
         $filter = new RoleFilter();
         $this->assertNull($filter->before($request, ['company_admin']));
@@ -39,9 +49,12 @@ final class RoleFilterTest extends CIUnitTestCase
     public function testKullaniciRoleSahipDegilse403Doner(): void
     {
         $request = $this->createMock(RequestInterface::class);
-        $request->user = (object) ['id' => 10];
-        $request->company_id = 2;
-        $request->roles = ['editor'];
+        $request->method('getHeaderLine')->willReturn('Bearer test-token');
+        RequestRuntime::setAuthContext([
+            'user_id' => 10,
+            'company_id' => 2,
+            'roles' => ['editor'],
+        ]);
 
         $filter = new RoleFilter();
         $response = $filter->before($request, ['super_admin,company_admin']);

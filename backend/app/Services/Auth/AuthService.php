@@ -8,6 +8,7 @@ use App\Exceptions\UnauthorizedException;
 use App\Models\PasswordResetTokenModel;
 use App\Models\UserModel;
 use App\Models\UserRefreshTokenModel;
+use App\Support\RequestRuntime;
 use Config\Database;
 use Config\AuthConfig;
 
@@ -118,9 +119,18 @@ class AuthService extends BaseService
     public function me(): array
     {
         $request = service('request');
-        $userId = (int) ($request->user?->id ?? 0);
-        $companyId = (int) ($request->company_id ?? 0);
-        $roles = is_array($request->roles ?? null) ? $request->roles : [];
+        $userId = RequestRuntime::getUserId();
+        if ($userId <= 0) {
+            $userId = (int) ($request->user?->id ?? 0);
+        }
+        $companyId = RequestRuntime::getCompanyId();
+        if ($companyId <= 0) {
+            $companyId = (int) ($request->company_id ?? 0);
+        }
+        $roles = RequestRuntime::getRoles();
+        if ($roles === []) {
+            $roles = is_array($request->roles ?? null) ? $request->roles : [];
+        }
 
         if ($userId <= 0) {
             throw new UnauthorizedException('Kimlik dogrulama gerekli', 'UNAUTHORIZED');
@@ -286,10 +296,10 @@ class AuthService extends BaseService
         $tokenFromBody = is_array($payload) ? (string) ($payload['refresh_token'] ?? '') : '';
         $resolvedToken = $refreshToken ?? $tokenFromBody;
 
-        $sessionId = property_exists($request, 'session_id') ? (int) $request->session_id : null;
+        $sessionId = RequestRuntime::getSessionId();
 
         return $this->logoutService->logout(
-            userId: isset($request->user?->id) ? (int) $request->user->id : null,
+            userId: (RequestRuntime::getUserId() > 0 ? RequestRuntime::getUserId() : (isset($request->user?->id) ? (int) $request->user->id : null)),
             sessionId: $sessionId,
             refreshToken: $resolvedToken !== '' ? $resolvedToken : null
         );
