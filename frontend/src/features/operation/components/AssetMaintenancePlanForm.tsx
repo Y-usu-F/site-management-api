@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { listLookupAssets } from '@/features/operation/api/lookupsApi'
+import { SearchableLookupSelect } from '@/features/operation/components/SearchableLookupSelect'
 
 interface Props {
   defaultValues?: Record<string, unknown>
@@ -22,7 +22,6 @@ export function AssetMaintenancePlanForm({
   const [vendorName, setVendorName] = useState(String(defaultValues?.vendor_name ?? ''))
   const [notes, setNotes] = useState(String(defaultValues?.notes ?? ''))
   const [status, setStatus] = useState(String(defaultValues?.status ?? 'active'))
-  const assetsQuery = useQuery({ queryKey: ['lookup-assets'], queryFn: listLookupAssets })
   const [clientError, setClientError] = useState<string | null>(null)
 
   return (
@@ -48,7 +47,14 @@ export function AssetMaintenancePlanForm({
       })
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
-        <select value={assetId} onChange={(e) => setAssetId(e.target.value)} className="rounded border px-3 py-2 text-sm"><option value="">asset_id seciniz</option>{(assetsQuery.data ?? []).map((x) => <option key={x.id} value={x.id}>{x.id} - {x.label}</option>)}</select>
+        <SearchableLookupSelect
+          label="Asset"
+          placeholder="asset_id seciniz"
+          value={assetId}
+          onChange={setAssetId}
+          queryKey="assets"
+          queryFn={listLookupAssets}
+        />
         <input value={frequencyInterval} onChange={(e) => setFrequencyInterval(e.target.value)} placeholder="frequency_interval" className="rounded border px-3 py-2 text-sm" />
         <input type="date" value={nextDueDate} onChange={(e) => setNextDueDate(e.target.value)} className="rounded border px-3 py-2 text-sm" />
         <input value={vendorName} onChange={(e) => setVendorName(e.target.value)} placeholder="vendor_name" className="rounded border px-3 py-2 text-sm" />

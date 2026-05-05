@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { OperationActionButtons } from '@/features/operation/components/OperationActionButtons'
+import { OperationStatusBadge } from '@/features/operation/components/OperationStatusBadge'
 import { useWorkOrdersQuery } from '@/features/operation/hooks/useWorkOrders'
 import { EmptyState } from '@/shared/components/EmptyState'
 import { PermissionDeniedNotice } from '@/shared/components/PermissionDeniedNotice'
@@ -18,6 +19,7 @@ export function WorkOrdersPage() {
   if (!canList) return <PermissionDeniedNotice permission="work_order.list" />
 
   const items = query.data?.items ?? []
+  const total = query.data?.total ?? 0
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -45,9 +47,13 @@ export function WorkOrdersPage() {
           <option value="cancelled">cancelled</option>
         </select>
       </label>
-      {items.length === 0 ? (
+      <p className="text-sm text-zinc-500">Toplam kayit: {total}</p>
+      {query.isLoading ? <div className="text-sm text-zinc-500">Yukleniyor...</div> : null}
+      {query.isError ? <EmptyState title="Liste alinamadi" description="Lutfen tekrar deneyin." /> : null}
+      {!query.isLoading && !query.isError && items.length === 0 ? (
         <EmptyState title="Work order yok" description="Ilk kaydi olusturun." />
-      ) : (
+      ) : null}
+      {!query.isLoading && !query.isError && items.length > 0 ? (
         <table className="min-w-full overflow-hidden rounded-xl border border-zinc-200 text-sm dark:border-zinc-800">
           <thead className="bg-zinc-100 dark:bg-zinc-900">
             <tr>
@@ -64,7 +70,7 @@ export function WorkOrdersPage() {
                 <td className="px-3 py-2">{row.id}</td>
                 <td className="px-3 py-2">{row.service_request_id}</td>
                 <td className="px-3 py-2">{row.vendor_name ?? '-'}</td>
-                <td className="px-3 py-2">{row.status ?? '-'}</td>
+                <td className="px-3 py-2"><OperationStatusBadge status={row.status} /></td>
                 <td className="px-3 py-2">
                   <div className="flex items-center gap-2">
                     {canView ? (
@@ -79,7 +85,7 @@ export function WorkOrdersPage() {
             ))}
           </tbody>
         </table>
-      )}
+      ) : null}
       <div className="flex items-center gap-2">
         <button
           type="button"

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { listLookupCommonAreas, listLookupResidents, listLookupUnits } from '@/features/operation/api/lookupsApi'
+import { SearchableLookupSelect } from '@/features/operation/components/SearchableLookupSelect'
 
 interface Props {
   defaultValues?: Record<string, unknown>
@@ -23,9 +23,6 @@ export function CommonAreaReservationForm({
   const [participantCount, setParticipantCount] = useState(String(defaultValues?.participant_count ?? ''))
   const [notes, setNotes] = useState(String(defaultValues?.notes ?? ''))
   const [clientError, setClientError] = useState<string | null>(null)
-  const commonAreasQuery = useQuery({ queryKey: ['lookup-common-areas'], queryFn: listLookupCommonAreas })
-  const residentsQuery = useQuery({ queryKey: ['lookup-residents'], queryFn: listLookupResidents })
-  const unitsQuery = useQuery({ queryKey: ['lookup-units'], queryFn: listLookupUnits })
 
   return (
     <form className="space-y-4" onSubmit={(e) => {
@@ -50,9 +47,30 @@ export function CommonAreaReservationForm({
       })
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
-        <select value={commonAreaId} onChange={(e) => setCommonAreaId(e.target.value)} className="rounded border px-3 py-2 text-sm"><option value="">common_area_id seciniz</option>{(commonAreasQuery.data ?? []).map((x) => <option key={x.id} value={x.id}>{x.id} - {x.label}</option>)}</select>
-        <select value={residentId} onChange={(e) => setResidentId(e.target.value)} className="rounded border px-3 py-2 text-sm"><option value="">resident_profile_id seciniz</option>{(residentsQuery.data ?? []).map((x) => <option key={x.id} value={x.id}>{x.id} - {x.label}</option>)}</select>
-        <select value={unitId} onChange={(e) => setUnitId(e.target.value)} className="rounded border px-3 py-2 text-sm"><option value="">unit_id seciniz</option>{(unitsQuery.data ?? []).map((x) => <option key={x.id} value={x.id}>{x.id} - {x.label}</option>)}</select>
+        <SearchableLookupSelect
+          label="Common area"
+          placeholder="common_area_id seciniz"
+          value={commonAreaId}
+          onChange={setCommonAreaId}
+          queryKey="common-areas"
+          queryFn={listLookupCommonAreas}
+        />
+        <SearchableLookupSelect
+          label="Resident"
+          placeholder="resident_profile_id seciniz"
+          value={residentId}
+          onChange={setResidentId}
+          queryKey="residents"
+          queryFn={listLookupResidents}
+        />
+        <SearchableLookupSelect
+          label="Unit"
+          placeholder="unit_id seciniz"
+          value={unitId}
+          onChange={setUnitId}
+          queryKey="units"
+          queryFn={listLookupUnits}
+        />
         <input value={participantCount} onChange={(e) => setParticipantCount(e.target.value)} placeholder="participant_count" className="rounded border px-3 py-2 text-sm" />
         <input type="datetime-local" value={startAt} onChange={(e) => setStartAt(e.target.value)} className="rounded border px-3 py-2 text-sm" />
         <input type="datetime-local" value={endAt} onChange={(e) => setEndAt(e.target.value)} className="rounded border px-3 py-2 text-sm" />

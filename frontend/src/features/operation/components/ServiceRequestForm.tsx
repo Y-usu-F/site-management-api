@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { listLookupResidents, listLookupSites, listLookupUnits } from '@/features/operation/api/lookupsApi'
+import { SearchableLookupSelect } from '@/features/operation/components/SearchableLookupSelect'
 
 interface Props {
   defaultValues?: Record<string, unknown>
@@ -27,9 +27,6 @@ export function ServiceRequestForm({
   const [source, setSource] = useState(String(defaultValues?.source ?? 'panel'))
   const [clientErrors, setClientErrors] = useState<Record<string, string>>({})
   const errors = { ...clientErrors, ...serverFieldErrors }
-  const sitesQuery = useQuery({ queryKey: ['lookup-sites'], queryFn: listLookupSites })
-  const unitsQuery = useQuery({ queryKey: ['lookup-units'], queryFn: listLookupUnits })
-  const residentsQuery = useQuery({ queryKey: ['lookup-residents'], queryFn: listLookupResidents })
 
   return (
     <form
@@ -55,9 +52,30 @@ export function ServiceRequestForm({
       }}
     >
       <div className="grid gap-3 sm:grid-cols-2">
-        <select value={siteId} onChange={(e) => setSiteId(e.target.value)} className="rounded border px-3 py-2 text-sm"><option value="">site_id seciniz</option>{(sitesQuery.data ?? []).map((x) => <option key={x.id} value={x.id}>{x.id} - {x.label}</option>)}</select>
-        <select value={unitId} onChange={(e) => setUnitId(e.target.value)} className="rounded border px-3 py-2 text-sm"><option value="">unit_id seciniz</option>{(unitsQuery.data ?? []).map((x) => <option key={x.id} value={x.id}>{x.id} - {x.label}</option>)}</select>
-        <select value={residentId} onChange={(e) => setResidentId(e.target.value)} className="rounded border px-3 py-2 text-sm"><option value="">resident_profile_id seciniz</option>{(residentsQuery.data ?? []).map((x) => <option key={x.id} value={x.id}>{x.id} - {x.label}</option>)}</select>
+        <SearchableLookupSelect
+          label="Site"
+          placeholder="site_id seciniz"
+          value={siteId}
+          onChange={setSiteId}
+          queryKey="sites"
+          queryFn={listLookupSites}
+        />
+        <SearchableLookupSelect
+          label="Unit"
+          placeholder="unit_id seciniz"
+          value={unitId}
+          onChange={setUnitId}
+          queryKey="units"
+          queryFn={listLookupUnits}
+        />
+        <SearchableLookupSelect
+          label="Resident"
+          placeholder="resident_profile_id seciniz"
+          value={residentId}
+          onChange={setResidentId}
+          queryKey="residents"
+          queryFn={listLookupResidents}
+        />
         <input value={categoryId} onChange={(e) => setCategoryId(e.target.value)} placeholder="category_id" className="rounded border px-3 py-2 text-sm" />
       </div>
       <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="title" className="w-full rounded border px-3 py-2 text-sm" />

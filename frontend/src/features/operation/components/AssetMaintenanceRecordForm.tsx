@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { listLookupAssets } from '@/features/operation/api/lookupsApi'
+import { SearchableLookupSelect } from '@/features/operation/components/SearchableLookupSelect'
 
 interface Props {
   isSubmitting: boolean
@@ -15,7 +15,6 @@ export function AssetMaintenanceRecordForm({ isSubmitting, submitLabel, onSubmit
   const [costAmount, setCostAmount] = useState('')
   const [currency, setCurrency] = useState('TRY')
   const [description, setDescription] = useState('')
-  const assetsQuery = useQuery({ queryKey: ['lookup-assets'], queryFn: listLookupAssets })
   const [clientError, setClientError] = useState<string | null>(null)
 
   return (
@@ -40,7 +39,14 @@ export function AssetMaintenanceRecordForm({ isSubmitting, submitLabel, onSubmit
       })
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
-        <select value={assetId} onChange={(e) => setAssetId(e.target.value)} className="rounded border px-3 py-2 text-sm"><option value="">asset_id seciniz</option>{(assetsQuery.data ?? []).map((x) => <option key={x.id} value={x.id}>{x.id} - {x.label}</option>)}</select>
+        <SearchableLookupSelect
+          label="Asset"
+          placeholder="asset_id seciniz"
+          value={assetId}
+          onChange={setAssetId}
+          queryKey="assets"
+          queryFn={listLookupAssets}
+        />
         <input value={maintenancePlanId} onChange={(e) => setMaintenancePlanId(e.target.value)} placeholder="maintenance_plan_id" className="rounded border px-3 py-2 text-sm" />
         <input type="datetime-local" value={performedAt} onChange={(e) => setPerformedAt(e.target.value)} className="rounded border px-3 py-2 text-sm" />
         <input value={costAmount} onChange={(e) => setCostAmount(e.target.value)} placeholder="cost_amount" className="rounded border px-3 py-2 text-sm" />

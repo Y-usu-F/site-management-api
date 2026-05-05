@@ -21,8 +21,18 @@ async function fetchLookup(path: string, labelKeys: string[]): Promise<LookupOpt
   }))
 }
 
-export const listLookupSites = () => fetchLookup('/sites', ['name', 'code'])
-export const listLookupUnits = () => fetchLookup('/units', ['unit_no', 'name'])
-export const listLookupResidents = () => fetchLookup('/residents', ['first_name', 'last_name', 'email'])
-export const listLookupAssets = () => fetchLookup('/assets', ['name', 'asset_no'])
-export const listLookupCommonAreas = () => fetchLookup('/common-areas', ['name', 'code'])
+function toLookupPath(path: string, search?: string): string {
+  const query = new URLSearchParams({ page: '1', per_page: '100' })
+  if (search && search.trim()) {
+    query.set('search', search.trim())
+  }
+  return `${path}?${query.toString()}`
+}
+
+export const listLookupSites = (search?: string) => fetchLookup(toLookupPath('/sites', search), ['name', 'code'])
+export const listLookupUnits = (search?: string) => fetchLookup(toLookupPath('/units', search), ['unit_no', 'name'])
+export const listLookupResidents = (search?: string) =>
+  fetchLookup(toLookupPath('/residents', search), ['first_name', 'last_name', 'email'])
+export const listLookupAssets = (search?: string) => fetchLookup(toLookupPath('/assets', search), ['name', 'asset_no'])
+export const listLookupCommonAreas = (search?: string) =>
+  fetchLookup(toLookupPath('/common-areas', search), ['name', 'code'])

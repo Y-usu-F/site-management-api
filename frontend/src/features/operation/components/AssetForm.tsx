@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { listLookupSites, listLookupUnits } from '@/features/operation/api/lookupsApi'
+import { SearchableLookupSelect } from '@/features/operation/components/SearchableLookupSelect'
 
 interface Props {
   defaultValues?: Record<string, unknown>
@@ -19,8 +19,6 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
   const [purchaseDate, setPurchaseDate] = useState(String(defaultValues?.purchase_date ?? ''))
   const [status, setStatus] = useState(String(defaultValues?.status ?? 'active'))
   const [clientError, setClientError] = useState<string | null>(null)
-  const sitesQuery = useQuery({ queryKey: ['lookup-sites'], queryFn: listLookupSites })
-  const unitsQuery = useQuery({ queryKey: ['lookup-units'], queryFn: listLookupUnits })
 
   return (
     <form className="space-y-4" onSubmit={(e) => {
@@ -46,9 +44,23 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
       })
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
-        <select value={siteId} onChange={(e) => setSiteId(e.target.value)} className="rounded border px-3 py-2 text-sm"><option value="">site_id seciniz</option>{(sitesQuery.data ?? []).map((x) => <option key={x.id} value={x.id}>{x.id} - {x.label}</option>)}</select>
+        <SearchableLookupSelect
+          label="Site"
+          placeholder="site_id seciniz"
+          value={siteId}
+          onChange={setSiteId}
+          queryKey="sites"
+          queryFn={listLookupSites}
+        />
         <input value={blockId} onChange={(e) => setBlockId(e.target.value)} placeholder="block_id" className="rounded border px-3 py-2 text-sm" />
-        <select value={unitId} onChange={(e) => setUnitId(e.target.value)} className="rounded border px-3 py-2 text-sm"><option value="">unit_id seciniz</option>{(unitsQuery.data ?? []).map((x) => <option key={x.id} value={x.id}>{x.id} - {x.label}</option>)}</select>
+        <SearchableLookupSelect
+          label="Unit"
+          placeholder="unit_id seciniz"
+          value={unitId}
+          onChange={setUnitId}
+          queryKey="units"
+          queryFn={listLookupUnits}
+        />
         <input value={assetNo} onChange={(e) => setAssetNo(e.target.value)} placeholder="asset_no/code" className="rounded border px-3 py-2 text-sm" />
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="name" className="rounded border px-3 py-2 text-sm" />
         <input type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} className="rounded border px-3 py-2 text-sm" />
