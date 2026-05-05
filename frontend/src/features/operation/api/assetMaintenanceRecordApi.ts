@@ -11,12 +11,14 @@ export async function listAssetMaintenanceRecords(params?: {
   per_page?: number
   search?: string
   asset_id?: number
+  status?: string
 }): Promise<AssetMaintenanceRecordListResponse> {
   const qs = buildQueryString({
     page: params?.page,
     per_page: params?.per_page,
     search: params?.search?.trim() ? params.search.trim() : undefined,
     asset_id: params?.asset_id,
+    status: params?.status,
   })
   return apiRequest<AssetMaintenanceRecordListResponse>(`/asset-maintenance-records${qs}`)
 }

@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 
+import { listLookupSites } from '@/features/operation/api/lookupsApi'
+import { OperationActionButtons } from '@/features/operation/components/OperationActionButtons'
 import { useServiceRequestsQuery } from '@/features/operation/hooks/useServiceRequests'
 import { EmptyState } from '@/shared/components/EmptyState'
 import { PermissionDeniedNotice } from '@/shared/components/PermissionDeniedNotice'
@@ -10,21 +13,109 @@ export function ServiceRequestsPage() {
   const canList = useEffectiveCan('service_request.list')
   const canCreate = useEffectiveCan('service_request.create')
   const canView = useEffectiveCan('service_request.view')
+
   const [page, setPage] = useState(1)
-  const query = useServiceRequestsQuery({ page, per_page: 10 }, canList)
+  const [status, setStatus] = useState('')
+  const [siteId, setSiteId] = useState('')
+
+  const query = useServiceRequestsQuery(
+    {
+      page,
+      per_page: 10,
+      status: status || undefined,
+      site_id: siteId ? Number(siteId) : undefined,
+    },
+    canList,
+  )
+  const sitesQuery = useQuery({
+    queryKey: ['operation', 'lookups', 'sites'],
+    queryFn: listLookupSites,
+    enabled: canList,
+  })
 
   if (!canList) return <PermissionDeniedNotice permission="service_request.list" />
   const items = query.data?.items ?? []
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Service requests</h1>
-        {canCreate ? <Link to="/operations/service-requests/new" className="rounded bg-violet-600 px-3 py-2 text-sm text-white">New</Link> : null}
+        {canCreate ? (
+          <Link to="/operations/service-requests/new" className="rounded bg-violet-600 px-3 py-2 text-sm text-white">
+            New
+          </Link>
+        ) : null}
+      </div>
+      <div className="flex flex-wrap items-end gap-2">
+        <label className="text-sm">
+          <span className="mb-1 block text-zinc-600 dark:text-zinc-300">Status</span>
+          <select
+            value={status}
+            onChange={(event) => {
+              setStatus(event.target.value)
+              setPage(1)
+            }}
+            className="rounded border border-zinc-300 px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
+          >
+            <option value="">All</option>
+            <option value="open">open</option>
+            <option value="assigned">assigned</option>
+            <option value="in_progress">in_progress</option>
+            <option value="resolved">resolved</option>
+            <option value="closed">closed</option>
+            <option value="cancelled">cancelled</option>
+          </select>
+        </label>
+        <label className="text-sm">
+          <span className="mb-1 block text-zinc-600 dark:text-zinc-300">Site</span>
+          <select
+            value={siteId}
+            onChange={(event) => {
+              setSiteId(event.target.value)
+              setPage(1)
+            }}
+            className="rounded border border-zinc-300 px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
+          >
+            <option value="">All</option>
+            {(sitesQuery.data ?? []).map((site) => (
+              <option key={site.id} value={String(site.id)}>
+                {site.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
       {items.length === 0 ? <EmptyState title="Service request yok" description="Ilk kaydi olusturun." /> : (
         <table className="min-w-full overflow-hidden rounded-xl border border-zinc-200 text-sm dark:border-zinc-800">
-          <thead className="bg-zinc-100 dark:bg-zinc-900"><tr><th className="px-3 py-2 text-left">ID</th><th className="px-3 py-2 text-left">Title</th><th className="px-3 py-2 text-left">Priority</th><th className="px-3 py-2 text-left">Status</th><th className="px-3 py-2 text-left">Action</th></tr></thead>
-          <tbody>{items.map((row) => <tr key={row.id} className="border-t border-zinc-200 dark:border-zinc-800"><td className="px-3 py-2">{row.id}</td><td className="px-3 py-2">{row.title}</td><td className="px-3 py-2">{row.priority ?? '-'}</td><td className="px-3 py-2">{row.status ?? '-'}</td><td className="px-3 py-2">{canView ? <Link className="text-violet-600" to={`/operations/service-requests/${row.id}`}>Open</Link> : '-'}</td></tr>)}</tbody>
+          <thead className="bg-zinc-100 dark:bg-zinc-900">
+            <tr>
+              <th className="px-3 py-2 text-left">ID</th>
+              <th className="px-3 py-2 text-left">Title</th>
+              <th className="px-3 py-2 text-left">Priority</th>
+              <th className="px-3 py-2 text-left">Status</th>
+              <th className="px-3 py-2 text-left">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((row) => (
+              <tr key={row.id} className="border-t border-zinc-200 dark:border-zinc-800">
+                <td className="px-3 py-2">{row.id}</td>
+                <td className="px-3 py-2">{row.title}</td>
+                <td className="px-3 py-2">{row.priority ?? '-'}</td>
+                <td className="px-3 py-2">{row.status ?? '-'}</td>
+                <td className="px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    {canView ? (
+                      <Link className="text-violet-600" to={`/operations/service-requests/${row.id}`}>
+                        Open
+                      </Link>
+                    ) : null}
+                    <OperationActionButtons entity="service_request" id={row.id} />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       )}
       <div className="flex items-center gap-2">
