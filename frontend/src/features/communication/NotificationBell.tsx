@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import {
+  useMarkAllNotificationRecipientsReadMutation,
   useMarkNotificationRecipientReadMutation,
   useNotificationRecipientsQuery,
   useNotificationUnreadCountQuery,
@@ -38,6 +39,7 @@ export function NotificationBell() {
   )
   const unread = useNotificationUnreadCountQuery(canList, 30_000)
   const markRead = useMarkNotificationRecipientReadMutation()
+  const markAllRead = useMarkAllNotificationRecipientsReadMutation()
 
   const items = useMemo(() => list.data?.items ?? [], [list.data?.items])
   const unreadCount = unread.data?.unread_count ?? 0
@@ -46,6 +48,15 @@ export function NotificationBell() {
     try {
       await markRead.mutateAsync(id)
       toast.success('Okundu olarak isaretlendi')
+    } catch (e) {
+      toast.error(getErrorMessage(e))
+    }
+  }
+
+  async function handleMarkAllRead() {
+    try {
+      const result = await markAllRead.mutateAsync()
+      toast.success(`${result.marked_count} bildirim okundu olarak isaretlendi`)
     } catch (e) {
       toast.error(getErrorMessage(e))
     }
@@ -73,13 +84,25 @@ export function NotificationBell() {
         <div className="absolute right-0 z-50 mt-2 w-96 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-950">
           <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 text-sm font-semibold dark:border-zinc-800">
             <span>Bildirimler</span>
-            <Link
-              to="/communication/notifications"
-              className="text-xs font-medium text-violet-600 hover:underline"
-              onClick={() => setOpen(false)}
-            >
-              Tumunu gor
-            </Link>
+            <div className="flex items-center gap-3">
+              {canMarkRead ? (
+                <button
+                  type="button"
+                  onClick={() => void handleMarkAllRead()}
+                  disabled={unreadCount <= 0 || markAllRead.isPending}
+                  className="text-xs font-medium text-zinc-600 hover:text-zinc-900 disabled:opacity-50 dark:text-zinc-300 dark:hover:text-zinc-100"
+                >
+                  Mark all read
+                </button>
+              ) : null}
+              <Link
+                to="/communication/notifications"
+                className="text-xs font-medium text-violet-600 hover:underline"
+                onClick={() => setOpen(false)}
+              >
+                Tumunu gor
+              </Link>
+            </div>
           </div>
 
           {list.isLoading ? (

@@ -4,6 +4,7 @@ import {
   getNotificationUnreadCount,
   getNotificationRecipient,
   listNotificationRecipients,
+  markAllNotificationRecipientsRead,
   markNotificationRecipientRead,
 } from '@/features/communication/notification.api'
 
@@ -44,6 +45,17 @@ export function useMarkNotificationRecipientReadMutation() {
     onSuccess: (_d, id) => {
       void qc.invalidateQueries({ queryKey: ['notification-recipients'] })
       void qc.invalidateQueries({ queryKey: ['notification-recipients', 'detail', id] })
+      void qc.invalidateQueries({ queryKey: ['notification-recipients', 'unread-count'] })
+    },
+  })
+}
+
+export function useMarkAllNotificationRecipientsReadMutation() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: markAllNotificationRecipientsRead,
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['notification-recipients'] })
       void qc.invalidateQueries({ queryKey: ['notification-recipients', 'unread-count'] })
     },
   })

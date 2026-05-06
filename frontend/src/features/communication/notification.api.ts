@@ -14,6 +14,7 @@ export async function listNotificationRecipients(params?: {
   direction?: 'asc' | 'desc'
   status?: string
   message_id?: number
+  read_status?: 'unread' | 'read'
 }): Promise<NotificationRecipientListResponse> {
   const qs = buildQueryString({
     page: params?.page,
@@ -22,6 +23,7 @@ export async function listNotificationRecipients(params?: {
     direction: params?.direction,
     status: params?.status,
     message_id: params?.message_id,
+    read_status: params?.read_status,
   })
   return apiRequest<NotificationRecipientListResponse>(`/notification-recipients${qs}`)
 }
@@ -38,5 +40,11 @@ export async function markNotificationRecipientRead(id: number): Promise<Notific
 
 export async function getNotificationUnreadCount(): Promise<NotificationUnreadCount> {
   return apiRequest<NotificationUnreadCount>('/notification-recipients/unread-count')
+}
+
+export async function markAllNotificationRecipientsRead(): Promise<{ marked_count: number }> {
+  return apiRequest<{ marked_count: number }>('/notification-recipients/mark-all-read', {
+    method: 'POST',
+  })
 }
 

@@ -1,6 +1,11 @@
 import { useMemo, useState } from 'react'
 
-import { useMarkNotificationRecipientReadMutation, useNotificationRecipientsQuery } from '@/features/communication/notification.hooks'
+import {
+  useMarkAllNotificationRecipientsReadMutation,
+  useMarkNotificationRecipientReadMutation,
+  useNotificationRecipientsQuery,
+  useNotificationUnreadCountQuery,
+} from '@/features/communication/notification.hooks'
 import { EmptyState } from '@/shared/components/EmptyState'
 import { PermissionDeniedNotice } from '@/shared/components/PermissionDeniedNotice'
 import { useEffectiveCan } from '@/shared/hooks/useEffectiveCan'
@@ -13,14 +18,22 @@ export function NotificationsPage() {
   const canMarkRead = useEffectiveCan('notification_recipient.mark_read')
 
   const [page, setPage] = useState(1)
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState<'all' | 'unread' | 'read'>('all')
 
   const list = useNotificationRecipientsQuery(
-    { page, per_page: 20, sort: 'created_at', direction: 'desc', status: status || undefined },
+    {
+      page,
+      per_page: 20,
+      sort: 'created_at',
+      direction: 'desc',
+      read_status: status === 'all' ? undefined : status,
+    },
     canList,
     30_000,
   )
+  const unread = useNotificationUnreadCountQuery(canList, 30_000)
   const markRead = useMarkNotificationRecipientReadMutation()
+  const markAllRead = useMarkAllNotificationRecipientsReadMutation()
 
   const items = useMemo(() => list.data?.items ?? [], [list.data?.items])
   const unreadOnPage = useMemo(() => items.filter((x) => !x.read_at).length, [items])
@@ -29,6 +42,15 @@ export function NotificationsPage() {
     try {
       await markRead.mutateAsync(id)
       toast.success('Okundu olarak isaretlendi')
+    } catch (e) {
+      toast.error(getErrorMessage(e))
+    }
+  }
+
+  async function handleMarkAllRead() {
+    try {
+      const result = await markAllRead.mutateAsync()
+      toast.success(`${result.marked_count} bildirim okundu olarak isaretlendi`)
     } catch (e) {
       toast.error(getErrorMessage(e))
     }
@@ -47,19 +69,37 @@ export function NotificationsPage() {
             Sayfadaki okunmamis: <span className="font-medium text-zinc-900 dark:text-zinc-100">{unreadOnPage}</span>
           </p>
         </div>
-        <div className="flex items-end gap-3">
-          <label className="text-sm">
-            <span className="mb-1 block text-zinc-600 dark:text-zinc-300">Status</span>
-            <input
-              value={status}
-              onChange={(e) => {
-                setStatus(e.target.value)
-                setPage(1)
-              }}
-              placeholder="(opsiyonel)"
-              className="w-48 rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-            />
-          </label>
+        <div className="flex items-center gap-3">
+          <div className="inline-flex rounded-lg border border-zinc-300 p-1 dark:border-zinc-700">
+            {(['all', 'unread', 'read'] as const).map((value) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => {
+                  setStatus(value)
+                  setPage(1)
+                }}
+                className={[
+                  'rounded-md px-3 py-1.5 text-xs font-medium transition',
+                  status === value
+                    ? 'bg-violet-600 text-white'
+                    : 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800',
+                ].join(' ')}
+              >
+                {value === 'all' ? 'All' : value === 'unread' ? 'Unread' : 'Read'}
+              </button>
+            ))}
+          </div>
+          {canMarkRead ? (
+            <button
+              type="button"
+              onClick={() => void handleMarkAllRead()}
+              disabled={(unread.data?.unread_count ?? 0) <= 0 || markAllRead.isPending}
+              className="rounded-lg border border-zinc-300 px-3 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
+            >
+              Mark all read
+            </button>
+          ) : null}
         </div>
       </div>
 
