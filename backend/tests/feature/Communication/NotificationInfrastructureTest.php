@@ -112,6 +112,60 @@ final class NotificationInfrastructureTest extends FeatureDatabaseTestCase
         $this->withHeaders(['Authorization' => 'Bearer ' . $token])->post('/api/v1/notification-recipients/' . $rid2 . '/mark-read')->assertStatus(409);
     }
 
+    public function testUnreadCountExactDonerVeMarkReadSonrasiAzalir(): void
+    {
+        [$token, $userId] = $this->createTenantAdmin('n11@example.com');
+        $otherUserId = $this->createSiblingUserForTenant('n11.sibling@example.com', $userId);
+
+        $this->createMessage($token, ['channel' => 'in_app', 'body' => 'u1', 'recipients' => [['user_id' => $userId]]]);
+        $this->createMessage($token, ['channel' => 'in_app', 'body' => 'u2', 'recipients' => [['user_id' => $userId]]]);
+        $this->createMessage($token, ['channel' => 'in_app', 'body' => 'u3', 'recipients' => [['user_id' => $userId]]]);
+        $this->createMessage($token, ['channel' => 'in_app', 'body' => 'other', 'recipients' => [['user_id' => $otherUserId]]]);
+        $this->createMessage($token, ['channel' => 'email', 'body' => 'mail', 'recipients' => [['email' => 'mail@example.com']]]);
+
+        $countRes = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->get('/api/v1/notification-recipients/unread-count');
+        $countRes->assertStatus(200);
+        $countPayload = json_decode($countRes->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(3, (int) ($countPayload['data']['unread_count'] ?? 0));
+
+        $recipient = Database::connect()
+            ->table('notification_recipients')
+            ->where('user_id', $userId)
+            ->where('read_at', null)
+            ->orderBy('id', 'ASC')
+            ->get(1)
+            ->getRowArray();
+        $this->assertIsArray($recipient);
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+            ->post('/api/v1/notification-recipients/' . (int) $recipient['id'] . '/mark-read')
+            ->assertStatus(200);
+
+        $countRes2 = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->get('/api/v1/notification-recipients/unread-count');
+        $countRes2->assertStatus(200);
+        $countPayload2 = json_decode($countRes2->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(2, (int) ($countPayload2['data']['unread_count'] ?? 0));
+    }
+
+    public function testUnreadCountCrossTenantVeriSizdirmaz(): void
+    {
+        [$tokenA, $userA] = $this->createTenantAdmin('n12a@example.com');
+        [$tokenB] = $this->createTenantAdmin('n12b@example.com');
+
+        $this->createMessage($tokenA, ['channel' => 'in_app', 'body' => 'a1', 'recipients' => [['user_id' => $userA]]]);
+        $this->createMessage($tokenA, ['channel' => 'in_app', 'body' => 'a2', 'recipients' => [['user_id' => $userA]]]);
+
+        $countA = $this->withHeaders(['Authorization' => 'Bearer ' . $tokenA])->get('/api/v1/notification-recipients/unread-count');
+        $countA->assertStatus(200);
+        $payloadA = json_decode($countA->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(2, (int) ($payloadA['data']['unread_count'] ?? 0));
+
+        $countB = $this->withHeaders(['Authorization' => 'Bearer ' . $tokenB])->get('/api/v1/notification-recipients/unread-count');
+        $countB->assertStatus(200);
+        $payloadB = json_decode($countB->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(0, (int) ($payloadB['data']['unread_count'] ?? 0));
+    }
+
     public function testProviderDefaultTekilKalir(): void
     {
         [$token] = $this->createTenantAdmin('n9@example.com');
@@ -194,6 +248,31 @@ final class NotificationInfrastructureTest extends FeatureDatabaseTestCase
         $res = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->withBodyFormat('json')->post('/api/v1/notification-messages/', $payload);
         $res->assertStatus(200);
         return json_decode($res->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data'];
+    }
+
+    private function createSiblingUserForTenant(string $email, int $seedUserId): int
+    {
+        $db = Database::connect();
+        $baseUser = $db->table('users')->where('id', $seedUserId)->get()->getRowArray();
+        $this->assertIsArray($baseUser);
+        $now = date('Y-m-d H:i:s');
+
+        $db->table('users')->insert([
+            'company_id' => (int) $baseUser['company_id'],
+            'public_id' => $this->uuid(),
+            'email' => $email,
+            'password_hash' => password_hash('Password123!', PASSWORD_DEFAULT),
+            'first_name' => 'Sibling',
+            'last_name' => 'User',
+            'status' => 'active',
+            'is_active' => 1,
+            'failed_login_count' => 0,
+            'locked_until' => null,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        return (int) $db->insertID();
     }
 
     /**

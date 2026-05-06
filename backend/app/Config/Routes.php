@@ -250,6 +250,7 @@ $routes->group('api/v1', ['filter' => ['request-id', 'request-context']], static
     });
     $routes->group('notification-recipients', ['filter' => ['auth-token', 'active-user']], static function ($routes) {
         $routes->get('/', 'Api\V1\NotificationRecipientController::index', ['filter' => ['auth-token', 'active-user', 'permission:notification_recipient.list']]);
+        $routes->get('unread-count', 'Api\V1\NotificationRecipientController::unreadCount', ['filter' => ['auth-token', 'active-user', 'permission:notification_recipient.list']]);
         $routes->get('(:num)', 'Api\V1\NotificationRecipientController::show/$1', ['filter' => ['auth-token', 'active-user', 'permission:notification_recipient.view']]);
         $routes->post('(:num)/mark-read', 'Api\V1\NotificationRecipientController::markRead/$1', ['filter' => ['auth-token', 'active-user', 'permission:notification_recipient.mark_read', 'idempotency']]);
     });
