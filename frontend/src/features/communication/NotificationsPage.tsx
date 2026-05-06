@@ -83,11 +83,23 @@ export function NotificationsPage() {
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
               {items.map((n) => (
-                <tr key={n.id}>
+                <tr
+                  key={n.id}
+                  className={!n.read_at ? 'bg-violet-50/40 dark:bg-violet-950/15' : undefined}
+                >
                   <td className="px-3 py-2 font-medium">{n.id}</td>
                   <td className="px-3 py-2">#{n.message_id}</td>
                   <td className="px-3 py-2">{n.status ?? '-'}</td>
-                  <td className="px-3 py-2">{n.read_at ? 'Okundu' : 'Okunmadi'}</td>
+                  <td className="px-3 py-2">
+                    {n.read_at ? (
+                      'Okundu'
+                    ) : (
+                      <span className="inline-flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-violet-600" />
+                        <span className="font-semibold text-violet-700 dark:text-violet-300">Okunmadi</span>
+                      </span>
+                    )}
+                  </td>
                   <td className="px-3 py-2">
                     {!n.read_at && canMarkRead ? (
                       <button

@@ -90,10 +90,25 @@ export function NotificationBell() {
             <div className="px-4 py-3 text-sm text-zinc-500">Bildirim yok.</div>
           ) : (
             <div className="divide-y divide-zinc-100 dark:divide-zinc-900">
-              {items.map((n) => (
-                <div key={n.id} className="flex items-start justify-between gap-3 px-4 py-3">
+              {items.map((n) => {
+                const isUnread = !n.read_at
+                return (
+                <div
+                  key={n.id}
+                  className={[
+                    'flex items-start justify-between gap-3 px-4 py-3',
+                    isUnread
+                      ? 'bg-violet-50/60 dark:bg-violet-950/20'
+                      : '',
+                  ].join(' ')}
+                >
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                    <div
+                      className={[
+                        'truncate text-sm text-zinc-900 dark:text-zinc-100',
+                        isUnread ? 'font-semibold' : 'font-medium',
+                      ].join(' ')}
+                    >
                       Bildirim #{n.id}
                     </div>
                     <div className="mt-0.5 text-xs text-zinc-500">
@@ -111,7 +126,8 @@ export function NotificationBell() {
                     </button>
                   ) : null}
                 </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
