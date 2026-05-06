@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Resident;
 
+use App\Services\Resident\ResidentContactService;
+use App\Support\RequestRuntime;
 use Tests\Support\FeatureDatabaseTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use CodeIgniter\Test\FeatureTestTrait;
@@ -226,9 +228,7 @@ final class ResidentManagementTest extends FeatureDatabaseTestCase
         $attackerCreate->assertStatus(403);
 
         $attackerList = $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->get('/api/v1/resident-contacts?resident_profile_id=' . $ownerResidentId);
-        $attackerList->assertStatus(200);
-        $attackerItems = json_decode($attackerList->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['items'];
-        $this->assertSame([], $attackerItems);
+        $attackerList->assertStatus(403);
 
         $attackerUpdate = $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->withBodyFormat('json')->put('/api/v1/resident-contacts/' . $ownerContactId, [
             'label' => 'hijack',
@@ -237,6 +237,53 @@ final class ResidentManagementTest extends FeatureDatabaseTestCase
 
         $attackerDelete = $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->delete('/api/v1/resident-contacts/' . $ownerContactId);
         $attackerDelete->assertStatus(403);
+    }
+
+    public function testResidentContactListRuntimeOnlyContextIleCalisir(): void
+    {
+        $companyId = $this->createCompany('Contact Runtime Co');
+        $db = Database::connect();
+        $now = date('Y-m-d H:i:s');
+
+        $db->table('resident_profiles')->insert([
+            'company_id' => $companyId,
+            'first_name' => 'Runtime',
+            'last_name' => 'Resident',
+            'status' => 'active',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+        $residentId = (int) $db->insertID();
+
+        $db->table('resident_contacts')->insert([
+            'company_id' => $companyId,
+            'resident_profile_id' => $residentId,
+            'type' => 'phone',
+            'value' => '5554443322',
+            'is_primary' => 1,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+        $contactId = (int) $db->insertID();
+
+        RequestRuntime::clearAuthContext();
+        RequestRuntime::setAuthContext([
+            'user_id' => 777,
+            'company_id' => $companyId,
+            'roles' => ['company_admin'],
+            'permissions' => [],
+            'session_id' => null,
+        ]);
+
+        $service = new ResidentContactService();
+        $result = $service->list([
+            'resident_profile_id' => $residentId,
+            'page' => 1,
+            'per_page' => 20,
+        ]);
+
+        $this->assertSame(1, (int) $result['total']);
+        $this->assertContains($contactId, array_map(static fn (array $row): int => (int) $row['id'], $result['items']));
     }
 
     public function testResidentVehicleCompanyIdOlmadanCalisirSpoofYokSayilirVeCrossTenantEngellenir(): void

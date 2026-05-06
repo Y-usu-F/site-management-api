@@ -26,6 +26,10 @@ class ResidentContactService extends BaseService
             'filterable' => ['resident_profile_id', 'type'],
         ]);
 
+        if (isset($q['filters']['resident_profile_id'])) {
+            $this->residentService->assertResidentIsActiveAndAccessible((int) $q['filters']['resident_profile_id']);
+        }
+
         $builder = $this->contactModel->builder()->select('*');
         $builder->where('deleted_at', null);
         if ($q['search'] !== '') {
