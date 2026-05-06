@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
+  getNotificationUnreadCount,
   getNotificationRecipient,
   listNotificationRecipients,
   markNotificationRecipientRead,
@@ -27,6 +28,15 @@ export function useNotificationRecipientQuery(id: number, enabled = true) {
   })
 }
 
+export function useNotificationUnreadCountQuery(enabled = true, pollingMs?: number) {
+  return useQuery({
+    queryKey: ['notification-recipients', 'unread-count'],
+    queryFn: getNotificationUnreadCount,
+    enabled,
+    refetchInterval: enabled && pollingMs ? pollingMs : false,
+  })
+}
+
 export function useMarkNotificationRecipientReadMutation() {
   const qc = useQueryClient()
   return useMutation({
@@ -34,6 +44,7 @@ export function useMarkNotificationRecipientReadMutation() {
     onSuccess: (_d, id) => {
       void qc.invalidateQueries({ queryKey: ['notification-recipients'] })
       void qc.invalidateQueries({ queryKey: ['notification-recipients', 'detail', id] })
+      void qc.invalidateQueries({ queryKey: ['notification-recipients', 'unread-count'] })
     },
   })
 }

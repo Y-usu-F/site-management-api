@@ -1,7 +1,11 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { useMarkNotificationRecipientReadMutation, useNotificationRecipientsQuery } from '@/features/communication/notification.hooks'
+import {
+  useMarkNotificationRecipientReadMutation,
+  useNotificationRecipientsQuery,
+  useNotificationUnreadCountQuery,
+} from '@/features/communication/notification.hooks'
 import { useEffectiveCan } from '@/shared/hooks/useEffectiveCan'
 import { useToast } from '@/shared/hooks/useToast'
 import { getErrorMessage } from '@/shared/lib/extractValidationErrors'
@@ -32,10 +36,11 @@ export function NotificationBell() {
     canList,
     30_000,
   )
+  const unread = useNotificationUnreadCountQuery(canList, 30_000)
   const markRead = useMarkNotificationRecipientReadMutation()
 
   const items = useMemo(() => list.data?.items ?? [], [list.data?.items])
-  const unreadCount = useMemo(() => items.filter((x) => !x.read_at).length, [items])
+  const unreadCount = unread.data?.unread_count ?? 0
 
   async function handleMarkRead(id: number) {
     try {

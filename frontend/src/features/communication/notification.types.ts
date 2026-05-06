@@ -14,3 +14,7 @@ export interface NotificationRecipient {
 
 export type NotificationRecipientListResponse = PaginatedResponse<NotificationRecipient>
 
+export interface NotificationUnreadCount {
+  unread_count: number
+}
+

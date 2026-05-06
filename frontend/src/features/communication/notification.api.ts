@@ -4,6 +4,7 @@ import { buildQueryString } from '@/shared/lib/buildQueryString'
 import type {
   NotificationRecipient,
   NotificationRecipientListResponse,
+  NotificationUnreadCount,
 } from '@/features/communication/notification.types'
 
 export async function listNotificationRecipients(params?: {
@@ -33,5 +34,9 @@ export async function markNotificationRecipientRead(id: number): Promise<Notific
   return apiRequest<NotificationRecipient>(`/notification-recipients/${id}/mark-read`, {
     method: 'POST',
   })
+}
+
+export async function getNotificationUnreadCount(): Promise<NotificationUnreadCount> {
+  return apiRequest<NotificationUnreadCount>('/notification-recipients/unread-count')
 }
 
