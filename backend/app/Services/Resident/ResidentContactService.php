@@ -7,6 +7,7 @@ use App\Exceptions\NotFoundApiException;
 use App\Exceptions\TenantAccessDeniedException;
 use App\Libraries\ListQuery;
 use App\Models\ResidentContactModel;
+use App\Support\RequestRuntime;
 use Config\Database;
 
 class ResidentContactService extends BaseService
@@ -124,6 +125,9 @@ class ResidentContactService extends BaseService
             throw new NotFoundApiException('Resident contact bulunamadi');
         }
         $contextCompanyId = (int) (service('request')->company_id ?? 0);
+        if ($contextCompanyId <= 0) {
+            $contextCompanyId = RequestRuntime::getCompanyId();
+        }
         if ($contextCompanyId > 0 && (int) $row['company_id'] !== $contextCompanyId) {
             throw new TenantAccessDeniedException('Cross-tenant erisim engellendi');
         }

@@ -171,6 +171,74 @@ final class ResidentManagementTest extends FeatureDatabaseTestCase
         $this->assertSame(0, (int) ($firstRow['is_primary'] ?? 0));
     }
 
+    public function testResidentContactCreateVeListCompanyIdOlmadanCalisirVeSpoofedCompanyIdYokSayilir(): void
+    {
+        [$email, $userId] = $this->createUserWithRole('contact.tenant.context@example.com', 'Password123!');
+        $access = (string) $this->login($email, 'Password123!')['data']['access_token'];
+        $residentId = $this->createResident($access, 'Context', 'Owner');
+        $authCompanyId = $this->getUserCompanyId($userId);
+        $spoofedCompanyId = $this->createCompany('Contact Spoof Co');
+
+        $create = $this->withHeaders(['Authorization' => 'Bearer ' . $access])->withBodyFormat('json')->post('/api/v1/resident-contacts/', [
+            'company_id' => $spoofedCompanyId,
+            'resident_profile_id' => $residentId,
+            'type' => 'phone',
+            'value' => '5553334444',
+            'is_primary' => true,
+        ]);
+        $create->assertStatus(200);
+        $created = json_decode($create->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data'];
+        $contactId = (int) $created['id'];
+
+        $list = $this->withHeaders(['Authorization' => 'Bearer ' . $access])->get('/api/v1/resident-contacts?resident_profile_id=' . $residentId);
+        $list->assertStatus(200);
+        $listPayload = json_decode($list->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['items'];
+        $this->assertNotEmpty($listPayload);
+        $this->assertContains($contactId, array_map(static fn (array $row): int => (int) $row['id'], $listPayload));
+
+        $row = Database::connect()->table('resident_contacts')->where('id', $contactId)->get()->getRowArray();
+        $this->assertIsArray($row);
+        $this->assertSame($authCompanyId, (int) ($row['company_id'] ?? 0));
+    }
+
+    public function testResidentContactCrossTenantErisimiEngellenir(): void
+    {
+        [$ownerEmail] = $this->createUserWithRole('contact.owner@example.com', 'Password123!');
+        [$attackerEmail] = $this->createUserWithRole('contact.attacker@example.com', 'Password123!');
+        $ownerAccess = (string) $this->login($ownerEmail, 'Password123!')['data']['access_token'];
+        $attackerAccess = (string) $this->login($attackerEmail, 'Password123!')['data']['access_token'];
+
+        $ownerResidentId = $this->createResident($ownerAccess, 'Contact', 'TenantA');
+        $ownerContactCreate = $this->withHeaders(['Authorization' => 'Bearer ' . $ownerAccess])->withBodyFormat('json')->post('/api/v1/resident-contacts/', [
+            'resident_profile_id' => $ownerResidentId,
+            'type' => 'phone',
+            'value' => '5551010101',
+            'is_primary' => true,
+        ]);
+        $ownerContactCreate->assertStatus(200);
+        $ownerContactId = (int) json_decode($ownerContactCreate->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['id'];
+
+        $attackerCreate = $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->withBodyFormat('json')->post('/api/v1/resident-contacts/', [
+            'resident_profile_id' => $ownerResidentId,
+            'type' => 'phone',
+            'value' => '5552020202',
+        ]);
+        $attackerCreate->assertStatus(403);
+
+        $attackerList = $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->get('/api/v1/resident-contacts?resident_profile_id=' . $ownerResidentId);
+        $attackerList->assertStatus(200);
+        $attackerItems = json_decode($attackerList->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['items'];
+        $this->assertSame([], $attackerItems);
+
+        $attackerUpdate = $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->withBodyFormat('json')->put('/api/v1/resident-contacts/' . $ownerContactId, [
+            'label' => 'hijack',
+        ]);
+        $attackerUpdate->assertStatus(403);
+
+        $attackerDelete = $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->delete('/api/v1/resident-contacts/' . $ownerContactId);
+        $attackerDelete->assertStatus(403);
+    }
+
     public function testEndDateStartDatetenKucukOlamaz(): void
     {
         [$email] = $this->createUserWithRole('occupancy.date@example.com', 'Password123!');
