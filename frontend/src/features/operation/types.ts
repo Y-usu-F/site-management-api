@@ -96,6 +96,22 @@ export interface AssetMaintenanceRecord {
   status?: string | null
 }
 
+export interface OperationsSummary {
+  service_requests: {
+    open: number
+  }
+  work_orders: {
+    in_progress: number
+  }
+  reservations: {
+    pending: number
+    approved: number
+  }
+  maintenance: {
+    active_plans: number
+  }
+}
+
 export type ServiceRequestListResponse = PaginatedResponse<ServiceRequest>
 export type WorkOrderListResponse = PaginatedResponse<WorkOrder>
 export type CommonAreaListResponse = PaginatedResponse<CommonArea>
