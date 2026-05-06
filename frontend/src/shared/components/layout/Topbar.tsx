@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { logoutRequest } from '@/features/auth/auth.api'
 import { useAuthStore } from '@/features/auth/auth.store'
+import { NotificationBell } from '@/features/communication/NotificationBell'
 
 export function Topbar() {
   const navigate = useNavigate()
@@ -27,13 +28,16 @@ export function Topbar() {
           {user?.email ?? '—'}
         </span>
       </span>
-      <button
-        type="button"
-        onClick={() => void handleLogout()}
-        className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-900"
-      >
-        Log out
-      </button>
+      <div className="flex items-center gap-2">
+        <NotificationBell />
+        <button
+          type="button"
+          onClick={() => void handleLogout()}
+          className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-900"
+        >
+          Log out
+        </button>
+      </div>
     </header>
   )
 }

@@ -123,6 +123,12 @@ export function Sidebar() {
         >
           Announcements
         </NavLink>
+        <NavLink
+          to="/communication/notifications"
+          className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
+        >
+          Notifications
+        </NavLink>
         <div className="pt-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">
           System
         </div>

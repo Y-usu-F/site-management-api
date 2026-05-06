@@ -1,73 +1,201 @@
+import { Suspense, lazy, type ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { LoginPage } from '@/features/auth/LoginPage'
 import { ProtectedRoute } from '@/features/auth/ProtectedRoute'
-import { AnnouncementsPage } from '@/features/communication/AnnouncementsPage'
-import { DashboardHomePage } from '@/features/dashboard/DashboardHomePage'
-import { DepositDetailPage } from '@/features/finance/pages/DepositDetailPage'
-import { DepositFormPage } from '@/features/finance/pages/DepositFormPage'
-import { DepositsPage } from '@/features/finance/pages/DepositsPage'
-import { DueDefinitionDetailPage } from '@/features/finance/pages/DueDefinitionDetailPage'
-import { DueDefinitionFormPage } from '@/features/finance/pages/DueDefinitionFormPage'
-import { DueDefinitionsPage } from '@/features/finance/pages/DueDefinitionsPage'
-import { DueItemDetailPage } from '@/features/finance/pages/DueItemDetailPage'
-import { DueItemsPage } from '@/features/finance/pages/DueItemsPage'
-import { DuePeriodDetailPage } from '@/features/finance/pages/DuePeriodDetailPage'
-import { DuePeriodFormPage } from '@/features/finance/pages/DuePeriodFormPage'
-import { DuePeriodsPage } from '@/features/finance/pages/DuePeriodsPage'
-import { FinanceDashboardPage } from '@/features/finance/pages/FinanceDashboardPage'
-import { PaymentDetailPage } from '@/features/finance/pages/PaymentDetailPage'
-import { PaymentFormPage } from '@/features/finance/pages/PaymentFormPage'
-import { PaymentsPage } from '@/features/finance/pages/PaymentsPage'
-import { AssetDetailPage } from '@/features/operation/pages/AssetDetailPage'
-import { AssetFormPage } from '@/features/operation/pages/AssetFormPage'
-import { AssetMaintenancePlanDetailPage } from '@/features/operation/pages/AssetMaintenancePlanDetailPage'
-import { AssetMaintenancePlanFormPage } from '@/features/operation/pages/AssetMaintenancePlanFormPage'
-import { AssetMaintenancePlansPage } from '@/features/operation/pages/AssetMaintenancePlansPage'
-import { AssetMaintenanceRecordDetailPage } from '@/features/operation/pages/AssetMaintenanceRecordDetailPage'
-import { AssetMaintenanceRecordFormPage } from '@/features/operation/pages/AssetMaintenanceRecordFormPage'
-import { AssetMaintenanceRecordsPage } from '@/features/operation/pages/AssetMaintenanceRecordsPage'
-import { AssetsPage } from '@/features/operation/pages/AssetsPage'
-import { CommonAreaDetailPage } from '@/features/operation/pages/CommonAreaDetailPage'
-import { CommonAreaFormPage } from '@/features/operation/pages/CommonAreaFormPage'
-import { CommonAreaReservationDetailPage } from '@/features/operation/pages/CommonAreaReservationDetailPage'
-import { CommonAreaReservationFormPage } from '@/features/operation/pages/CommonAreaReservationFormPage'
-import { CommonAreaReservationsPage } from '@/features/operation/pages/CommonAreaReservationsPage'
-import { CommonAreasPage } from '@/features/operation/pages/CommonAreasPage'
-import { OperationsDashboardPage } from '@/features/operation/pages/OperationsDashboardPage'
-import { ServiceRequestDetailPage } from '@/features/operation/pages/ServiceRequestDetailPage'
-import { ServiceRequestFormPage } from '@/features/operation/pages/ServiceRequestFormPage'
-import { ServiceRequestsPage } from '@/features/operation/pages/ServiceRequestsPage'
-import { WorkOrderDetailPage } from '@/features/operation/pages/WorkOrderDetailPage'
-import { WorkOrderFormPage } from '@/features/operation/pages/WorkOrderFormPage'
-import { WorkOrdersPage } from '@/features/operation/pages/WorkOrdersPage'
-import { ResidentContactsPage } from '@/features/resident/ResidentContactsPage'
-import { ResidentDetailPage } from '@/features/resident/ResidentDetailPage'
-import { ResidentFormPage } from '@/features/resident/ResidentFormPage'
-import { ResidentsPage } from '@/features/resident/ResidentsPage'
-import { ResidentVehiclesPage } from '@/features/resident/ResidentVehiclesPage'
-import { UnitOccupanciesPage } from '@/features/resident/UnitOccupanciesPage'
-import { BlockDetailPage } from '@/features/site/pages/BlockDetailPage'
-import { BlockFormPage } from '@/features/site/pages/BlockFormPage'
-import { BlocksPage } from '@/features/site/pages/BlocksPage'
-import { FloorDetailPage } from '@/features/site/pages/FloorDetailPage'
-import { FloorFormPage } from '@/features/site/pages/FloorFormPage'
-import { FloorsPage } from '@/features/site/pages/FloorsPage'
-import { SiteDetailPage } from '@/features/site/pages/SiteDetailPage'
-import { SiteFormPage } from '@/features/site/pages/SiteFormPage'
-import { SitesPage } from '@/features/site/pages/SitesPage'
-import { UnitDetailPage } from '@/features/site/pages/UnitDetailPage'
-import { UnitFormPage } from '@/features/site/pages/UnitFormPage'
-import { UnitsPage } from '@/features/site/pages/UnitsPage'
-import { RolesPage } from '@/features/system/RolesPage'
-import { DashboardLayout } from '@/shared/components/layout/DashboardLayout'
+const AnnouncementsPage = lazy(() =>
+  import('@/features/communication/AnnouncementsPage').then((m) => ({ default: m.AnnouncementsPage })),
+)
+const NotificationsPage = lazy(() =>
+  import('@/features/communication/NotificationsPage').then((m) => ({ default: m.NotificationsPage })),
+)
+const DashboardHomePage = lazy(() =>
+  import('@/features/dashboard/DashboardHomePage').then((m) => ({ default: m.DashboardHomePage })),
+)
+const DepositDetailPage = lazy(() =>
+  import('@/features/finance/pages/DepositDetailPage').then((m) => ({ default: m.DepositDetailPage })),
+)
+const DepositFormPage = lazy(() =>
+  import('@/features/finance/pages/DepositFormPage').then((m) => ({ default: m.DepositFormPage })),
+)
+const DepositsPage = lazy(() =>
+  import('@/features/finance/pages/DepositsPage').then((m) => ({ default: m.DepositsPage })),
+)
+const DueDefinitionDetailPage = lazy(() =>
+  import('@/features/finance/pages/DueDefinitionDetailPage').then((m) => ({ default: m.DueDefinitionDetailPage })),
+)
+const DueDefinitionFormPage = lazy(() =>
+  import('@/features/finance/pages/DueDefinitionFormPage').then((m) => ({ default: m.DueDefinitionFormPage })),
+)
+const DueDefinitionsPage = lazy(() =>
+  import('@/features/finance/pages/DueDefinitionsPage').then((m) => ({ default: m.DueDefinitionsPage })),
+)
+const DueItemDetailPage = lazy(() =>
+  import('@/features/finance/pages/DueItemDetailPage').then((m) => ({ default: m.DueItemDetailPage })),
+)
+const DueItemsPage = lazy(() =>
+  import('@/features/finance/pages/DueItemsPage').then((m) => ({ default: m.DueItemsPage })),
+)
+const DuePeriodDetailPage = lazy(() =>
+  import('@/features/finance/pages/DuePeriodDetailPage').then((m) => ({ default: m.DuePeriodDetailPage })),
+)
+const DuePeriodFormPage = lazy(() =>
+  import('@/features/finance/pages/DuePeriodFormPage').then((m) => ({ default: m.DuePeriodFormPage })),
+)
+const DuePeriodsPage = lazy(() =>
+  import('@/features/finance/pages/DuePeriodsPage').then((m) => ({ default: m.DuePeriodsPage })),
+)
+const FinanceDashboardPage = lazy(() =>
+  import('@/features/finance/pages/FinanceDashboardPage').then((m) => ({ default: m.FinanceDashboardPage })),
+)
+const PaymentDetailPage = lazy(() =>
+  import('@/features/finance/pages/PaymentDetailPage').then((m) => ({ default: m.PaymentDetailPage })),
+)
+const PaymentFormPage = lazy(() =>
+  import('@/features/finance/pages/PaymentFormPage').then((m) => ({ default: m.PaymentFormPage })),
+)
+const PaymentsPage = lazy(() =>
+  import('@/features/finance/pages/PaymentsPage').then((m) => ({ default: m.PaymentsPage })),
+)
+const AssetDetailPage = lazy(() =>
+  import('@/features/operation/pages/AssetDetailPage').then((m) => ({ default: m.AssetDetailPage })),
+)
+const AssetFormPage = lazy(() =>
+  import('@/features/operation/pages/AssetFormPage').then((m) => ({ default: m.AssetFormPage })),
+)
+const AssetMaintenancePlanDetailPage = lazy(() =>
+  import('@/features/operation/pages/AssetMaintenancePlanDetailPage').then((m) => ({ default: m.AssetMaintenancePlanDetailPage })),
+)
+const AssetMaintenancePlanFormPage = lazy(() =>
+  import('@/features/operation/pages/AssetMaintenancePlanFormPage').then((m) => ({ default: m.AssetMaintenancePlanFormPage })),
+)
+const AssetMaintenancePlansPage = lazy(() =>
+  import('@/features/operation/pages/AssetMaintenancePlansPage').then((m) => ({ default: m.AssetMaintenancePlansPage })),
+)
+const AssetMaintenanceRecordDetailPage = lazy(() =>
+  import('@/features/operation/pages/AssetMaintenanceRecordDetailPage').then((m) => ({ default: m.AssetMaintenanceRecordDetailPage })),
+)
+const AssetMaintenanceRecordFormPage = lazy(() =>
+  import('@/features/operation/pages/AssetMaintenanceRecordFormPage').then((m) => ({ default: m.AssetMaintenanceRecordFormPage })),
+)
+const AssetMaintenanceRecordsPage = lazy(() =>
+  import('@/features/operation/pages/AssetMaintenanceRecordsPage').then((m) => ({ default: m.AssetMaintenanceRecordsPage })),
+)
+const AssetsPage = lazy(() =>
+  import('@/features/operation/pages/AssetsPage').then((m) => ({ default: m.AssetsPage })),
+)
+const CommonAreaDetailPage = lazy(() =>
+  import('@/features/operation/pages/CommonAreaDetailPage').then((m) => ({ default: m.CommonAreaDetailPage })),
+)
+const CommonAreaFormPage = lazy(() =>
+  import('@/features/operation/pages/CommonAreaFormPage').then((m) => ({ default: m.CommonAreaFormPage })),
+)
+const CommonAreaReservationDetailPage = lazy(() =>
+  import('@/features/operation/pages/CommonAreaReservationDetailPage').then((m) => ({ default: m.CommonAreaReservationDetailPage })),
+)
+const CommonAreaReservationFormPage = lazy(() =>
+  import('@/features/operation/pages/CommonAreaReservationFormPage').then((m) => ({ default: m.CommonAreaReservationFormPage })),
+)
+const CommonAreaReservationsPage = lazy(() =>
+  import('@/features/operation/pages/CommonAreaReservationsPage').then((m) => ({ default: m.CommonAreaReservationsPage })),
+)
+const CommonAreasPage = lazy(() =>
+  import('@/features/operation/pages/CommonAreasPage').then((m) => ({ default: m.CommonAreasPage })),
+)
+const OperationsDashboardPage = lazy(() =>
+  import('@/features/operation/pages/OperationsDashboardPage').then((m) => ({ default: m.OperationsDashboardPage })),
+)
+const ServiceRequestDetailPage = lazy(() =>
+  import('@/features/operation/pages/ServiceRequestDetailPage').then((m) => ({ default: m.ServiceRequestDetailPage })),
+)
+const ServiceRequestFormPage = lazy(() =>
+  import('@/features/operation/pages/ServiceRequestFormPage').then((m) => ({ default: m.ServiceRequestFormPage })),
+)
+const ServiceRequestsPage = lazy(() =>
+  import('@/features/operation/pages/ServiceRequestsPage').then((m) => ({ default: m.ServiceRequestsPage })),
+)
+const WorkOrderDetailPage = lazy(() =>
+  import('@/features/operation/pages/WorkOrderDetailPage').then((m) => ({ default: m.WorkOrderDetailPage })),
+)
+const WorkOrderFormPage = lazy(() =>
+  import('@/features/operation/pages/WorkOrderFormPage').then((m) => ({ default: m.WorkOrderFormPage })),
+)
+const WorkOrdersPage = lazy(() =>
+  import('@/features/operation/pages/WorkOrdersPage').then((m) => ({ default: m.WorkOrdersPage })),
+)
+const ResidentContactsPage = lazy(() =>
+  import('@/features/resident/ResidentContactsPage').then((m) => ({ default: m.ResidentContactsPage })),
+)
+const ResidentDetailPage = lazy(() =>
+  import('@/features/resident/ResidentDetailPage').then((m) => ({ default: m.ResidentDetailPage })),
+)
+const ResidentFormPage = lazy(() =>
+  import('@/features/resident/ResidentFormPage').then((m) => ({ default: m.ResidentFormPage })),
+)
+const ResidentsPage = lazy(() =>
+  import('@/features/resident/ResidentsPage').then((m) => ({ default: m.ResidentsPage })),
+)
+const ResidentVehiclesPage = lazy(() =>
+  import('@/features/resident/ResidentVehiclesPage').then((m) => ({ default: m.ResidentVehiclesPage })),
+)
+const UnitOccupanciesPage = lazy(() =>
+  import('@/features/resident/UnitOccupanciesPage').then((m) => ({ default: m.UnitOccupanciesPage })),
+)
+const BlockDetailPage = lazy(() =>
+  import('@/features/site/pages/BlockDetailPage').then((m) => ({ default: m.BlockDetailPage })),
+)
+const BlockFormPage = lazy(() =>
+  import('@/features/site/pages/BlockFormPage').then((m) => ({ default: m.BlockFormPage })),
+)
+const BlocksPage = lazy(() =>
+  import('@/features/site/pages/BlocksPage').then((m) => ({ default: m.BlocksPage })),
+)
+const FloorDetailPage = lazy(() =>
+  import('@/features/site/pages/FloorDetailPage').then((m) => ({ default: m.FloorDetailPage })),
+)
+const FloorFormPage = lazy(() =>
+  import('@/features/site/pages/FloorFormPage').then((m) => ({ default: m.FloorFormPage })),
+)
+const FloorsPage = lazy(() =>
+  import('@/features/site/pages/FloorsPage').then((m) => ({ default: m.FloorsPage })),
+)
+const SiteDetailPage = lazy(() =>
+  import('@/features/site/pages/SiteDetailPage').then((m) => ({ default: m.SiteDetailPage })),
+)
+const SiteFormPage = lazy(() =>
+  import('@/features/site/pages/SiteFormPage').then((m) => ({ default: m.SiteFormPage })),
+)
+const SitesPage = lazy(() =>
+  import('@/features/site/pages/SitesPage').then((m) => ({ default: m.SitesPage })),
+)
+const UnitDetailPage = lazy(() =>
+  import('@/features/site/pages/UnitDetailPage').then((m) => ({ default: m.UnitDetailPage })),
+)
+const UnitFormPage = lazy(() =>
+  import('@/features/site/pages/UnitFormPage').then((m) => ({ default: m.UnitFormPage })),
+)
+const UnitsPage = lazy(() =>
+  import('@/features/site/pages/UnitsPage').then((m) => ({ default: m.UnitsPage })),
+)
+const RolesPage = lazy(() => import('@/features/system/RolesPage').then((m) => ({ default: m.RolesPage })))
+const DashboardLayout = lazy(() =>
+  import('@/shared/components/layout/DashboardLayout').then((m) => ({ default: m.DashboardLayout })),
+)
+
+function withSuspense(element: ReactNode) {
+  return (
+    <Suspense fallback={<div className="p-4 text-sm text-zinc-500">Yukleniyor...</div>}>
+      {element}
+    </Suspense>
+  )
+}
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
-        <Route element={<DashboardLayout />}>
+        <Route element={withSuspense(<DashboardLayout />)}>
           <Route path="/dashboard" element={<DashboardHomePage />} />
 
           <Route path="/sites/new" element={<SiteFormPage mode="create" />} />
@@ -155,6 +283,10 @@ export function AppRoutes() {
           <Route
             path="/communication/announcements"
             element={<AnnouncementsPage />}
+          />
+          <Route
+            path="/communication/notifications"
+            element={<NotificationsPage />}
           />
           <Route path="/system/roles" element={<RolesPage />} />
         </Route>
