@@ -87,6 +87,89 @@ final class OperationManagementTest extends FeatureDatabaseTestCase
         $this->withHeaders(['Authorization' => 'Bearer ' . $token])->post('/api/v1/work-orders/' . $woId . '/start')->assertStatus(409);
     }
 
+    public function testOperationsSummaryCountsDogruDoner(): void
+    {
+        [$token, $siteId, $blockId, $unitId, $residentId] = $this->bootstrapGraph('summary.user@example.com');
+
+        // 1 open service request
+        $req = $this->createServiceRequest($token, $siteId, $blockId, $unitId, $residentId);
+
+        // 1 in_progress work order
+        $wo = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->withBodyFormat('json')->post('/api/v1/work-orders/', [
+            'service_request_id' => (int) $req['id'],
+        ]);
+        $wo->assertStatus(200);
+        $woId = (int) json_decode($wo->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['id'];
+        $this->withHeaders(['Authorization' => 'Bearer ' . $token])->post('/api/v1/work-orders/' . $woId . '/start')->assertStatus(200);
+
+        // 1 pending + 1 approved reservation
+        $pendingArea = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->withBodyFormat('json')->post('/api/v1/common-areas/', [
+            'site_id' => $siteId,
+            'name' => 'Pending Salon',
+            'code' => 'PEND-' . random_int(100, 999),
+            'requires_approval' => 1,
+            'status' => 'active',
+        ]);
+        $pendingArea->assertStatus(200);
+        $pendingAreaId = (int) json_decode($pendingArea->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['id'];
+
+        $approvedArea = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->withBodyFormat('json')->post('/api/v1/common-areas/', [
+            'site_id' => $siteId,
+            'name' => 'Approved Salon',
+            'code' => 'APRV-' . random_int(100, 999),
+            'requires_approval' => 0,
+            'status' => 'active',
+        ]);
+        $approvedArea->assertStatus(200);
+        $approvedAreaId = (int) json_decode($approvedArea->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['id'];
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $token])->withBodyFormat('json')->post('/api/v1/common-area-reservations/', [
+            'common_area_id' => $pendingAreaId,
+            'unit_id' => $unitId,
+            'resident_profile_id' => $residentId,
+            'start_at' => date('Y-m-d H:i:s', time() + 7200),
+            'end_at' => date('Y-m-d H:i:s', time() + 10800),
+        ])->assertStatus(200);
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $token])->withBodyFormat('json')->post('/api/v1/common-area-reservations/', [
+            'common_area_id' => $approvedAreaId,
+            'unit_id' => $unitId,
+            'resident_profile_id' => $residentId,
+            'start_at' => date('Y-m-d H:i:s', time() + 14400),
+            'end_at' => date('Y-m-d H:i:s', time() + 18000),
+        ])->assertStatus(200);
+
+        // 1 active maintenance plan
+        $asset = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->withBodyFormat('json')->post('/api/v1/assets/', [
+            'site_id' => $siteId,
+            'block_id' => $blockId,
+            'unit_id' => $unitId,
+            'name' => 'Pompa',
+            'asset_type' => 'hydrophore',
+            'status' => 'active',
+        ]);
+        $asset->assertStatus(200);
+        $assetId = (int) json_decode($asset->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['id'];
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $token])->withBodyFormat('json')->post('/api/v1/asset-maintenance-plans/', [
+            'asset_id' => $assetId,
+            'frequency_type' => 'monthly',
+            'frequency_interval' => 1,
+            'next_due_date' => date('Y-m-d', strtotime('+7 days')),
+            'status' => 'active',
+        ])->assertStatus(200);
+
+        $summary = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->get('/api/v1/operations/summary');
+        $summary->assertStatus(200);
+        $payload = json_decode($summary->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertSame(1, (int) ($payload['data']['service_requests']['open'] ?? 0));
+        $this->assertSame(1, (int) ($payload['data']['work_orders']['in_progress'] ?? 0));
+        $this->assertSame(1, (int) ($payload['data']['reservations']['pending'] ?? 0));
+        $this->assertSame(1, (int) ($payload['data']['reservations']['approved'] ?? 0));
+        $this->assertSame(1, (int) ($payload['data']['maintenance']['active_plans'] ?? 0));
+    }
+
     /**
      * @return array{0:string,1:int,2:int,3:int,4:int}
      */

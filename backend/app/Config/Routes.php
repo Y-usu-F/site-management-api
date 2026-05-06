@@ -206,6 +206,8 @@ $routes->group('api/v1', ['filter' => ['request-id', 'request-context']], static
         $routes->delete('(:num)', 'Api\V1\RequestCategoryController::delete/$1', ['filter' => ['auth-token', 'active-user', 'permission:request_category.delete', 'idempotency']]);
     });
 
+    $routes->get('operations/summary', 'Api\V1\OperationsSummaryController::show', ['filter' => ['auth-token', 'active-user', 'permission:service_request.list']]);
+
     $routes->group('service-requests', ['filter' => ['auth-token', 'active-user']], static function ($routes) {
         $routes->get('/', 'Api\V1\ServiceRequestController::index', ['filter' => ['auth-token', 'active-user', 'permission:service_request.list']]);
         $routes->post('/', 'Api\V1\ServiceRequestController::create', ['filter' => ['auth-token', 'active-user', 'permission:service_request.create', 'idempotency']]);
