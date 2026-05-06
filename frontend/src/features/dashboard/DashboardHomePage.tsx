@@ -1,10 +1,13 @@
 import { PlaceholderPage } from '@/shared/components/PlaceholderPage'
+import { useTranslation } from 'react-i18next'
 
 export function DashboardHomePage() {
+  const { t } = useTranslation(['navigation'])
+
   return (
     <PlaceholderPage
-      title="Dashboard"
-      subtitle="Summary widgets and KPIs will appear here once connected to the API."
+      title={t('navigation.dashboard')}
+      subtitle={t('navigation.overview')}
     />
   )
 }

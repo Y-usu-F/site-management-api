@@ -1,5 +1,6 @@
 import { Suspense, lazy, type ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { LoginPage } from '@/features/auth/LoginPage'
 import { ProtectedRoute } from '@/features/auth/ProtectedRoute'
@@ -182,20 +183,22 @@ const DashboardLayout = lazy(() =>
   import('@/shared/components/layout/DashboardLayout').then((m) => ({ default: m.DashboardLayout })),
 )
 
-function withSuspense(element: ReactNode) {
+function withSuspense(element: ReactNode, loadingText: string) {
   return (
-    <Suspense fallback={<div className="p-4 text-sm text-zinc-500">Yukleniyor...</div>}>
+    <Suspense fallback={<div className="p-4 text-sm text-zinc-500">{loadingText}</div>}>
       {element}
     </Suspense>
   )
 }
 
 export function AppRoutes() {
+  const { t } = useTranslation(['common'])
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
-        <Route element={withSuspense(<DashboardLayout />)}>
+        <Route element={withSuspense(<DashboardLayout />, t('common.loading'))}>
           <Route path="/dashboard" element={<DashboardHomePage />} />
 
           <Route path="/sites/new" element={<SiteFormPage mode="create" />} />

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 interface ConfirmDialogProps {
   isOpen: boolean
   title: string
@@ -21,6 +23,7 @@ export function ConfirmDialog({
   onClose,
   onConfirm,
 }: ConfirmDialogProps) {
+  const { t } = useTranslation(['common'])
   if (!isOpen) return null
 
   const confirmClass =
@@ -48,7 +51,7 @@ export function ConfirmDialog({
             disabled={isLoading}
             className={`rounded-lg px-3 py-2 text-sm disabled:opacity-60 ${confirmClass}`}
           >
-            {isLoading ? 'Please wait…' : confirmText}
+            {isLoading ? t('common.pleaseWait') : confirmText}
           </button>
         </div>
       </div>
