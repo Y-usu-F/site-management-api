@@ -4,7 +4,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ResidentForm } from '@/features/resident/components/ResidentForm'
 import { useCreateResidentMutation, useUpdateResidentMutation } from '@/features/resident/hooks/useResidentMutations'
 import { useResidentQuery } from '@/features/resident/hooks/useResidentQuery'
-import { useAuthStore } from '@/features/auth/auth.store'
 import { PermissionDeniedNotice } from '@/shared/components/PermissionDeniedNotice'
 import { useEffectiveCan } from '@/shared/hooks/useEffectiveCan'
 import { useToast } from '@/shared/hooks/useToast'
@@ -21,7 +20,6 @@ export function ResidentFormPage({ mode }: { mode: 'create' | 'edit' }) {
   const canCreate = useEffectiveCan('resident.create')
   const canUpdate = useEffectiveCan('resident.update')
   const allowed = mode === 'create' ? canCreate : canUpdate
-  const authCompanyId = useAuthStore((state) => state.user?.company_id ?? null)
 
   const { data: existing, isPending } = useResidentQuery(id ?? 0, mode === 'edit' && id !== null && allowed)
   const createMut = useCreateResidentMutation()
@@ -92,7 +90,7 @@ export function ResidentFormPage({ mode }: { mode: 'create' | 'edit' }) {
       ) : null}
 
       <ResidentForm
-        defaultValues={mode === 'create' ? { company_id: authCompanyId ?? undefined } : (existing ?? undefined)}
+        defaultValues={existing ?? undefined}
         submitLabel={mode === 'create' ? 'Create resident' : 'Save changes'}
         isSubmitting={isSubmitting}
         serverFieldErrors={serverErrors}

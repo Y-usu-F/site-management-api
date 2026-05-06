@@ -25,7 +25,6 @@ export interface ResidentListParams {
 export type ResidentListResponse = PaginatedResponse<ResidentProfile>
 
 export interface ResidentCreatePayload {
-  company_id: number
   first_name: string
   last_name: string
   identity_number?: string | null

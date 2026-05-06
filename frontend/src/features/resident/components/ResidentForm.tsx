@@ -10,7 +10,6 @@ interface ResidentFormProps {
   isSubmitting: boolean
   serverFieldErrors?: Record<string, string>
   onSubmit: (values: {
-    company_id: number
     first_name: string
     last_name: string
     identity_number: string
@@ -29,11 +28,6 @@ export function ResidentForm({
 }: ResidentFormProps) {
   const [firstName, setFirstName] = useState(defaultValues?.first_name ?? '')
   const [lastName, setLastName] = useState(defaultValues?.last_name ?? '')
-  const [companyId, setCompanyId] = useState(
-    defaultValues?.company_id !== undefined && defaultValues.company_id !== null
-      ? String(defaultValues.company_id)
-      : '',
-  )
   const [identityNumber, setIdentityNumber] = useState(defaultValues?.identity_number ?? '')
   const [phone, setPhone] = useState(defaultValues?.phone ?? '')
   const [email, setEmail] = useState(defaultValues?.email ?? '')
@@ -45,7 +39,6 @@ export function ResidentForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const next: Record<string, string> = {}
-    if (!companyId.trim() || Number(companyId) <= 0) next.company_id = 'Gecerli bir company id giriniz.'
     if (firstName.trim().length < 2) next.first_name = 'First name en az 2 karakter olmali.'
     if (lastName.trim().length < 2) next.last_name = 'Last name en az 2 karakter olmali.'
     if (email.trim() !== '' && !email.includes('@')) next.email = 'Gecerli bir email giriniz.'
@@ -53,7 +46,6 @@ export function ResidentForm({
     if (Object.keys(next).length > 0) return
 
     onSubmit({
-      company_id: Number(companyId),
       first_name: firstName.trim(),
       last_name: lastName.trim(),
       identity_number: identityNumber.trim(),
@@ -66,20 +58,6 @@ export function ResidentForm({
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="resident-company-id" className="block text-sm font-medium">
-            Company ID
-          </label>
-          <input
-            id="resident-company-id"
-            type="number"
-            min={1}
-            value={companyId}
-            onChange={(e) => setCompanyId(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
-          />
-          {errors.company_id ? <p className="mt-1 text-xs text-red-600">{errors.company_id}</p> : null}
-        </div>
         <div>
           <label htmlFor="resident-first-name" className="block text-sm font-medium">
             First name

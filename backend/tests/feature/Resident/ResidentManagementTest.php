@@ -259,6 +259,29 @@ final class ResidentManagementTest extends FeatureDatabaseTestCase
         $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->get('/api/v1/residents/' . $residentId)->assertStatus(403);
     }
 
+    public function testResidentCreateSpoofedCompanyIdYokSayilirVeAuthTenantaYazilir(): void
+    {
+        [$email, $userId] = $this->createUserWithRole('resident.spoofed.company@example.com', 'Password123!');
+        $access = (string) $this->login($email, 'Password123!')['data']['access_token'];
+        $authCompanyId = $this->getUserCompanyId($userId);
+        $spoofedCompanyId = $this->createCompany('Spoofed Co');
+
+        $create = $this->withHeaders(['Authorization' => 'Bearer ' . $access])
+            ->withBodyFormat('json')
+            ->post('/api/v1/residents/', [
+                'company_id' => $spoofedCompanyId,
+                'first_name' => 'Spoof',
+                'last_name' => 'Tenant',
+                'status' => 'active',
+            ]);
+        $create->assertStatus(200);
+        $residentId = (int) json_decode($create->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['id'];
+
+        $row = Database::connect()->table('resident_profiles')->where('id', $residentId)->get()->getRowArray();
+        $this->assertIsArray($row);
+        $this->assertSame($authCompanyId, (int) ($row['company_id'] ?? 0));
+    }
+
     /**
      * @return array{0:string,1:int}
      */
@@ -266,14 +289,7 @@ final class ResidentManagementTest extends FeatureDatabaseTestCase
     {
         $db = Database::connect();
         $now = date('Y-m-d H:i:s');
-        $db->table('companies')->insert([
-            'public_id' => $this->uuid(),
-            'name' => 'Resident Co ' . bin2hex(random_bytes(2)),
-            'status' => 'active',
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-        $companyId = (int) $db->insertID();
+        $companyId = $this->createCompany('Resident Co ' . bin2hex(random_bytes(2)));
         $db->table('users')->insert([
             'company_id' => $companyId,
             'public_id' => $this->uuid(),
@@ -299,6 +315,12 @@ final class ResidentManagementTest extends FeatureDatabaseTestCase
             'updated_at' => $now,
         ]);
         return [$email, $userId];
+    }
+
+    private function getUserCompanyId(int $userId): int
+    {
+        $row = Database::connect()->table('users')->select('company_id')->where('id', $userId)->get()->getRowArray();
+        return (int) ($row['company_id'] ?? 0);
     }
 
     private function login(string $email, string $password): array
@@ -371,5 +393,20 @@ final class ResidentManagementTest extends FeatureDatabaseTestCase
         $bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
         $hex = bin2hex($bytes);
         return sprintf('%s-%s-%s-%s-%s', substr($hex, 0, 8), substr($hex, 8, 4), substr($hex, 12, 4), substr($hex, 16, 4), substr($hex, 20, 12));
+    }
+
+    private function createCompany(string $name): int
+    {
+        $db = Database::connect();
+        $now = date('Y-m-d H:i:s');
+        $db->table('companies')->insert([
+            'public_id' => $this->uuid(),
+            'name' => $name,
+            'status' => 'active',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        return (int) $db->insertID();
     }
 }

@@ -7,6 +7,7 @@ use App\Exceptions\NotFoundApiException;
 use App\Exceptions\TenantAccessDeniedException;
 use App\Libraries\ListQuery;
 use App\Models\ResidentProfileModel;
+use App\Support\RequestRuntime;
 use Config\Database;
 
 class ResidentProfileService extends BaseService
@@ -52,7 +53,6 @@ class ResidentProfileService extends BaseService
     public function create(array $payload): array
     {
         $data = [
-            'company_id' => isset($payload['company_id']) ? (int) $payload['company_id'] : null,
             'user_id' => $payload['user_id'] ?? null,
             'first_name' => trim((string) $payload['first_name']),
             'last_name' => trim((string) $payload['last_name']),
@@ -130,6 +130,9 @@ class ResidentProfileService extends BaseService
             throw new NotFoundApiException('Resident profile bulunamadi');
         }
         $contextCompanyId = (int) (service('request')->company_id ?? 0);
+        if ($contextCompanyId <= 0) {
+            $contextCompanyId = RequestRuntime::getCompanyId();
+        }
         if ($contextCompanyId > 0 && (int) $row['company_id'] !== $contextCompanyId) {
             throw new TenantAccessDeniedException('Cross-tenant erisim engellendi');
         }
