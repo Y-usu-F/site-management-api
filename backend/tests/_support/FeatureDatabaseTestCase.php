@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Support;
 
 use App\Database\Seeds\RbacSeeder;
+use App\Support\RequestRuntime;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\Test\CIUnitTestCase;
 
@@ -33,6 +34,7 @@ abstract class FeatureDatabaseTestCase extends CIUnitTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        RequestRuntime::clearAuthContext();
 
         $request = service('request');
         if ($request instanceof IncomingRequest) {
@@ -51,5 +53,11 @@ abstract class FeatureDatabaseTestCase extends CIUnitTestCase
                 }
             }
         }
+    }
+
+    protected function tearDown(): void
+    {
+        RequestRuntime::clearAuthContext();
+        parent::tearDown();
     }
 }
