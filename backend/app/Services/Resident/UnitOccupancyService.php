@@ -9,6 +9,7 @@ use App\Exceptions\TenantAccessDeniedException;
 use App\Libraries\ListQuery;
 use App\Models\UnitModel;
 use App\Models\UnitOccupancyModel;
+use App\Support\RequestRuntime;
 use Config\Database;
 
 class UnitOccupancyService extends BaseService
@@ -168,6 +169,9 @@ class UnitOccupancyService extends BaseService
             throw new NotFoundApiException('Unit bulunamadi');
         }
         $contextCompanyId = (int) (service('request')->company_id ?? 0);
+        if ($contextCompanyId <= 0) {
+            $contextCompanyId = RequestRuntime::getCompanyId();
+        }
         if ($contextCompanyId > 0 && (int) $row['company_id'] !== $contextCompanyId) {
             throw new TenantAccessDeniedException('Cross-tenant erisim engellendi');
         }
@@ -187,6 +191,9 @@ class UnitOccupancyService extends BaseService
             throw new NotFoundApiException('Unit occupancy bulunamadi');
         }
         $contextCompanyId = (int) (service('request')->company_id ?? 0);
+        if ($contextCompanyId <= 0) {
+            $contextCompanyId = RequestRuntime::getCompanyId();
+        }
         if ($contextCompanyId > 0 && (int) $row['company_id'] !== $contextCompanyId) {
             throw new TenantAccessDeniedException('Cross-tenant erisim engellendi');
         }

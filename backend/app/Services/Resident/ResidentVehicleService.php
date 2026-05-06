@@ -9,6 +9,7 @@ use App\Exceptions\TenantAccessDeniedException;
 use App\Libraries\ListQuery;
 use App\Models\ResidentVehicleModel;
 use App\Models\UnitModel;
+use App\Support\RequestRuntime;
 use Config\Database;
 
 class ResidentVehicleService extends BaseService
@@ -140,6 +141,9 @@ class ResidentVehicleService extends BaseService
             throw new NotFoundApiException('Unit bulunamadi');
         }
         $contextCompanyId = (int) (service('request')->company_id ?? 0);
+        if ($contextCompanyId <= 0) {
+            $contextCompanyId = RequestRuntime::getCompanyId();
+        }
         if ($contextCompanyId > 0 && (int) $row['company_id'] !== $contextCompanyId) {
             throw new TenantAccessDeniedException('Cross-tenant erisim engellendi');
         }
@@ -170,6 +174,9 @@ class ResidentVehicleService extends BaseService
             throw new NotFoundApiException('Resident vehicle bulunamadi');
         }
         $contextCompanyId = (int) (service('request')->company_id ?? 0);
+        if ($contextCompanyId <= 0) {
+            $contextCompanyId = RequestRuntime::getCompanyId();
+        }
         if ($contextCompanyId > 0 && (int) $row['company_id'] !== $contextCompanyId) {
             throw new TenantAccessDeniedException('Cross-tenant erisim engellendi');
         }

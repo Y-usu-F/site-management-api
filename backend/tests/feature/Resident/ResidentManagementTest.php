@@ -239,6 +239,84 @@ final class ResidentManagementTest extends FeatureDatabaseTestCase
         $attackerDelete->assertStatus(403);
     }
 
+    public function testResidentVehicleCompanyIdOlmadanCalisirSpoofYokSayilirVeCrossTenantEngellenir(): void
+    {
+        [$ownerEmail, $ownerUserId] = $this->createUserWithRole('vehicle.owner.context@example.com', 'Password123!');
+        [$attackerEmail] = $this->createUserWithRole('vehicle.attacker.context@example.com', 'Password123!');
+        $ownerAccess = (string) $this->login($ownerEmail, 'Password123!')['data']['access_token'];
+        $attackerAccess = (string) $this->login($attackerEmail, 'Password123!')['data']['access_token'];
+
+        [$unitId] = $this->createUnitGraph($ownerAccess, 'R-SITE-VCTX');
+        $residentId = $this->createResident($ownerAccess, 'Vehicle', 'Owner');
+        $ownerCompanyId = $this->getUserCompanyId($ownerUserId);
+        $spoofedCompanyId = $this->createCompany('Vehicle Spoof Co');
+
+        $create = $this->withHeaders(['Authorization' => 'Bearer ' . $ownerAccess])->withBodyFormat('json')->post('/api/v1/resident-vehicles/', [
+            'company_id' => $spoofedCompanyId,
+            'resident_profile_id' => $residentId,
+            'unit_id' => $unitId,
+            'plate_number' => '34 xyz 123',
+            'status' => 'active',
+        ]);
+        $create->assertStatus(200);
+        $vehicle = json_decode($create->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data'];
+        $vehicleId = (int) $vehicle['id'];
+
+        $list = $this->withHeaders(['Authorization' => 'Bearer ' . $ownerAccess])->get('/api/v1/resident-vehicles?resident_profile_id=' . $residentId);
+        $list->assertStatus(200);
+        $listItems = json_decode($list->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['items'];
+        $this->assertContains($vehicleId, array_map(static fn (array $row): int => (int) $row['id'], $listItems));
+
+        $row = Database::connect()->table('resident_vehicles')->where('id', $vehicleId)->get()->getRowArray();
+        $this->assertIsArray($row);
+        $this->assertSame($ownerCompanyId, (int) ($row['company_id'] ?? 0));
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->get('/api/v1/resident-vehicles/' . $vehicleId)->assertStatus(403);
+        $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->withBodyFormat('json')
+            ->put('/api/v1/resident-vehicles/' . $vehicleId, ['color' => 'black'])->assertStatus(403);
+        $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->delete('/api/v1/resident-vehicles/' . $vehicleId)->assertStatus(403);
+    }
+
+    public function testUnitOccupancyCompanyIdOlmadanCalisirSpoofYokSayilirVeCrossTenantEngellenir(): void
+    {
+        [$ownerEmail, $ownerUserId] = $this->createUserWithRole('occupancy.owner.context@example.com', 'Password123!');
+        [$attackerEmail] = $this->createUserWithRole('occupancy.attacker.context@example.com', 'Password123!');
+        $ownerAccess = (string) $this->login($ownerEmail, 'Password123!')['data']['access_token'];
+        $attackerAccess = (string) $this->login($attackerEmail, 'Password123!')['data']['access_token'];
+
+        [$unitId] = $this->createUnitGraph($ownerAccess, 'R-SITE-OCTX');
+        $residentId = $this->createResident($ownerAccess, 'Occupancy', 'Owner');
+        $ownerCompanyId = $this->getUserCompanyId($ownerUserId);
+        $spoofedCompanyId = $this->createCompany('Occupancy Spoof Co');
+
+        $create = $this->withHeaders(['Authorization' => 'Bearer ' . $ownerAccess])->withBodyFormat('json')->post('/api/v1/unit-occupancies/', [
+            'company_id' => $spoofedCompanyId,
+            'unit_id' => $unitId,
+            'resident_profile_id' => $residentId,
+            'relationship_type' => 'tenant',
+            'start_date' => '2026-09-01',
+            'is_primary' => true,
+            'status' => 'active',
+        ]);
+        $create->assertStatus(200);
+        $occupancy = json_decode($create->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data'];
+        $occupancyId = (int) $occupancy['id'];
+
+        $list = $this->withHeaders(['Authorization' => 'Bearer ' . $ownerAccess])->get('/api/v1/unit-occupancies?unit_id=' . $unitId);
+        $list->assertStatus(200);
+        $listItems = json_decode($list->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data']['items'];
+        $this->assertContains($occupancyId, array_map(static fn (array $row): int => (int) $row['id'], $listItems));
+
+        $row = Database::connect()->table('unit_occupancies')->where('id', $occupancyId)->get()->getRowArray();
+        $this->assertIsArray($row);
+        $this->assertSame($ownerCompanyId, (int) ($row['company_id'] ?? 0));
+
+        $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->get('/api/v1/unit-occupancies/' . $occupancyId)->assertStatus(403);
+        $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->withBodyFormat('json')
+            ->put('/api/v1/unit-occupancies/' . $occupancyId, ['status' => 'passive'])->assertStatus(403);
+        $this->withHeaders(['Authorization' => 'Bearer ' . $attackerAccess])->delete('/api/v1/unit-occupancies/' . $occupancyId)->assertStatus(403);
+    }
+
     public function testEndDateStartDatetenKucukOlamaz(): void
     {
         [$email] = $this->createUserWithRole('occupancy.date@example.com', 'Password123!');
