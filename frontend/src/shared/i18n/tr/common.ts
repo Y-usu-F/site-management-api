@@ -1,0 +1,39 @@
+const common = {
+  loading: 'Yukleniyor...',
+  errorGeneric: 'Bir hata olustu.',
+  save: 'Kaydet',
+  cancel: 'Iptal',
+  delete: 'Sil',
+  edit: 'Duzenle',
+  create: 'Olustur',
+  update: 'Guncelle',
+  close: 'Kapat',
+  back: 'Geri',
+  confirm: 'Onayla',
+  logout: 'Cikis yap',
+  signedInAs: 'Giris yapan',
+  markAsRead: 'Okundu isaretle',
+  markAllRead: 'Tumunu okundu isaretle',
+  viewAll: 'Tumunu gor',
+  emptyTitle: 'Kayit bulunamadi',
+  emptyDescription: 'Goruntulenecek icerik yok.',
+  pleaseWait: 'Lutfen bekleyin...',
+  placeholderWiring: 'CRUD ve veri baglantisi sonraki adimlarda tamamlanacak.',
+  status: {
+    read: 'Okundu',
+    unread: 'Okunmadi',
+  },
+  pagination: {
+    prev: 'Onceki',
+    next: 'Sonraki',
+    page: 'Sayfa',
+    total: 'Toplam',
+  },
+  filters: {
+    all: 'Tum',
+    unread: 'Okunmamis',
+    read: 'Okunmus',
+  },
+} as const
+
+export default common

@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import App from '@/app/App.tsx'
 import { configureApiClient } from '@/shared/api/client'
 import { useAuthStore } from '@/features/auth/auth.store'
+import '@/shared/i18n'
 
 import './index.css'
 
