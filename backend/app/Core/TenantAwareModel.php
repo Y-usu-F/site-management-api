@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use App\Exceptions\TenantAccessDeniedException;
+use App\Support\RequestRuntime;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\Model;
@@ -63,6 +64,10 @@ abstract class TenantAwareModel extends Model
         $contextCompanyId = $this->resolveContextCompanyId(false);
         $payloadCompanyId = isset($data['data']['company_id']) ? (int) $data['data']['company_id'] : null;
         $userId = $request->user?->id ?? null;
+        if ($userId === null || (int) $userId <= 0) {
+            $runtimeUserId = RequestRuntime::getUserId();
+            $userId = $runtimeUserId > 0 ? $runtimeUserId : null;
+        }
 
         if ($this->requiresTenant) {
             $companyId = $contextCompanyId;
@@ -91,11 +96,19 @@ abstract class TenantAwareModel extends Model
         $request = service('request');
         if ($this->shouldEnforceTenant()) {
             $contextCompanyId = isset($request->company_id) ? (int) $request->company_id : 0;
+            if ($contextCompanyId <= 0) {
+                $contextCompanyId = RequestRuntime::getCompanyId();
+            }
             if ($contextCompanyId > 0) {
                 $this->resolveContextCompanyId();
             }
         }
-        $data['data']['updated_by'] = $request->user?->id ?? null;
+        $updatedBy = $request->user?->id ?? null;
+        if ($updatedBy === null || (int) $updatedBy <= 0) {
+            $runtimeUserId = RequestRuntime::getUserId();
+            $updatedBy = $runtimeUserId > 0 ? $runtimeUserId : null;
+        }
+        $data['data']['updated_by'] = $updatedBy;
         return $data;
     }
 
@@ -116,7 +129,7 @@ abstract class TenantAwareModel extends Model
     protected function isSuperAdminContext(): bool
     {
         $request = service('request');
-        $roles = is_array($request->roles ?? null) ? $request->roles : [];
+        $roles = is_array($request->roles ?? null) ? $request->roles : RequestRuntime::getRoles();
         $superAdminRole = config(TenantConfig::class)->superAdminRole;
         return in_array($superAdminRole, $roles, true);
     }
@@ -129,6 +142,9 @@ abstract class TenantAwareModel extends Model
 
         $request = service('request');
         $companyId = isset($request->company_id) ? (int) $request->company_id : 0;
+        if ($companyId <= 0) {
+            $companyId = RequestRuntime::getCompanyId();
+        }
         if ($companyId > 0) {
             return $companyId;
         }

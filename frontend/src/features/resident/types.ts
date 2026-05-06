@@ -2,6 +2,7 @@ import type { PaginatedResponse } from '@/shared/types/pagination'
 
 export interface ResidentProfile {
   id: number
+  company_id?: number | null
   user_id?: number | null
   first_name: string
   last_name: string
@@ -24,6 +25,7 @@ export interface ResidentListParams {
 export type ResidentListResponse = PaginatedResponse<ResidentProfile>
 
 export interface ResidentCreatePayload {
+  company_id: number
   first_name: string
   last_name: string
   identity_number?: string | null

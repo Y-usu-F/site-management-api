@@ -7,6 +7,7 @@ class ResidentProfileValidation
     public static function createRules(): array
     {
         return [
+            'company_id' => 'permit_empty|is_natural_no_zero',
             'user_id' => 'permit_empty|is_natural_no_zero',
             'first_name' => 'required|string|min_length[2]|max_length[100]',
             'last_name' => 'required|string|min_length[2]|max_length[100]',
