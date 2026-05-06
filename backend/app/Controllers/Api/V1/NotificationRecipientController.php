@@ -31,6 +31,15 @@ class NotificationRecipientController extends ApiController
         }
     }
 
+    public function markAllRead()
+    {
+        try {
+            return $this->ok('Notification recipient toplu mark-read tamamlandi', $this->service->markAllRead());
+        } catch (Throwable $e) {
+            return $this->failFromException($e);
+        }
+    }
+
     public function show($id = null)
     {
         try {

@@ -166,6 +166,120 @@ final class NotificationInfrastructureTest extends FeatureDatabaseTestCase
         $this->assertSame(0, (int) ($payloadB['data']['unread_count'] ?? 0));
     }
 
+    public function testNotificationRecipientsUnreadFilterSadeceUnreadDoner(): void
+    {
+        [$token, $userId] = $this->createTenantAdmin('n13@example.com');
+
+        $m1 = $this->createMessage($token, ['channel' => 'in_app', 'body' => 'u1', 'recipients' => [['user_id' => $userId]]]);
+        $m2 = $this->createMessage($token, ['channel' => 'in_app', 'body' => 'u2', 'recipients' => [['user_id' => $userId]]]);
+        $this->createMessage($token, ['channel' => 'email', 'body' => 'mail', 'recipients' => [['email' => 'x@example.com']]]);
+
+        $readRecipient = Database::connect()->table('notification_recipients')
+            ->where('message_id', (int) $m1['id'])
+            ->get(1)
+            ->getRowArray();
+        $this->assertIsArray($readRecipient);
+        $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+            ->post('/api/v1/notification-recipients/' . (int) $readRecipient['id'] . '/mark-read')
+            ->assertStatus(200);
+
+        $res = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+            ->get('/api/v1/notification-recipients?read_status=unread');
+        $res->assertStatus(200);
+        $payload = json_decode($res->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+        $items = $payload['data']['items'] ?? [];
+        $this->assertNotEmpty($items);
+        $messageIds = array_map(static fn (array $row): int => (int) ($row['message_id'] ?? 0), $items);
+        $this->assertContains((int) $m2['id'], $messageIds);
+        foreach ($items as $item) {
+            $this->assertNull($item['read_at'] ?? null);
+        }
+    }
+
+    public function testNotificationRecipientsReadFilterSadeceReadDoner(): void
+    {
+        [$token, $userId] = $this->createTenantAdmin('n14@example.com');
+
+        $m1 = $this->createMessage($token, ['channel' => 'in_app', 'body' => 'r1', 'recipients' => [['user_id' => $userId]]]);
+        $this->createMessage($token, ['channel' => 'in_app', 'body' => 'r2', 'recipients' => [['user_id' => $userId]]]);
+
+        $readRecipient = Database::connect()->table('notification_recipients')
+            ->where('message_id', (int) $m1['id'])
+            ->get(1)
+            ->getRowArray();
+        $this->assertIsArray($readRecipient);
+        $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+            ->post('/api/v1/notification-recipients/' . (int) $readRecipient['id'] . '/mark-read')
+            ->assertStatus(200);
+
+        $res = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+            ->get('/api/v1/notification-recipients?read_status=read');
+        $res->assertStatus(200);
+        $payload = json_decode($res->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+        $items = $payload['data']['items'] ?? [];
+        $this->assertNotEmpty($items);
+        $messageIds = array_map(static fn (array $row): int => (int) ($row['message_id'] ?? 0), $items);
+        $this->assertContains((int) $m1['id'], $messageIds);
+        foreach ($items as $item) {
+            $this->assertNotNull($item['read_at'] ?? null);
+        }
+    }
+
+    public function testNotificationRecipientsInvalidReadStatusValidationDoner(): void
+    {
+        [$token] = $this->createTenantAdmin('n15@example.com');
+
+        $res = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+            ->get('/api/v1/notification-recipients?read_status=invalid');
+        $res->assertStatus(422);
+        $payload = json_decode($res->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame('VALIDATION_ERROR', $payload['errors']['error_code'] ?? null);
+    }
+
+    public function testMarkAllReadSadeceCurrentUserUnreadInAppKayitlariniIsaretlerVeTekrardaSifirDoner(): void
+    {
+        [$token, $userId] = $this->createTenantAdmin('n16@example.com');
+        $otherUserId = $this->createSiblingUserForTenant('n16.sibling@example.com', $userId);
+        [$tokenOtherTenant, $otherTenantUserId] = $this->createTenantAdmin('n16.other@example.com');
+
+        $this->createMessage($token, ['channel' => 'in_app', 'body' => 'mine-1', 'recipients' => [['user_id' => $userId]]]);
+        $this->createMessage($token, ['channel' => 'in_app', 'body' => 'mine-2', 'recipients' => [['user_id' => $userId]]]);
+        $this->createMessage($token, ['channel' => 'in_app', 'body' => 'other-user', 'recipients' => [['user_id' => $otherUserId]]]);
+        $this->createMessage($token, ['channel' => 'email', 'body' => 'mail-user', 'recipients' => [['user_id' => $userId, 'email' => 'mine@example.com']]]);
+        $this->createMessage($tokenOtherTenant, ['channel' => 'in_app', 'body' => 'other-tenant', 'recipients' => [['user_id' => $otherTenantUserId]]]);
+
+        $first = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+            ->post('/api/v1/notification-recipients/mark-all-read');
+        $first->assertStatus(200);
+        $firstPayload = json_decode($first->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(2, (int) ($firstPayload['data']['marked_count'] ?? 0));
+
+        $second = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+            ->post('/api/v1/notification-recipients/mark-all-read');
+        $second->assertStatus(200);
+        $secondPayload = json_decode($second->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame(0, (int) ($secondPayload['data']['marked_count'] ?? 0));
+
+        $unreadMine = (int) Database::connect()->table('notification_recipients')
+            ->where('user_id', $userId)
+            ->where('read_at', null)
+            ->countAllResults();
+        // email kaydi unread kalabilir, in_app kayitlari okunmus olmalidir
+        $this->assertSame(1, $unreadMine);
+
+        $unreadOtherUser = (int) Database::connect()->table('notification_recipients')
+            ->where('user_id', $otherUserId)
+            ->where('read_at', null)
+            ->countAllResults();
+        $this->assertSame(1, $unreadOtherUser);
+
+        $unreadOtherTenant = (int) Database::connect()->table('notification_recipients')
+            ->where('company_id !=', (int) Database::connect()->table('users')->where('id', $userId)->get()->getRowArray()['company_id'])
+            ->where('read_at', null)
+            ->countAllResults();
+        $this->assertGreaterThanOrEqual(1, $unreadOtherTenant);
+    }
+
     public function testProviderDefaultTekilKalir(): void
     {
         [$token] = $this->createTenantAdmin('n9@example.com');

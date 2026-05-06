@@ -6,10 +6,12 @@ use App\Core\BaseService;
 use App\Exceptions\ConflictApiException;
 use App\Exceptions\NotFoundApiException;
 use App\Exceptions\TenantAccessDeniedException;
+use App\Exceptions\ValidationApiException;
 use App\Libraries\ListQuery;
 use App\Models\NotificationMessageModel;
 use App\Models\NotificationRecipientModel;
 use App\Support\RequestRuntime;
+use CodeIgniter\Database\BaseBuilder;
 use Config\Database;
 
 class NotificationRecipientService extends BaseService
@@ -24,12 +26,44 @@ class NotificationRecipientService extends BaseService
     public function list(array $query): array
     {
         $q = ListQuery::normalize($query, ['sortable' => ['id', 'status', 'created_at'], 'filterable' => ['message_id', 'status']]);
-        $b = $this->model->builder()->select('*')->where('deleted_at', null);
-        foreach ($q['filters'] as $f => $v) {
-            $b->where($f, $v);
+        $readStatus = isset($query['read_status']) ? strtolower(trim((string) $query['read_status'])) : null;
+        if ($readStatus !== null && ! in_array($readStatus, ['unread', 'read'], true)) {
+            throw new ValidationApiException('Dogrulama hatasi', [
+                'read_status' => 'read_status sadece unread veya read olabilir',
+            ]);
         }
+
+        $companyId = $this->resolveCompanyId();
+        $userId = $this->resolveUserId();
+        $residentProfileId = $this->resolveResidentProfileId();
+
+        $b = $this->model->builder()
+            ->from('notification_recipients nr')
+            ->select('nr.*')
+            ->where('nr.deleted_at', null)
+            ->where('nr.company_id', $companyId)
+            ->whereIn('nr.message_id', static function (BaseBuilder $sub) use ($companyId): void {
+                $sub->select('id')
+                    ->from('notification_messages')
+                    ->where('company_id', $companyId)
+                    ->where('deleted_at', null)
+                    ->where('channel', 'in_app');
+            });
+
+        $this->applyRecipientScope($b, $userId, $residentProfileId);
+
+        foreach ($q['filters'] as $f => $v) {
+            $b->where('nr.' . $f, $v);
+        }
+
+        if ($readStatus === 'unread') {
+            $b->where('nr.read_at', null);
+        } elseif ($readStatus === 'read') {
+            $b->where('nr.read_at IS NOT NULL', null, false);
+        }
+
         $t = (int) $b->countAllResults(false);
-        $i = $b->orderBy($q['sort'], $q['direction'])->limit($q['per_page'], ($q['page'] - 1) * $q['per_page'])->get()->getResultArray();
+        $i = $b->orderBy('nr.' . $q['sort'], $q['direction'])->limit($q['per_page'], ($q['page'] - 1) * $q['per_page'])->get()->getResultArray();
         return ListQuery::envelope($q['page'], $q['per_page'], $t, $i);
     }
 
@@ -96,6 +130,45 @@ class NotificationRecipientService extends BaseService
         return $n;
     }
 
+    /**
+     * @return array{marked_count:int}
+     */
+    public function markAllRead(): array
+    {
+        $companyId = $this->resolveCompanyId();
+        $userId = $this->resolveUserId();
+        $residentProfileId = $this->resolveResidentProfileId();
+        if ($companyId <= 0 || ($userId <= 0 && $residentProfileId <= 0)) {
+            return ['marked_count' => 0];
+        }
+
+        $db = Database::connect();
+        $builder = $db->table('notification_recipients nr')
+            ->where('nr.deleted_at', null)
+            ->where('nr.company_id', $companyId)
+            ->where('nr.read_at', null)
+            ->whereIn('nr.message_id', static function (BaseBuilder $sub) use ($companyId): void {
+                $sub->select('id')
+                    ->from('notification_messages')
+                    ->where('company_id', $companyId)
+                    ->where('deleted_at', null)
+                    ->where('channel', 'in_app');
+            });
+        $this->applyRecipientScope($builder, $userId, $residentProfileId);
+
+        $rows = $builder->select('nr.id')->get()->getResultArray();
+        if ($rows === []) {
+            return ['marked_count' => 0];
+        }
+
+        $ids = array_map(static fn (array $row): int => (int) $row['id'], $rows);
+        $db->table('notification_recipients')
+            ->whereIn('id', $ids)
+            ->update(['read_at' => date('Y-m-d H:i:s')]);
+
+        return ['marked_count' => count($ids)];
+    }
+
     private function assertAccessible(int $id): void
     {
         $row = Database::connect()->table('notification_recipients')->where('id', $id)->get()->getRowArray();
@@ -132,5 +205,22 @@ class NotificationRecipientService extends BaseService
     {
         $request = service('request');
         return (int) ($request->resident_profile_id ?? 0);
+    }
+
+    private function applyRecipientScope(BaseBuilder $builder, int $userId, int $residentProfileId): void
+    {
+        if ($userId <= 0 && $residentProfileId <= 0) {
+            $builder->where('1 = 0', null, false);
+            return;
+        }
+
+        $builder->groupStart();
+        if ($userId > 0) {
+            $builder->orWhere('nr.user_id', $userId);
+        }
+        if ($residentProfileId > 0) {
+            $builder->orWhere('nr.resident_profile_id', $residentProfileId);
+        }
+        $builder->groupEnd();
     }
 }
