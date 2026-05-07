@@ -15,4 +15,24 @@ export interface DashboardAnalytics {
     active_occupancy_count: number
     unit_count: number
   }
+  trends: {
+    payments_last_30_days: Array<{
+      date: string
+      total: number
+    }>
+    service_requests_last_30_days: Array<{
+      date: string
+      count: number
+    }>
+  }
+  distributions: {
+    service_request_statuses: Array<{
+      status: string
+      count: number
+    }>
+    work_order_statuses: Array<{
+      status: string
+      count: number
+    }>
+  }
 }

@@ -1,9 +1,10 @@
 import { FinanceStatCard } from '@/features/finance/components/FinanceStatCard'
 import { useDashboardAnalyticsQuery } from '@/features/analytics/hooks/useDashboardAnalytics'
+import { AnalyticsCharts } from '@/features/dashboard/components/AnalyticsCharts'
 import { useTranslation } from 'react-i18next'
 
 export function DashboardHomePage() {
-  const { t } = useTranslation(['navigation', 'common', 'finance', 'operations', 'residents'])
+  const { t } = useTranslation(['navigation', 'common', 'finance', 'operations', 'residents', 'analytics'])
   const analyticsQuery = useDashboardAnalyticsQuery()
 
   if (analyticsQuery.isLoading) {
@@ -85,6 +86,20 @@ export function DashboardHomePage() {
           description={t('navigation.residents')}
         />
       </div>
+
+      {analytics ? (
+        <AnalyticsCharts
+          analytics={analytics}
+          labels={{
+            paymentsTrend: t('analytics.trends.payments'),
+            serviceRequestsTrend: t('analytics.trends.serviceRequests'),
+            serviceRequestDistribution: t('analytics.distributions.serviceRequests'),
+            workOrderDistribution: t('analytics.distributions.workOrders'),
+            totalAxis: t('analytics.axes.total'),
+            countAxis: t('analytics.axes.count'),
+          }}
+        />
+      ) : null}
     </div>
   )
 }
