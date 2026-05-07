@@ -207,6 +207,7 @@ $routes->group('api/v1', ['filter' => ['request-id', 'request-context']], static
     });
 
     $routes->get('operations/summary', 'Api\V1\OperationsSummaryController::show', ['filter' => ['auth-token', 'active-user', 'permission:service_request.list']]);
+    $routes->get('analytics/dashboard', 'Api\V1\DashboardAnalyticsController::show', ['filter' => ['auth-token', 'active-user', 'permission:auth.me.view']]);
 
     $routes->group('service-requests', ['filter' => ['auth-token', 'active-user']], static function ($routes) {
         $routes->get('/', 'Api\V1\ServiceRequestController::index', ['filter' => ['auth-token', 'active-user', 'permission:service_request.list']]);
