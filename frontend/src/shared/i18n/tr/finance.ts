@@ -11,6 +11,10 @@ const finance = {
     duePeriodsDescription: 'Donem yonetimi',
     dueDefinitionsTitle: 'Aidat tanimlari',
     dueDefinitionsDescription: 'Aidat/borc tanimlari.',
+    dashboardDueTotalTitle: 'Toplam tahakkuk',
+    dashboardPaidTotalTitle: 'Toplam odeme',
+    dashboardUnpaidTotalTitle: 'Kalan borc',
+    dashboardPaymentCountTitle: 'Odeme adedi',
   },
 } as const
 

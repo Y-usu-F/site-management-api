@@ -2,6 +2,7 @@ const navigation = {
   appName: 'Site yonetimi',
   dashboard: 'Panel',
   overview: 'Genel bakis',
+  analytics: 'Analitik',
   site: 'Site',
   sites: 'Siteler',
   residents: 'Sakinler',
