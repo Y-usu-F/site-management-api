@@ -1,8 +1,8 @@
 const analytics = {
   title: 'Analitik',
   trends: {
-    payments: 'Son 30 gun odeme trendi',
-    serviceRequests: 'Son 30 gun servis talebi trendi',
+    payments: 'Odeme trendi',
+    serviceRequests: 'Servis talebi trendi',
   },
   distributions: {
     serviceRequests: 'Servis talebi durum dagilimi',
@@ -13,6 +13,11 @@ const analytics = {
     total: 'Toplam',
     count: 'Adet',
     status: 'Durum',
+  },
+  range: {
+    last7Days: 'Son 7 gun',
+    last30Days: 'Son 30 gun',
+    last90Days: 'Son 90 gun',
   },
 } as const
 

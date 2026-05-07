@@ -1,11 +1,14 @@
 import { FinanceStatCard } from '@/features/finance/components/FinanceStatCard'
 import { useDashboardAnalyticsQuery } from '@/features/analytics/hooks/useDashboardAnalytics'
 import { AnalyticsCharts } from '@/features/dashboard/components/AnalyticsCharts'
+import type { AnalyticsRange } from '@/features/analytics/api/dashboardAnalyticsApi'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export function DashboardHomePage() {
   const { t } = useTranslation(['navigation', 'common', 'finance', 'operations', 'residents', 'analytics'])
-  const analyticsQuery = useDashboardAnalyticsQuery()
+  const [range, setRange] = useState<AnalyticsRange>('30d')
+  const analyticsQuery = useDashboardAnalyticsQuery(range)
 
   if (analyticsQuery.isLoading) {
     return <div className="text-sm text-zinc-500">{t('common.loading')}</div>
@@ -22,6 +25,28 @@ export function DashboardHomePage() {
       <div>
         <h1 className="text-xl font-semibold">{t('navigation.dashboard')}</h1>
         <p className="text-sm text-zinc-500">{t('navigation.analytics')}</p>
+      </div>
+
+      <div className="inline-flex rounded-lg border border-zinc-300 p-1 dark:border-zinc-700">
+        {(['7d', '30d', '90d'] as const).map((value) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setRange(value)}
+            className={[
+              'rounded-md px-3 py-1.5 text-xs font-medium transition',
+              range === value
+                ? 'bg-violet-600 text-white'
+                : 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800',
+            ].join(' ')}
+          >
+            {value === '7d'
+              ? t('analytics.range.last7Days')
+              : value === '30d'
+                ? t('analytics.range.last30Days')
+                : t('analytics.range.last90Days')}
+          </button>
+        ))}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
