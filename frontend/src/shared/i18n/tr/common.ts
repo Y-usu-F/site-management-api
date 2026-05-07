@@ -9,6 +9,7 @@ const common = {
   update: 'Guncelle',
   close: 'Kapat',
   back: 'Geri',
+  search: 'Ara...',
   confirm: 'Onayla',
   logout: 'Cikis yap',
   signedInAs: 'Giris yapan',

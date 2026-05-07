@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import {
   createResidentVehicle,
@@ -29,6 +30,7 @@ function emptyPayload(residentId: number): VehiclePayload {
 }
 
 export function ResidentVehiclesPage() {
+  const { t } = useTranslation(['residents', 'common'])
   const { residentId: raw } = useParams<{ residentId: string }>()
   const residentId = parsePositiveInt(raw)
   const toast = useToast()
@@ -95,7 +97,7 @@ export function ResidentVehiclesPage() {
   })
 
   if (!canList) return <PermissionDeniedNotice permission="resident_vehicle.list" />
-  if (residentId === null) return <p className="text-sm text-zinc-600">Invalid resident id.</p>
+  if (residentId === null) return <p className="text-sm text-zinc-600">{t('residents.common.invalidResidentId')}</p>
 
   const rows = vehiclesQ.data?.items ?? []
   const isSubmitting = createMut.isPending || updateMut.isPending
@@ -118,12 +120,12 @@ export function ResidentVehiclesPage() {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to={`/residents/${residentId}`} className="hover:text-violet-600">
-          Resident {residentId}
+          {t('residents.common.resident')} {residentId}
         </Link>
         <span className="mx-1">/</span>
-        <span>Vehicles</span>
+        <span>{t('residents.common.vehicles')}</span>
       </nav>
-      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">Resident vehicles</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('residents.common.vehicles')}</h1>
 
       {(canCreate || (canUpdate && editId !== null)) && (
         <form
@@ -194,7 +196,7 @@ export function ResidentVehiclesPage() {
               disabled={isSubmitting}
               className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
-              {isSubmitting ? 'Saving…' : editId === null ? 'Create vehicle' : 'Save vehicle'}
+              {isSubmitting ? t('residents.common.saving') : editId === null ? 'Arac olustur' : t('residents.common.save')}
             </button>
             {editId !== null ? (
               <button
@@ -206,7 +208,7 @@ export function ResidentVehiclesPage() {
                   setForm(emptyPayload(residentId))
                 }}
               >
-                Cancel edit
+                {t('residents.common.cancelEdit')}
               </button>
             ) : null}
           </div>
@@ -214,7 +216,7 @@ export function ResidentVehiclesPage() {
       )}
 
       {!vehiclesQ.isPending && !vehiclesQ.isError && rows.length === 0 ? (
-        <EmptyState title="No vehicles yet" description="Add resident vehicle records." />
+        <EmptyState title={t('common.emptyTitle')} description={t('common.emptyDescription')} />
       ) : null}
 
       {rows.length > 0 ? (

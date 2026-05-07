@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import type { Site } from '@/features/site/types'
 
@@ -24,6 +25,7 @@ export function SiteForm({
   serverFieldErrors = {},
   onSubmit,
 }: SiteFormProps) {
+  const { t } = useTranslation(['site'])
   const [name, setName] = useState(defaultValues?.name ?? '')
   const [code, setCode] = useState(defaultValues?.code ?? '')
   const [address, setAddress] = useState(defaultValues?.address ?? '')
@@ -51,7 +53,7 @@ export function SiteForm({
     <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
       <div>
         <label htmlFor="site-name" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Name
+          {t('site.form.name')}
         </label>
         <input
           id="site-name"
@@ -64,7 +66,7 @@ export function SiteForm({
       </div>
       <div>
         <label htmlFor="site-code" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Code
+          {t('site.form.code')}
         </label>
         <input
           id="site-code"
@@ -77,7 +79,7 @@ export function SiteForm({
       </div>
       <div>
         <label htmlFor="site-address" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Address
+          {t('site.form.address')}
         </label>
         <textarea
           id="site-address"
@@ -90,7 +92,7 @@ export function SiteForm({
       </div>
       <div>
         <label htmlFor="site-status" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Status
+          {t('site.common.status')}
         </label>
         <select
           id="site-status"
@@ -112,7 +114,7 @@ export function SiteForm({
           disabled={isSubmitting}
           className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
-          {isSubmitting ? 'Saving…' : submitLabel}
+          {isSubmitting ? t('site.form.saving') : submitLabel}
         </button>
       </div>
     </form>

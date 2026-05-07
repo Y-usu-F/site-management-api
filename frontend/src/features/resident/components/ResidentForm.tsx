@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import type { ResidentProfile } from '@/features/resident/types'
 
@@ -26,6 +27,7 @@ export function ResidentForm({
   serverFieldErrors = {},
   onSubmit,
 }: ResidentFormProps) {
+  const { t } = useTranslation(['residents'])
   const [firstName, setFirstName] = useState(defaultValues?.first_name ?? '')
   const [lastName, setLastName] = useState(defaultValues?.last_name ?? '')
   const [identityNumber, setIdentityNumber] = useState(defaultValues?.identity_number ?? '')
@@ -60,7 +62,7 @@ export function ResidentForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="resident-first-name" className="block text-sm font-medium">
-            First name
+            {t('residents.form.firstName')}
           </label>
           <input
             id="resident-first-name"
@@ -72,7 +74,7 @@ export function ResidentForm({
         </div>
         <div>
           <label htmlFor="resident-last-name" className="block text-sm font-medium">
-            Last name
+            {t('residents.form.lastName')}
           </label>
           <input
             id="resident-last-name"
@@ -87,7 +89,7 @@ export function ResidentForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="resident-identity-number" className="block text-sm font-medium">
-            Identity number
+            {t('residents.form.identityNumber')}
           </label>
           <input
             id="resident-identity-number"
@@ -101,7 +103,7 @@ export function ResidentForm({
         </div>
         <div>
           <label htmlFor="resident-phone" className="block text-sm font-medium">
-            Phone
+            {t('residents.form.phone')}
           </label>
           <input
             id="resident-phone"
@@ -116,7 +118,7 @@ export function ResidentForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="resident-email" className="block text-sm font-medium">
-            Email
+            {t('residents.form.email')}
           </label>
           <input
             id="resident-email"
@@ -128,7 +130,7 @@ export function ResidentForm({
         </div>
         <div>
           <label htmlFor="resident-status" className="block text-sm font-medium">
-            Status
+            {t('residents.form.status')}
           </label>
           <select
             id="resident-status"
@@ -151,7 +153,7 @@ export function ResidentForm({
         disabled={isSubmitting}
         className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
-        {isSubmitting ? 'Saving…' : submitLabel}
+        {isSubmitting ? t('residents.common.saving') : submitLabel}
       </button>
     </form>
   )

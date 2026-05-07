@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { FloorForm } from '@/features/site/components/FloorForm'
@@ -15,6 +16,7 @@ import { parsePositiveInt } from '@/shared/lib/parseRouteId'
 import { useEffectiveCan } from '@/shared/hooks/useEffectiveCan'
 
 export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
+  const { t } = useTranslation(['site', 'common'])
   const { blockId: blockIdRaw, id: floorIdRaw } = useParams<{
     blockId?: string
     id?: string
@@ -50,19 +52,19 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'create' && blockId === null) {
     return (
       <p className="text-sm">
-        Invalid block. <Link to="/sites">Sites</Link>
+        {t('site.common.invalidId')}. <Link to="/sites">{t('site.common.sites')}</Link>
       </p>
     )
   }
 
   if (mode === 'create' && loadingBlock) {
-    return <p className="text-sm">Loading…</p>
+    return <p className="text-sm">{t('site.common.loading')}</p>
   }
 
   if (mode === 'create' && !block) {
     return (
       <p className="text-sm">
-        Block not found. <Link to="/sites">Sites</Link>
+        {t('site.common.notFound')}. <Link to="/sites">{t('site.common.sites')}</Link>
       </p>
     )
   }
@@ -70,19 +72,19 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'edit' && floorId === null) {
     return (
       <p className="text-sm">
-        Invalid floor. <Link to="/sites">Sites</Link>
+        {t('site.common.invalidId')}. <Link to="/sites">{t('site.common.sites')}</Link>
       </p>
     )
   }
 
   if (mode === 'edit' && loadingFloor) {
-    return <p className="text-sm">Loading…</p>
+    return <p className="text-sm">{t('site.common.loading')}</p>
   }
 
   if (mode === 'edit' && !existing) {
     return (
       <p className="text-sm">
-        Floor not found. <Link to="/sites">Sites</Link>
+        {t('site.common.notFound')}. <Link to="/sites">{t('site.common.sites')}</Link>
       </p>
     )
   }
@@ -96,19 +98,19 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">Sites</Link>
+        <Link to="/sites">{t('site.common.sites')}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${effectiveSiteId}`}>Site</Link>
+        <Link to={`/sites/${effectiveSiteId}`}>{t('site.common.sites')}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/blocks/${effectiveBlockId}/floors`}>Floors</Link>
+        <Link to={`/blocks/${effectiveBlockId}/floors`}>{t('site.common.floors')}</Link>
         <span className="mx-1">/</span>
-        <span>{mode === 'create' ? 'New' : 'Edit'}</span>
+        <span>{mode === 'create' ? t('site.common.new') : t('site.common.edit')}</span>
       </nav>
-      <h1 className="text-2xl font-semibold">{mode === 'create' ? 'New floor' : 'Edit floor'}</h1>
+      <h1 className="text-2xl font-semibold">{mode === 'create' ? `${t('site.common.new')} ${t('site.common.floors')}` : `${t('site.common.edit')} ${t('site.common.floors')}`}</h1>
 
       {mutationError ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          {getErrorMessage(mutationError, 'Failed')}
+          {getErrorMessage(mutationError, t('site.common.requestFailed'))}
         </div>
       ) : null}
 
@@ -116,7 +118,7 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
         siteId={effectiveSiteId}
         blockId={effectiveBlockId}
         defaultValues={existing ?? undefined}
-        submitLabel={mode === 'create' ? 'Create floor' : 'Save'}
+        submitLabel={mode === 'create' ? t('common.create') : t('common.save')}
         isSubmitting={isSubmitting}
         serverFieldErrors={serverErrors}
         onSubmit={(values) => {
@@ -133,12 +135,12 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
               },
               {
                 onSuccess: (f) => {
-                  toast.success('Floor created.')
+                  toast.success(`${t('site.common.floors')} ${t('common.create')}`)
                   navigate(`/floors/${f.id}`)
                 },
                 onError: (e) => {
                   setServerErrors(extractValidationErrors(e))
-                  toast.error(getErrorMessage(e, 'Could not create floor.'))
+                  toast.error(getErrorMessage(e, t('common.errorGeneric')))
                 },
               },
             )
@@ -157,12 +159,12 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
               },
               {
                 onSuccess: (f) => {
-                  toast.success('Floor updated.')
+                  toast.success(`${t('site.common.floors')} ${t('common.update')}`)
                   navigate(`/floors/${f.id}`)
                 },
                 onError: (e) => {
                   setServerErrors(extractValidationErrors(e))
-                  toast.error(getErrorMessage(e, 'Could not update floor.'))
+                  toast.error(getErrorMessage(e, t('common.errorGeneric')))
                 },
               },
             )

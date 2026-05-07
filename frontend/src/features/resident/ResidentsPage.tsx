@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { useDeleteResidentMutation } from '@/features/resident/hooks/useResidentMutations'
 import { useResidentsQuery } from '@/features/resident/hooks/useResidentsQuery'
@@ -15,6 +16,7 @@ import { getErrorMessage } from '@/shared/lib/extractValidationErrors'
 const SEARCH_DEBOUNCE_MS = 350
 
 export function ResidentsPage() {
+  const { t } = useTranslation(['residents', 'common'])
   const toast = useToast()
   const canList = useEffectiveCan('resident.list')
   const canCreate = useEffectiveCan('resident.create')
@@ -61,17 +63,17 @@ export function ResidentsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Residents
+            {t('residents.common.residents')}
           </h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            {total} resident(s)
+            {total} {t('residents.common.resident')}
             {debouncedSearch ? ` matching "${debouncedSearch}"` : ''}.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="search"
-            placeholder="Search by name or identity…"
+            placeholder={t('common.search')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none ring-violet-500 focus:ring-2 sm:w-72 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50"
@@ -81,7 +83,7 @@ export function ResidentsPage() {
               to="/residents/new"
               className="inline-flex justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
             >
-              New resident
+              {t('residents.form.createResident')}
             </Link>
           ) : null}
         </div>
@@ -89,22 +91,22 @@ export function ResidentsPage() {
 
       {isPending ? (
         <div className="rounded-xl border border-zinc-200 bg-white p-12 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-          Loading residents…
+          {t('residents.common.loading')}
         </div>
       ) : null}
 
       {isError ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/40">
-          <p className="font-medium text-red-900 dark:text-red-100">Could not load residents</p>
+          <p className="font-medium text-red-900 dark:text-red-100">{t('common.errorGeneric')}</p>
           <p className="mt-2 text-sm text-red-800 dark:text-red-200">
-            {error instanceof Error ? error.message : 'Unknown error'}
+            {error instanceof Error ? error.message : t('common.errorGeneric')}
           </p>
         </div>
       ) : null}
 
       {!isPending && !isError && residents.length === 0 ? (
         <EmptyState
-          title="No residents yet"
+          title={t('common.emptyTitle')}
           description={
             canCreate ? (
               <>
@@ -127,25 +129,25 @@ export function ResidentsPage() {
               <thead className="bg-zinc-50 dark:bg-zinc-800/80">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Name
+                    {t('residents.form.firstName')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Identity
+                    {t('residents.common.identityNumber')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Phone
+                    {t('residents.common.phone')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Email
+                    {t('residents.common.email')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Status
+                    {t('residents.common.status')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Updated
+                    {t('residents.common.updated')}
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Actions
+                    {t('residents.common.actions')}
                   </th>
                 </tr>
               </thead>
@@ -171,7 +173,7 @@ export function ResidentsPage() {
                     <td className="px-4 py-3 text-right text-sm">
                       <div className="flex justify-end gap-3">
                         <Link to={`/residents/${resident.id}`} className="font-medium text-violet-600 hover:underline">
-                          Open
+                          {t('residents.common.open')}
                         </Link>
                         {canDelete ? (
                           <button
@@ -179,7 +181,7 @@ export function ResidentsPage() {
                             onClick={() => setSelectedDeleteId(resident.id)}
                             className="font-medium text-red-600 hover:underline"
                           >
-                            Delete
+                            {t('residents.common.delete')}
                           </button>
                         ) : null}
                       </div>
@@ -202,7 +204,7 @@ export function ResidentsPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="rounded-lg border border-zinc-300 px-3 py-1 text-xs font-medium disabled:opacity-40 dark:border-zinc-600"
                 >
-                  Previous
+                  {t('common.pagination.prev')}
                 </button>
                 <button
                   type="button"
@@ -210,7 +212,7 @@ export function ResidentsPage() {
                   onClick={() => setPage((p) => p + 1)}
                   className="rounded-lg border border-zinc-300 px-3 py-1 text-xs font-medium disabled:opacity-40 dark:border-zinc-600"
                 >
-                  Next
+                  {t('common.pagination.next')}
                 </button>
               </div>
             </div>
@@ -220,13 +222,13 @@ export function ResidentsPage() {
 
       <ConfirmDialog
         isOpen={selectedDeleteId !== null}
-        title="Delete resident"
+        title={t('residents.common.delete')}
         description={
           deletingResident
             ? `Delete "${deletingResident.first_name} ${deletingResident.last_name}"?`
             : 'Delete selected resident?'
         }
-        confirmText="Delete"
+        confirmText={t('residents.common.delete')}
         cancelText="Cancel"
         variant="danger"
         isLoading={deleteMutation.isPending}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { useBlockQuery } from '@/features/site/hooks/useBlockQuery'
@@ -14,6 +15,7 @@ import { parsePositiveInt } from '@/shared/lib/parseRouteId'
 import { useEffectiveCan } from '@/shared/hooks/useEffectiveCan'
 
 export function FloorDetailPage() {
+  const { t } = useTranslation(['site', 'common'])
   const { id: idRaw } = useParams<{ id: string }>()
   const id = parsePositiveInt(idRaw)
   const navigate = useNavigate()
@@ -42,17 +44,17 @@ export function FloorDetailPage() {
   }
 
   if (id === null) {
-    return <p className="text-sm">Invalid floor id.</p>
+    return <p className="text-sm">{t('site.common.invalidId')}</p>
   }
 
   if (isPending) {
-    return <p className="text-sm">Loading…</p>
+    return <p className="text-sm">{t('site.common.loading')}</p>
   }
 
   if (isError || !data) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-        {error instanceof Error ? error.message : 'Not found'}
+        {error instanceof Error ? error.message : t('site.common.notFound')}
       </div>
     )
   }
@@ -62,10 +64,10 @@ export function FloorDetailPage() {
   const handleDelete = () => {
     deleteMutation.mutate(floor.id, {
       onSuccess: () => {
-        toast.success('Floor deleted.')
+        toast.success(`${t('site.common.floors')} ${t('common.delete')}`)
         navigate(`/blocks/${floor.block_id}/floors`)
       },
-      onError: (err) => toast.error(getErrorMessage(err, 'Could not delete floor.')),
+      onError: (err) => toast.error(getErrorMessage(err, t('common.errorGeneric'))),
     })
   }
 
@@ -74,15 +76,15 @@ export function FloorDetailPage() {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">Sites</Link>
+        <Link to="/sites">{t('site.common.sites')}</Link>
         <span className="mx-1">/</span>
         <Link to={`/sites/${floor.site_id}`}>{site?.code ?? floor.site_id}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${floor.site_id}/blocks`}>Blocks</Link>
+        <Link to={`/sites/${floor.site_id}/blocks`}>{t('site.common.blocks')}</Link>
         <span className="mx-1">/</span>
         <Link to={`/blocks/${floor.block_id}`}>{block?.code ?? floor.block_id}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/blocks/${floor.block_id}/floors`}>Floors</Link>
+        <Link to={`/blocks/${floor.block_id}/floors`}>{t('site.common.floors')}</Link>
         <span className="mx-1">/</span>
         <span>{floor.number}</span>
       </nav>
@@ -90,7 +92,7 @@ export function FloorDetailPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">
-            Floor {floor.number}
+            {t('site.common.floors')} {floor.number}
             {floor.label?.trim() ? ` · ${floor.label}` : ''}
           </h1>
           <p className="text-sm text-zinc-500">{floor.status}</p>
@@ -101,7 +103,7 @@ export function FloorDetailPage() {
               to={`/floors/${floor.id}/units`}
               className="rounded-lg border px-3 py-2 text-sm dark:border-zinc-600"
             >
-              Units
+              {t('site.common.units')}
             </Link>
           ) : null}
           {canUpdate ? (
@@ -109,7 +111,7 @@ export function FloorDetailPage() {
               to={`/floors/${floor.id}/edit`}
               className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white"
             >
-              Edit
+              {t('site.common.edit')}
             </Link>
           ) : null}
           {canDelete ? (
@@ -119,7 +121,7 @@ export function FloorDetailPage() {
               disabled={deleteMutation.isPending}
               className="rounded-lg border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50"
             >
-              {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
+              {deleteMutation.isPending ? t('site.common.deleting') : t('site.common.delete')}
             </button>
           ) : null}
         </div>
@@ -133,20 +135,20 @@ export function FloorDetailPage() {
 
       <dl className="grid max-w-xl gap-4 rounded-xl border p-6 dark:border-zinc-800">
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">Sort order</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.form.sortOrder')}</dt>
           <dd className="mt-1 text-sm">{floor.sort_order ?? '—'}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">Updated</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.common.updated')}</dt>
           <dd className="mt-1 text-sm">{formatDateTime(floor.updated_at ?? floor.created_at)}</dd>
         </div>
       </dl>
       <ConfirmDialog
         isOpen={confirmOpen}
-        title="Delete floor"
-        description={`Delete floor #${floor.number}? Units on this floor must be removed first.`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        title={t('site.common.delete')}
+        description={t('common.confirm')}
+        confirmText={t('site.common.delete')}
+        cancelText={t('common.cancel')}
         variant="danger"
         isLoading={deleteMutation.isPending}
         onClose={() => setConfirmOpen(false)}

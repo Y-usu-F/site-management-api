@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { bulkDeleteSites, downloadSiteTemplate, exportSitesExcel, importSitesExcel } from '@/features/site/api/siteApi'
@@ -20,6 +21,7 @@ import { useSelection } from '@/shared/hooks/useSelection'
 const SEARCH_DEBOUNCE_MS = 350
 
 export function SitesPage() {
+  const { t } = useTranslation(['site', 'common'])
   const toast = useToast()
   const qc = useQueryClient()
   const canList = useEffectiveCan('site.list')
@@ -131,7 +133,7 @@ export function SitesPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Sites
+            {t('site.common.sites')}
           </h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
             {total} site(s)
@@ -141,12 +143,12 @@ export function SitesPage() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="w-full sm:w-72">
             <label htmlFor="site-search" className="sr-only">
-              Search sites
+              {t('common.search')}
             </label>
             <input
               id="site-search"
               type="search"
-              placeholder="Search by name or code…"
+              placeholder={t('common.search')}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none ring-violet-500 focus:ring-2 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50"
@@ -157,7 +159,7 @@ export function SitesPage() {
               to="/sites/new"
               className="inline-flex justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
             >
-              New site
+              {t('site.common.new')}
             </Link>
           ) : null}
         </div>
@@ -178,22 +180,22 @@ export function SitesPage() {
 
       {isPending ? (
         <div className="rounded-xl border border-zinc-200 bg-white p-12 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-          Loading sites…
+          {t('site.common.loading')}
         </div>
       ) : null}
 
       {isError ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/40">
-          <p className="font-medium text-red-900 dark:text-red-100">Could not load sites</p>
+          <p className="font-medium text-red-900 dark:text-red-100">{t('common.errorGeneric')}</p>
           <p className="mt-2 text-sm text-red-800 dark:text-red-200">
-            {error instanceof Error ? error.message : 'Unknown error'}
+            {error instanceof Error ? error.message : t('common.errorGeneric')}
           </p>
         </div>
       ) : null}
 
       {!isPending && !isError && items.length === 0 ? (
         <EmptyState
-          title="No sites yet"
+          title={t('common.emptyTitle')}
           description={
             canCreate ? (
               <>
@@ -224,22 +226,22 @@ export function SitesPage() {
                     />
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Code
+                    {t('site.form.code')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Name
+                    {t('site.form.name')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Address
+                    {t('site.form.address')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Status
+                    {t('site.common.status')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Updated
+                    {t('site.common.updated')}
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Actions
+                    {t('site.common.actions')}
                   </th>
                 </tr>
               </thead>
@@ -276,7 +278,7 @@ export function SitesPage() {
                         to={`/sites/${site.id}`}
                         className="font-medium text-violet-600 hover:underline"
                       >
-                        Open
+                        {t('site.common.open')}
                       </Link>
                     </td>
                   </tr>
@@ -297,7 +299,7 @@ export function SitesPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="rounded-lg border border-zinc-300 px-3 py-1 text-xs font-medium disabled:opacity-40 dark:border-zinc-600"
                 >
-                  Previous
+                  {t('common.pagination.prev')}
                 </button>
                 <button
                   type="button"
@@ -305,7 +307,7 @@ export function SitesPage() {
                   onClick={() => setPage((p) => p + 1)}
                   className="rounded-lg border border-zinc-300 px-3 py-1 text-xs font-medium disabled:opacity-40 dark:border-zinc-600"
                 >
-                  Next
+                  {t('common.pagination.next')}
                 </button>
               </div>
             </div>
@@ -314,9 +316,9 @@ export function SitesPage() {
       ) : null}
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
-        title="Delete selected sites"
+        title={t('site.common.delete')}
         description={`Delete ${selectedCount} selected site(s)?`}
-        confirmText="Delete"
+        confirmText={t('site.common.delete')}
         cancelText="Cancel"
         variant="danger"
         isLoading={bulkDeleteMutation.isPending}

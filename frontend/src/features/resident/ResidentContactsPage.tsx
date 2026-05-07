@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import {
   createResidentContact,
@@ -28,6 +29,7 @@ function emptyPayload(residentId: number): ContactPayload {
 }
 
 export function ResidentContactsPage() {
+  const { t } = useTranslation(['residents', 'common'])
   const { residentId: raw } = useParams<{ residentId: string }>()
   const residentId = parsePositiveInt(raw)
   const toast = useToast()
@@ -95,7 +97,7 @@ export function ResidentContactsPage() {
   })
 
   if (!canList) return <PermissionDeniedNotice permission="resident_contact.list" />
-  if (residentId === null) return <p className="text-sm text-zinc-600">Invalid resident id.</p>
+  if (residentId === null) return <p className="text-sm text-zinc-600">{t('residents.common.invalidResidentId')}</p>
 
   const rows = contactsQ.data?.items ?? []
   const isSubmitting = createMut.isPending || updateMut.isPending
@@ -116,12 +118,12 @@ export function ResidentContactsPage() {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to={`/residents/${residentId}`} className="hover:text-violet-600">
-          Resident {residentId}
+          {t('residents.common.resident')} {residentId}
         </Link>
         <span className="mx-1">/</span>
-        <span>Contacts</span>
+        <span>{t('residents.common.contacts')}</span>
       </nav>
-      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">Resident contacts</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('residents.common.contacts')}</h1>
 
       {(canCreate || (canUpdate && editId !== null)) && (
         <form
@@ -139,7 +141,7 @@ export function ResidentContactsPage() {
           }}
         >
           <div>
-            <label className="block text-sm font-medium">Type</label>
+            <label className="block text-sm font-medium">Tip</label>
             <select
               value={form.type}
               onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))}
@@ -151,7 +153,7 @@ export function ResidentContactsPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">Label</label>
+            <label className="block text-sm font-medium">Etiket</label>
             <input
               value={form.label ?? ''}
               onChange={(e) => setForm((p) => ({ ...p, label: e.target.value }))}
@@ -159,7 +161,7 @@ export function ResidentContactsPage() {
             />
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium">Value</label>
+            <label className="block text-sm font-medium">Deger</label>
             <input
               value={form.value}
               onChange={(e) => setForm((p) => ({ ...p, value: e.target.value }))}
@@ -173,7 +175,7 @@ export function ResidentContactsPage() {
               checked={Boolean(form.is_primary)}
               onChange={(e) => setForm((p) => ({ ...p, is_primary: e.target.checked }))}
             />
-            is_primary
+            Birincil
           </label>
           <div className="sm:col-span-2 flex gap-2">
             <button
@@ -181,7 +183,7 @@ export function ResidentContactsPage() {
               disabled={isSubmitting}
               className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
-              {isSubmitting ? 'Saving…' : editId === null ? 'Create contact' : 'Save contact'}
+              {isSubmitting ? t('residents.common.saving') : editId === null ? 'Iletisim olustur' : t('residents.common.save')}
             </button>
             {editId !== null ? (
               <button
@@ -193,7 +195,7 @@ export function ResidentContactsPage() {
                   setForm(emptyPayload(residentId))
                 }}
               >
-                Cancel edit
+                {t('residents.common.cancelEdit')}
               </button>
             ) : null}
           </div>
@@ -201,7 +203,7 @@ export function ResidentContactsPage() {
       )}
 
       {!contactsQ.isPending && !contactsQ.isError && rows.length === 0 ? (
-        <EmptyState title="No contacts yet" description="Add a phone, email, or emergency contact." />
+        <EmptyState title={t('common.emptyTitle')} description={t('common.emptyDescription')} />
       ) : null}
 
       {rows.length > 0 ? (

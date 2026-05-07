@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import type { Floor } from '@/features/site/types'
 
@@ -30,6 +31,7 @@ export function FloorForm({
   serverFieldErrors = {},
   onSubmit,
 }: FloorFormProps) {
+  const { t } = useTranslation(['site'])
   const [numberStr, setNumberStr] = useState(
     defaultValues?.number !== undefined ? String(defaultValues.number) : '',
   )
@@ -72,7 +74,7 @@ export function FloorForm({
     <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
       <div>
         <label htmlFor="floor-number" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Floor number
+          {t('site.form.floorNumber')}
         </label>
         <input
           id="floor-number"
@@ -86,20 +88,20 @@ export function FloorForm({
       </div>
       <div>
         <label htmlFor="floor-label" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Label / name
+          {t('site.form.floorLabel')}
         </label>
         <input
           id="floor-label"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          placeholder="e.g. Ground, Mezzanine"
+          placeholder={t('site.form.floorLabel')}
           className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
         />
         {errors.label ? <p className="mt-1 text-xs text-red-600">{errors.label}</p> : null}
       </div>
       <div>
         <label htmlFor="floor-sort" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Sort order
+          {t('site.form.sortOrder')}
         </label>
         <input
           id="floor-sort"
@@ -107,7 +109,7 @@ export function FloorForm({
           inputMode="numeric"
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
-          placeholder="Optional"
+          placeholder={t('site.form.optional')}
           className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
         />
         {errors.sort_order ? (
@@ -116,7 +118,7 @@ export function FloorForm({
       </div>
       <div>
         <label htmlFor="floor-status" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Status
+          {t('site.common.status')}
         </label>
         <select
           id="floor-status"
@@ -138,7 +140,7 @@ export function FloorForm({
           disabled={isSubmitting}
           className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
-          {isSubmitting ? 'Saving…' : submitLabel}
+          {isSubmitting ? t('site.form.saving') : submitLabel}
         </button>
       </div>
     </form>

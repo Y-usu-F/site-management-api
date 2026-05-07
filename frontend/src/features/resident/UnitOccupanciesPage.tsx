@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import {
   createOccupancy,
@@ -31,6 +32,7 @@ function defaultPayload(unitId: number): OccupancyPayload {
 }
 
 export function UnitOccupanciesPage() {
+  const { t } = useTranslation(['residents', 'common'])
   const { unitId: raw } = useParams<{ unitId: string }>()
   const unitId = parsePositiveInt(raw)
   const toast = useToast()
@@ -104,7 +106,7 @@ export function UnitOccupanciesPage() {
   })
 
   if (!canList) return <PermissionDeniedNotice permission="unit_occupancy.list" />
-  if (unitId === null) return <p className="text-sm text-zinc-600">Invalid unit id.</p>
+  if (unitId === null) return <p className="text-sm text-zinc-600">{t('residents.common.invalidUnitId')}</p>
 
   const rows = occupanciesQ.data?.items ?? []
   const residentOptions = residentsQ.data?.items ?? []
@@ -128,13 +130,13 @@ export function UnitOccupanciesPage() {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to={`/units/${unitId}`} className="hover:text-violet-600">
-          Unit {unitId}
+          Birim {unitId}
         </Link>
         <span className="mx-1">/</span>
-        <span>Occupancies</span>
+        <span>{t('residents.common.occupancies')}</span>
       </nav>
 
-      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">Unit occupancies</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('residents.common.occupancies')}</h1>
 
       {(canCreate || (canUpdate && editId !== null)) && (
         <form
@@ -160,7 +162,7 @@ export function UnitOccupanciesPage() {
               onChange={(e) => setForm((p) => ({ ...p, resident_profile_id: Number(e.target.value) }))}
               className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
             >
-              <option value={0}>Select resident</option>
+              <option value={0}>Sakin secin</option>
               {residentOptions.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.first_name} {r.last_name}
@@ -229,7 +231,7 @@ export function UnitOccupanciesPage() {
               disabled={isSubmitting}
               className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
-              {isSubmitting ? 'Saving…' : editId === null ? 'Create occupancy' : 'Save occupancy'}
+              {isSubmitting ? t('residents.common.saving') : editId === null ? 'Oturum olustur' : t('residents.common.save')}
             </button>
             {editId !== null ? (
               <button
@@ -241,14 +243,14 @@ export function UnitOccupanciesPage() {
                   setForm(defaultPayload(unitId))
                 }}
               >
-                Cancel edit
+                {t('residents.common.cancelEdit')}
               </button>
             ) : null}
           </div>
         </form>
       )}
 
-      {occupanciesQ.isPending ? <p className="text-sm text-zinc-500">Loading occupancies…</p> : null}
+      {occupanciesQ.isPending ? <p className="text-sm text-zinc-500">{t('residents.common.loading')}</p> : null}
       {occupanciesQ.isError ? (
         <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {getErrorMessage(occupanciesQ.error, 'Could not load occupancies.')}
@@ -256,7 +258,7 @@ export function UnitOccupanciesPage() {
       ) : null}
 
       {!occupanciesQ.isPending && !occupanciesQ.isError && rows.length === 0 ? (
-        <EmptyState title="No occupancies yet" description="Create occupancy records for this unit." />
+        <EmptyState title={t('common.emptyTitle')} description={t('common.emptyDescription')} />
       ) : null}
 
       {rows.length > 0 ? (

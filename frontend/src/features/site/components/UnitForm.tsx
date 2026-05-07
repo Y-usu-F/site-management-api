@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import type { Unit } from '@/features/site/types'
 
@@ -42,6 +43,7 @@ export function UnitForm({
   serverFieldErrors = {},
   onSubmit,
 }: UnitFormProps) {
+  const { t } = useTranslation(['site'])
   const [unitNo, setUnitNo] = useState(defaultValues?.unit_no ?? '')
   const [type, setType] = useState(defaultValues?.type ?? '')
   const [grossArea, setGrossArea] = useState(
@@ -88,7 +90,7 @@ export function UnitForm({
     <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
       <div>
         <label htmlFor="unit-no" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Unit number
+          {t('site.form.unitNumber')}
         </label>
         <input
           id="unit-no"
@@ -100,13 +102,13 @@ export function UnitForm({
       </div>
       <div>
         <label htmlFor="unit-type" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Type
+          {t('site.form.type')}
         </label>
         <input
           id="unit-type"
           value={type}
           onChange={(e) => setType(e.target.value)}
-          placeholder="Apartment, shop, …"
+          placeholder={t('site.form.type')}
           className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
         />
         {errors.type ? <p className="mt-1 text-xs text-red-600">{errors.type}</p> : null}
@@ -117,7 +119,7 @@ export function UnitForm({
             htmlFor="unit-gross"
             className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
           >
-            Gross area
+            {t('site.form.grossArea')}
           </label>
           <input
             id="unit-gross"
@@ -131,7 +133,7 @@ export function UnitForm({
         </div>
         <div>
           <label htmlFor="unit-net" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            Net area
+            {t('site.form.netArea')}
           </label>
           <input
             id="unit-net"
@@ -146,7 +148,7 @@ export function UnitForm({
             htmlFor="unit-land"
             className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
           >
-            Land share
+            {t('site.form.landShare')}
           </label>
           <input
             id="unit-land"
@@ -164,7 +166,7 @@ export function UnitForm({
           htmlFor="unit-occupant"
           className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
         >
-          Occupant name
+          {t('site.form.occupantName')}
         </label>
         <input
           id="unit-occupant"
@@ -178,7 +180,7 @@ export function UnitForm({
       </div>
       <div>
         <label htmlFor="unit-status" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Status
+          {t('site.common.status')}
         </label>
         <select
           id="unit-status"
@@ -200,7 +202,7 @@ export function UnitForm({
           disabled={isSubmitting}
           className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
-          {isSubmitting ? 'Saving…' : submitLabel}
+          {isSubmitting ? t('site.form.saving') : submitLabel}
         </button>
       </div>
     </form>

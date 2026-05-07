@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { bulkDeleteBlocks, downloadBlockTemplate, exportBlocksExcel, importBlocksExcel } from '@/features/site/api/blockApi'
@@ -22,6 +23,7 @@ import { useSelection } from '@/shared/hooks/useSelection'
 const SEARCH_DEBOUNCE_MS = 350
 
 export function BlocksPage() {
+  const { t } = useTranslation(['site', 'common'])
   const toast = useToast()
   const qc = useQueryClient()
   const { siteId: siteIdRaw } = useParams<{ siteId: string }>()
@@ -145,19 +147,19 @@ export function BlocksPage() {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to="/sites" className="hover:text-violet-600">
-          Sites
+          {t('site.common.sites')}
         </Link>
         <span className="mx-1">/</span>
         <Link to={`/sites/${siteId}`} className="hover:text-violet-600">
           {site?.code ?? site?.name ?? `Site ${siteId}`}
         </Link>
         <span className="mx-1">/</span>
-        <span className="text-zinc-700 dark:text-zinc-300">Blocks</span>
+        <span className="text-zinc-700 dark:text-zinc-300">{t('site.common.blocks')}</span>
       </nav>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">Blocks</h1>
+          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('site.common.blocks')}</h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
             Blocks for this site ({data?.total ?? 0} total).
           </p>
@@ -175,7 +177,7 @@ export function BlocksPage() {
               to={`/sites/${siteId}/blocks/new`}
               className="inline-flex justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white"
             >
-              New block
+              {t('site.common.new')}
             </Link>
           ) : null}
         </div>
@@ -195,18 +197,18 @@ export function BlocksPage() {
       />
 
       {isPending ? (
-        <div className="rounded-xl border p-12 text-center text-sm text-zinc-600">Loading…</div>
+        <div className="rounded-xl border p-12 text-center text-sm text-zinc-600">{t('site.common.loading')}</div>
       ) : null}
 
       {isError ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-          {error instanceof Error ? error.message : 'Failed to load'}
+          {error instanceof Error ? error.message : t('common.errorGeneric')}
         </div>
       ) : null}
 
       {!isPending && !isError && items.length === 0 ? (
         <EmptyState
-          title="No blocks yet"
+          title={t('common.emptyTitle')}
           description={
             canCreate ? (
               <Link className="text-violet-600 underline" to={`/sites/${siteId}/blocks/new`}>
@@ -234,19 +236,19 @@ export function BlocksPage() {
                     />
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
-                    Code
+                    {t('site.form.code')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
-                    Name
+                    {t('site.form.name')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
-                    Status
+                    {t('site.common.status')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
-                    Updated
+                    {t('site.common.updated')}
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-zinc-500">
-                    Actions
+                    {t('site.common.actions')}
                   </th>
                 </tr>
               </thead>
@@ -269,7 +271,7 @@ export function BlocksPage() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Link className="text-violet-600" to={`/blocks/${row.id}`}>
-                        Open
+                        {t('site.common.open')}
                       </Link>
                     </td>
                   </tr>

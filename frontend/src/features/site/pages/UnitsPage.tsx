@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { useBlockQuery } from '@/features/site/hooks/useBlockQuery'
@@ -24,6 +25,7 @@ import { useSelection } from '@/shared/hooks/useSelection'
 const SEARCH_DEBOUNCE_MS = 350
 
 export function UnitsPage() {
+  const { t } = useTranslation(['site', 'common'])
   const toast = useToast()
   const qc = useQueryClient()
   const { floorId: floorIdRaw } = useParams<{ floorId: string }>()
@@ -152,24 +154,24 @@ export function UnitsPage() {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">Sites</Link>
+        <Link to="/sites">{t('site.common.sites')}</Link>
         <span className="mx-1">/</span>
         <Link to={`/sites/${siteId}`}>{site?.code ?? siteId}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${siteId}/blocks`}>Blocks</Link>
+        <Link to={`/sites/${siteId}/blocks`}>{t('site.common.blocks')}</Link>
         <span className="mx-1">/</span>
         <Link to={`/blocks/${blockId}`}>{block?.code ?? blockId}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/blocks/${blockId}/floors`}>Floors</Link>
+        <Link to={`/blocks/${blockId}/floors`}>{t('site.common.floors')}</Link>
         <span className="mx-1">/</span>
         <Link to={`/floors/${floorId}`}>Floor {floor?.number ?? ''}</Link>
         <span className="mx-1">/</span>
-        <span>Units</span>
+        <span>{t('site.common.units')}</span>
       </nav>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Units</h1>
+          <h1 className="text-2xl font-semibold">{t('site.common.units')}</h1>
           <p className="mt-1 text-sm text-zinc-600">{data?.total ?? 0} unit(s) on this floor.</p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -185,7 +187,7 @@ export function UnitsPage() {
               to={`/floors/${floorId}/units/new`}
               className="inline-flex justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white"
             >
-              New unit
+              {t('site.common.new')}
             </Link>
           ) : null}
         </div>
@@ -205,18 +207,18 @@ export function UnitsPage() {
       />
 
       {isPending ? (
-        <div className="rounded-xl border p-12 text-center text-sm">Loading…</div>
+        <div className="rounded-xl border p-12 text-center text-sm">{t('site.common.loading')}</div>
       ) : null}
 
       {isError ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-          {error instanceof Error ? error.message : 'Error'}
+          {error instanceof Error ? error.message : t('common.errorGeneric')}
         </div>
       ) : null}
 
       {!isPending && !isError && items.length === 0 ? (
         <EmptyState
-          title="No units yet"
+          title={t('common.emptyTitle')}
           description={
             canCreate ? (
               <Link className="text-violet-600 underline" to={`/floors/${floorId}/units/new`}>
@@ -242,12 +244,12 @@ export function UnitsPage() {
                     aria-label="Select all units on page"
                   />
                 </th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">Unit</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">Type</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">Areas</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">Status</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">Updated</th>
-                <th className="px-4 py-3 text-right text-xs uppercase text-zinc-500">Actions</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.form.unitNumber')}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.form.type')}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">Alan</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.common.status')}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.common.updated')}</th>
+                <th className="px-4 py-3 text-right text-xs uppercase text-zinc-500">{t('site.common.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -16,6 +17,7 @@ import { formatDateTime } from '@/shared/lib/formatDateTime'
 import { parsePositiveInt } from '@/shared/lib/parseRouteId'
 
 export function ResidentDetailPage() {
+  const { t } = useTranslation(['residents', 'common', 'site'])
   const { id: idParam } = useParams<{ id: string }>()
   const id = parsePositiveInt(idParam)
   const navigate = useNavigate()
@@ -53,14 +55,14 @@ export function ResidentDetailPage() {
   if (!canView) {
     return <PermissionDeniedNotice permission="resident.view" />
   }
-  if (id === null) return <p className="text-sm text-zinc-600">Invalid resident id.</p>
-  if (isPending) return <p className="text-sm text-zinc-600">Loading resident…</p>
+  if (id === null) return <p className="text-sm text-zinc-600">{t('residents.common.invalidResidentId')}</p>
+  if (isPending) return <p className="text-sm text-zinc-600">{t('residents.common.loading')}</p>
 
   if (isError || !data) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/40">
         <p className="text-sm text-red-800 dark:text-red-200">
-          {error instanceof Error ? error.message : 'Resident not found'}
+          {error instanceof Error ? error.message : t('residents.common.notFound')}
         </p>
       </div>
     )
@@ -74,7 +76,7 @@ export function ResidentDetailPage() {
         <div>
           <nav className="text-xs text-zinc-500">
             <Link to="/residents" className="hover:text-violet-600">
-              Residents
+              {t('residents.common.residents')}
             </Link>
             <span className="mx-1">/</span>
             <span className="text-zinc-700 dark:text-zinc-300">
@@ -85,23 +87,23 @@ export function ResidentDetailPage() {
             {resident.first_name} {resident.last_name}
           </h1>
           <p className="mt-1 text-sm text-zinc-500">
-            {resident.identity_number?.trim() ? resident.identity_number : 'No identity number'}
+            {resident.identity_number?.trim() ? resident.identity_number : '—'}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {canContacts ? (
             <Link to={`/residents/${resident.id}/contacts`} className="rounded-lg border px-3 py-2 text-sm dark:border-zinc-700">
-              Contacts
+              {t('residents.common.contacts')}
             </Link>
           ) : null}
           {canVehicles ? (
             <Link to={`/residents/${resident.id}/vehicles`} className="rounded-lg border px-3 py-2 text-sm dark:border-zinc-700">
-              Vehicles
+              {t('residents.common.vehicles')}
             </Link>
           ) : null}
           {canUpdate ? (
             <Link to={`/residents/${resident.id}/edit`} className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white">
-              Edit
+              {t('common.edit')}
             </Link>
           ) : null}
           {canDelete ? (
@@ -111,7 +113,7 @@ export function ResidentDetailPage() {
               disabled={deleteMutation.isPending}
               className="rounded-lg border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50 dark:border-red-800 dark:text-red-300"
             >
-              {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
+              {deleteMutation.isPending ? t('common.pleaseWait') : t('common.delete')}
             </button>
           ) : null}
         </div>
@@ -119,19 +121,19 @@ export function ResidentDetailPage() {
 
       <dl className="grid max-w-3xl gap-4 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:grid-cols-2">
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">Phone</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('residents.common.phone')}</dt>
           <dd className="mt-1 text-sm">{resident.phone?.trim() ? resident.phone : '—'}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">Email</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('residents.common.email')}</dt>
           <dd className="mt-1 text-sm">{resident.email?.trim() ? resident.email : '—'}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">Status</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('residents.common.status')}</dt>
           <dd className="mt-1 text-sm">{resident.status}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">Updated</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('residents.common.updated')}</dt>
           <dd className="mt-1 text-sm">{formatDateTime(resident.updated_at ?? resident.created_at)}</dd>
         </div>
       </dl>
@@ -139,9 +141,9 @@ export function ResidentDetailPage() {
       {canContacts ? (
         <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">Contacts</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.contacts')}</h2>
             <Link to={`/residents/${resident.id}/contacts`} className="text-sm text-violet-600 hover:underline">
-              Manage
+              {t('residents.common.open')}
             </Link>
           </div>
           {contactsQ.data?.items.length ? (
@@ -153,7 +155,7 @@ export function ResidentDetailPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-zinc-500">No contacts.</p>
+            <p className="text-sm text-zinc-500">{t('common.emptyDescription')}</p>
           )}
         </section>
       ) : null}
@@ -161,9 +163,9 @@ export function ResidentDetailPage() {
       {canVehicles ? (
         <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">Vehicles</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.vehicles')}</h2>
             <Link to={`/residents/${resident.id}/vehicles`} className="text-sm text-violet-600 hover:underline">
-              Manage
+              {t('residents.common.open')}
             </Link>
           </div>
           {vehiclesQ.data?.items.length ? (
@@ -175,44 +177,44 @@ export function ResidentDetailPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-zinc-500">No vehicles.</p>
+            <p className="text-sm text-zinc-500">{t('common.emptyDescription')}</p>
           )}
         </section>
       ) : null}
 
       {canOccupancies ? (
         <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-500">Occupancies</h2>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.occupancies')}</h2>
           {occupanciesQ.data?.items.length ? (
             <ul className="space-y-1 text-sm">
               {occupanciesQ.data.items.map((o) => (
                 <li key={o.id}>
-                  Unit #{o.unit_id} · {o.relationship_type} · {o.status}
+                  {t('site.form.unitNumber')} #{o.unit_id} · {o.relationship_type} · {o.status}
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-zinc-500">No occupancies found for this resident.</p>
+            <p className="text-sm text-zinc-500">{t('common.emptyDescription')}</p>
           )}
         </section>
       ) : null}
 
       <ConfirmDialog
         isOpen={confirmOpen}
-        title="Delete resident"
-        description={`Delete "${resident.first_name} ${resident.last_name}"?`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        title={t('residents.common.delete')}
+        description={t('common.confirm')}
+        confirmText={t('residents.common.delete')}
+        cancelText={t('common.cancel')}
         variant="danger"
         isLoading={deleteMutation.isPending}
         onClose={() => setConfirmOpen(false)}
         onConfirm={() => {
           deleteMutation.mutate(resident.id, {
             onSuccess: () => {
-              toast.success('Resident deleted.')
+              toast.success(`${t('residents.common.resident')} ${t('common.delete')}`)
               navigate('/residents')
             },
-            onError: (err) => toast.error(getErrorMessage(err, 'Could not delete resident.')),
+            onError: (err) => toast.error(getErrorMessage(err, t('common.errorGeneric'))),
           })
         }}
       />

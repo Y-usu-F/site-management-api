@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { BlockForm } from '@/features/site/components/BlockForm'
@@ -14,6 +15,7 @@ import { parsePositiveInt } from '@/shared/lib/parseRouteId'
 import { useEffectiveCan } from '@/shared/hooks/useEffectiveCan'
 
 export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
+  const { t } = useTranslation(['site', 'common'])
   const { siteId: siteIdRaw, id: blockIdRaw } = useParams<{
     siteId?: string
     id?: string
@@ -45,7 +47,7 @@ export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'create' && siteId === null) {
     return (
       <p className="text-sm">
-        Invalid site. <Link to="/sites">Sites</Link>
+        {t('site.common.invalidId')}. <Link to="/sites">{t('site.common.sites')}</Link>
       </p>
     )
   }
@@ -53,19 +55,19 @@ export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'edit' && blockId === null) {
     return (
       <p className="text-sm">
-        Invalid block. <Link to="/sites">Sites</Link>
+        {t('site.common.invalidId')}. <Link to="/sites">{t('site.common.sites')}</Link>
       </p>
     )
   }
 
   if (mode === 'edit' && loadingBlock) {
-    return <p className="text-sm text-zinc-600">Loading…</p>
+    return <p className="text-sm text-zinc-600">{t('site.common.loading')}</p>
   }
 
   if (mode === 'edit' && !existing) {
     return (
       <p className="text-sm">
-        Block not found. <Link to="/sites">Sites</Link>
+        {t('site.common.notFound')}. <Link to="/sites">{t('site.common.sites')}</Link>
       </p>
     )
   }
@@ -77,26 +79,26 @@ export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">Sites</Link>
+        <Link to="/sites">{t('site.common.sites')}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${effectiveSiteId}`}>Site</Link>
+        <Link to={`/sites/${effectiveSiteId}`}>{t('site.common.sites')}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${effectiveSiteId}/blocks`}>Blocks</Link>
+        <Link to={`/sites/${effectiveSiteId}/blocks`}>{t('site.common.blocks')}</Link>
         <span className="mx-1">/</span>
-        <span>{mode === 'create' ? 'New' : 'Edit'}</span>
+        <span>{mode === 'create' ? t('site.common.new') : t('site.common.edit')}</span>
       </nav>
-      <h1 className="text-2xl font-semibold">{mode === 'create' ? 'New block' : 'Edit block'}</h1>
+      <h1 className="text-2xl font-semibold">{mode === 'create' ? `${t('site.common.new')} ${t('site.common.blocks')}` : `${t('site.common.edit')} ${t('site.common.blocks')}`}</h1>
 
       {mutationError ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          {getErrorMessage(mutationError, 'Failed')}
+          {getErrorMessage(mutationError, t('site.common.requestFailed'))}
         </div>
       ) : null}
 
       <BlockForm
         siteId={effectiveSiteId}
         defaultValues={existing ?? undefined}
-        submitLabel={mode === 'create' ? 'Create block' : 'Save'}
+        submitLabel={mode === 'create' ? t('common.create') : t('common.save')}
         isSubmitting={isSubmitting}
         serverFieldErrors={serverErrors}
         onSubmit={(values) => {
@@ -112,12 +114,12 @@ export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
               },
               {
                 onSuccess: (b) => {
-                  toast.success('Block created.')
+                  toast.success(`${t('site.common.blocks')} ${t('common.create')}`)
                   navigate(`/blocks/${b.id}`)
                 },
                 onError: (e) => {
                   setServerErrors(extractValidationErrors(e))
-                  toast.error(getErrorMessage(e, 'Could not create block.'))
+                  toast.error(getErrorMessage(e, t('common.errorGeneric')))
                 },
               },
             )
@@ -135,12 +137,12 @@ export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
               },
               {
                 onSuccess: (b) => {
-                  toast.success('Block updated.')
+                  toast.success(`${t('site.common.blocks')} ${t('common.update')}`)
                   navigate(`/blocks/${b.id}`)
                 },
                 onError: (e) => {
                   setServerErrors(extractValidationErrors(e))
-                  toast.error(getErrorMessage(e, 'Could not update block.'))
+                  toast.error(getErrorMessage(e, t('common.errorGeneric')))
                 },
               },
             )
