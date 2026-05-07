@@ -100,6 +100,52 @@ final class DashboardAnalyticsTest extends FeatureDatabaseTestCase
         $this->assertSame(1000.0, (float) $nonZeroOtherPaymentDays[0]['total']);
     }
 
+    public function testDashboardAnalyticsRangeParametresiGunSayisiniBelirler(): void
+    {
+        [$email, $userId, $companyId] = $this->createUserWithRole('analytics.range@example.com', 'Password123!');
+        $token = (string) $this->login($email, 'Password123!')['data']['access_token'];
+
+        $this->seedAnalyticsDataForCompany($companyId, $userId, [
+            'due_amount' => 100.00,
+            'due_remaining' => 20.00,
+            'due_status' => 'partial',
+            'payment_amount' => 80.00,
+            'payment_status' => 'completed',
+            'service_request_status' => 'open',
+            'work_order_status' => 'in_progress',
+            'reservation_status' => 'approved',
+            'soft_delete' => false,
+        ]);
+
+        $defaultResponse = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->get('/api/v1/analytics/dashboard');
+        $defaultResponse->assertStatus(200);
+        $defaultPayload = json_decode($defaultResponse->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data'];
+        $this->assertCount(30, $defaultPayload['trends']['payments_last_30_days']);
+
+        $range7 = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->get('/api/v1/analytics/dashboard?range=7d');
+        $range7->assertStatus(200);
+        $payload7 = json_decode($range7->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data'];
+        $this->assertCount(7, $payload7['trends']['payments_last_30_days']);
+        $this->assertCount(7, $payload7['trends']['service_requests_last_30_days']);
+
+        $range90 = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->get('/api/v1/analytics/dashboard?range=90d');
+        $range90->assertStatus(200);
+        $payload90 = json_decode($range90->getJSON(), true, 512, JSON_THROW_ON_ERROR)['data'];
+        $this->assertCount(90, $payload90['trends']['payments_last_30_days']);
+        $this->assertCount(90, $payload90['trends']['service_requests_last_30_days']);
+    }
+
+    public function testDashboardAnalyticsInvalidRangeValidationHatasiDoner(): void
+    {
+        [$email] = $this->createUserWithRole('analytics.range.invalid@example.com', 'Password123!');
+        $token = (string) $this->login($email, 'Password123!')['data']['access_token'];
+
+        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])->get('/api/v1/analytics/dashboard?range=15d');
+        $response->assertStatus(422);
+        $payload = json_decode($response->getJSON(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame('VALIDATION_ERROR', (string) ($payload['errors']['error_code'] ?? ''));
+    }
+
     /**
      * @param array{
      *   due_amount:float,

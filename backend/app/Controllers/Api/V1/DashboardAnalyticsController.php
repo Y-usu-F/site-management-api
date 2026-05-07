@@ -16,7 +16,8 @@ class DashboardAnalyticsController extends ApiController
     public function show($id = null)
     {
         try {
-            return $this->ok('Dashboard analytics ozeti getirildi', $this->service->summary());
+            $range = $this->request->getGet('range');
+            return $this->ok('Dashboard analytics ozeti getirildi', $this->service->summary(is_string($range) ? $range : null));
         } catch (Throwable $e) {
             return $this->failFromException($e);
         }

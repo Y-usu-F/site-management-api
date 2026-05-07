@@ -2,13 +2,19 @@
 
 namespace App\Services\Analytics;
 
+use App\Exceptions\ValidationApiException;
 use App\Support\RequestRuntime;
 use CodeIgniter\Database\BaseConnection;
 use Config\Database;
 
 class DashboardAnalyticsService
 {
-    private const TREND_DAYS = 30;
+    private const DEFAULT_RANGE = '30d';
+    private const RANGE_DAYS = [
+        '7d' => 7,
+        '30d' => 30,
+        '90d' => 90,
+    ];
 
     public function __construct(
         private readonly ?BaseConnection $db = null
@@ -30,11 +36,14 @@ class DashboardAnalyticsService
      *   }
      * }
      */
-    public function summary(): array
+    public function summary(?string $range = null): array
     {
+        $normalizedRange = $this->normalizeRange($range);
+        $trendDays = self::RANGE_DAYS[$normalizedRange];
+
         $companyId = $this->resolveCompanyId();
         if ($companyId <= 0) {
-            return $this->emptySummary();
+            return $this->emptySummary($trendDays);
         }
 
         $row = $this->fetchSummaryRow($companyId);
@@ -57,8 +66,8 @@ class DashboardAnalyticsService
                 'unit_count' => (int) ($row['unit_count'] ?? 0),
             ],
             'trends' => [
-                'payments_last_30_days' => $this->buildPaymentsTrend($companyId),
-                'service_requests_last_30_days' => $this->buildServiceRequestsTrend($companyId),
+                'payments_last_30_days' => $this->buildPaymentsTrend($companyId, $trendDays),
+                'service_requests_last_30_days' => $this->buildServiceRequestsTrend($companyId, $trendDays),
             ],
             'distributions' => [
                 'service_request_statuses' => $this->fetchStatusDistribution($companyId, 'service_requests'),
@@ -69,7 +78,7 @@ class DashboardAnalyticsService
     /**
      * @return list<array{date:string,total:float}>
      */
-    protected function buildPaymentsTrend(int $companyId): array
+    protected function buildPaymentsTrend(int $companyId, int $days): array
     {
         $sql = "SELECT DATE(payment_date) AS day, COALESCE(SUM(amount), 0) AS total
             FROM payments
@@ -78,15 +87,15 @@ class DashboardAnalyticsService
               AND status = 'completed'
               AND DATE(payment_date) BETWEEN DATE_SUB(CURDATE(), INTERVAL ? DAY) AND CURDATE()
             GROUP BY DATE(payment_date)";
-        $daysBack = self::TREND_DAYS - 1;
+        $daysBack = $days - 1;
         $rows = $this->connection()->query($sql, [$companyId, $daysBack])->getResultArray();
-        return $this->fillDailySeries($rows, 'total');
+        return $this->fillDailySeries($rows, 'total', $days);
     }
 
     /**
      * @return list<array{date:string,count:int}>
      */
-    protected function buildServiceRequestsTrend(int $companyId): array
+    protected function buildServiceRequestsTrend(int $companyId, int $days): array
     {
         $sql = "SELECT DATE(created_at) AS day, COUNT(1) AS count
             FROM service_requests
@@ -94,9 +103,9 @@ class DashboardAnalyticsService
               AND deleted_at IS NULL
               AND DATE(created_at) BETWEEN DATE_SUB(CURDATE(), INTERVAL ? DAY) AND CURDATE()
             GROUP BY DATE(created_at)";
-        $daysBack = self::TREND_DAYS - 1;
+        $daysBack = $days - 1;
         $rows = $this->connection()->query($sql, [$companyId, $daysBack])->getResultArray();
-        return $this->fillDailySeries($rows, 'count');
+        return $this->fillDailySeries($rows, 'count', $days);
     }
 
     /**
@@ -127,7 +136,7 @@ class DashboardAnalyticsService
      * @param list<array<string,mixed>> $rows
      * @return list<array{date:string,total:float}|array{date:string,count:int}>
      */
-    protected function fillDailySeries(array $rows, string $valueKey): array
+    protected function fillDailySeries(array $rows, string $valueKey, int $days): array
     {
         $indexed = [];
         foreach ($rows as $row) {
@@ -140,7 +149,7 @@ class DashboardAnalyticsService
 
         $series = [];
         $today = new \DateTimeImmutable('today');
-        $start = $today->sub(new \DateInterval('P' . (self::TREND_DAYS - 1) . 'D'));
+        $start = $today->sub(new \DateInterval('P' . ($days - 1) . 'D'));
         for ($cursor = $start; $cursor <= $today; $cursor = $cursor->add(new \DateInterval('P1D'))) {
             $date = $cursor->format('Y-m-d');
             if ($valueKey === 'total') {
@@ -158,6 +167,21 @@ class DashboardAnalyticsService
         }
 
         return $series;
+    }
+
+    protected function normalizeRange(?string $range): string
+    {
+        $candidate = strtolower(trim((string) ($range ?? self::DEFAULT_RANGE)));
+        if ($candidate === '') {
+            $candidate = self::DEFAULT_RANGE;
+        }
+        if (isset(self::RANGE_DAYS[$candidate])) {
+            return $candidate;
+        }
+
+        throw new ValidationApiException('Gecersiz range parametresi', [
+            'range' => ['range sadece 7d, 30d veya 90d olabilir'],
+        ]);
     }
 
 
@@ -227,7 +251,7 @@ class DashboardAnalyticsService
      *   }
      * }
      */
-    private function emptySummary(): array
+    private function emptySummary(int $trendDays): array
     {
         return [
             'finance' => [
@@ -247,8 +271,8 @@ class DashboardAnalyticsService
                 'unit_count' => 0,
             ],
             'trends' => [
-                'payments_last_30_days' => $this->fillDailySeries([], 'total'),
-                'service_requests_last_30_days' => $this->fillDailySeries([], 'count'),
+                'payments_last_30_days' => $this->fillDailySeries([], 'total', $trendDays),
+                'service_requests_last_30_days' => $this->fillDailySeries([], 'count', $trendDays),
             ],
             'distributions' => [
                 'service_request_statuses' => [],

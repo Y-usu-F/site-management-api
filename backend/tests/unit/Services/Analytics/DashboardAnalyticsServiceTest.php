@@ -31,7 +31,7 @@ final class DashboardAnalyticsServiceTest extends CIUnitTestCase
                 ];
             }
 
-            protected function buildPaymentsTrend(int $companyId): array
+            protected function buildPaymentsTrend(int $companyId, int $days): array
             {
                 return [
                     ['date' => '2026-05-01', 'total' => 100.0],
@@ -39,7 +39,7 @@ final class DashboardAnalyticsServiceTest extends CIUnitTestCase
                 ];
             }
 
-            protected function buildServiceRequestsTrend(int $companyId): array
+            protected function buildServiceRequestsTrend(int $companyId, int $days): array
             {
                 return [
                     ['date' => '2026-05-01', 'count' => 2],
@@ -61,7 +61,7 @@ final class DashboardAnalyticsServiceTest extends CIUnitTestCase
             }
         };
 
-        $summary = $service->summary();
+        $summary = $service->summary('30d');
 
         $this->assertSame(1250.5, $summary['finance']['due_total']);
         $this->assertSame(900.25, $summary['finance']['paid_total']);
@@ -78,5 +78,13 @@ final class DashboardAnalyticsServiceTest extends CIUnitTestCase
         $this->assertSame(2, $summary['trends']['service_requests_last_30_days'][0]['count']);
         $this->assertSame('open', $summary['distributions']['service_request_statuses'][0]['status']);
         $this->assertSame(2, $summary['distributions']['work_order_statuses'][0]['count']);
+    }
+
+    public function testNormalizeRangeGecersizDegerdeValidationExceptionFırlatir(): void
+    {
+        $this->expectException(\App\Exceptions\ValidationApiException::class);
+
+        $service = new DashboardAnalyticsService();
+        $service->summary('999d');
     }
 }
