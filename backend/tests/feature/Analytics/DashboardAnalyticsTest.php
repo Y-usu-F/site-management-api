@@ -71,6 +71,17 @@ final class DashboardAnalyticsTest extends FeatureDatabaseTestCase
         $this->assertSame(1, (int) $ownerPayload['residents']['resident_count']);
         $this->assertSame(1, (int) $ownerPayload['residents']['active_occupancy_count']);
         $this->assertSame(1, (int) $ownerPayload['residents']['unit_count']);
+        $this->assertCount(30, $ownerPayload['trends']['payments_last_30_days']);
+        $this->assertCount(30, $ownerPayload['trends']['service_requests_last_30_days']);
+        $zeroPaymentDays = array_filter(
+            $ownerPayload['trends']['payments_last_30_days'],
+            static fn (array $row): bool => (float) ($row['total'] ?? 0) === 0.0
+        );
+        $this->assertNotEmpty($zeroPaymentDays);
+        $this->assertSame(1, (int) ($ownerPayload['distributions']['service_request_statuses'][0]['count'] ?? 0));
+        $this->assertSame('open', (string) ($ownerPayload['distributions']['service_request_statuses'][0]['status'] ?? ''));
+        $this->assertSame(1, (int) ($ownerPayload['distributions']['work_order_statuses'][0]['count'] ?? 0));
+        $this->assertSame('in_progress', (string) ($ownerPayload['distributions']['work_order_statuses'][0]['status'] ?? ''));
 
         $otherResponse = $this->withHeaders(['Authorization' => 'Bearer ' . $otherToken])->get('/api/v1/analytics/dashboard');
         $otherResponse->assertStatus(200);
@@ -80,6 +91,13 @@ final class DashboardAnalyticsTest extends FeatureDatabaseTestCase
         $this->assertSame(1000.0, (float) $otherPayload['finance']['paid_total']);
         $this->assertSame(4000.0, (float) $otherPayload['finance']['unpaid_total']);
         $this->assertSame(1, (int) $otherPayload['finance']['payment_count']);
+        $this->assertCount(30, $otherPayload['trends']['payments_last_30_days']);
+        $nonZeroOtherPaymentDays = array_values(array_filter(
+            $otherPayload['trends']['payments_last_30_days'],
+            static fn (array $row): bool => (float) ($row['total'] ?? 0) > 0
+        ));
+        $this->assertCount(1, $nonZeroOtherPaymentDays);
+        $this->assertSame(1000.0, (float) $nonZeroOtherPaymentDays[0]['total']);
     }
 
     /**

@@ -8,6 +8,8 @@ use Config\Database;
 
 class DashboardAnalyticsService
 {
+    private const TREND_DAYS = 30;
+
     public function __construct(
         private readonly ?BaseConnection $db = null
     ) {
@@ -17,7 +19,15 @@ class DashboardAnalyticsService
      * @return array{
      *   finance: array{due_total:float,paid_total:float,unpaid_total:float,payment_count:int},
      *   operations: array{open_service_requests:int,active_work_orders:int,upcoming_reservations:int},
-     *   residents: array{resident_count:int,active_occupancy_count:int,unit_count:int}
+     *   residents: array{resident_count:int,active_occupancy_count:int,unit_count:int},
+     *   trends: array{
+     *     payments_last_30_days:list<array{date:string,total:float}>,
+     *     service_requests_last_30_days:list<array{date:string,count:int}>
+     *   },
+     *   distributions: array{
+     *     service_request_statuses:list<array{status:string,count:int}>,
+     *     work_order_statuses:list<array{status:string,count:int}>
+     *   }
      * }
      */
     public function summary(): array
@@ -46,8 +56,110 @@ class DashboardAnalyticsService
                 'active_occupancy_count' => (int) ($row['active_occupancy_count'] ?? 0),
                 'unit_count' => (int) ($row['unit_count'] ?? 0),
             ],
+            'trends' => [
+                'payments_last_30_days' => $this->buildPaymentsTrend($companyId),
+                'service_requests_last_30_days' => $this->buildServiceRequestsTrend($companyId),
+            ],
+            'distributions' => [
+                'service_request_statuses' => $this->fetchStatusDistribution($companyId, 'service_requests'),
+                'work_order_statuses' => $this->fetchStatusDistribution($companyId, 'work_orders'),
+            ],
         ];
     }
+    /**
+     * @return list<array{date:string,total:float}>
+     */
+    protected function buildPaymentsTrend(int $companyId): array
+    {
+        $sql = "SELECT DATE(payment_date) AS day, COALESCE(SUM(amount), 0) AS total
+            FROM payments
+            WHERE company_id = ?
+              AND deleted_at IS NULL
+              AND status = 'completed'
+              AND DATE(payment_date) BETWEEN DATE_SUB(CURDATE(), INTERVAL ? DAY) AND CURDATE()
+            GROUP BY DATE(payment_date)";
+        $daysBack = self::TREND_DAYS - 1;
+        $rows = $this->connection()->query($sql, [$companyId, $daysBack])->getResultArray();
+        return $this->fillDailySeries($rows, 'total');
+    }
+
+    /**
+     * @return list<array{date:string,count:int}>
+     */
+    protected function buildServiceRequestsTrend(int $companyId): array
+    {
+        $sql = "SELECT DATE(created_at) AS day, COUNT(1) AS count
+            FROM service_requests
+            WHERE company_id = ?
+              AND deleted_at IS NULL
+              AND DATE(created_at) BETWEEN DATE_SUB(CURDATE(), INTERVAL ? DAY) AND CURDATE()
+            GROUP BY DATE(created_at)";
+        $daysBack = self::TREND_DAYS - 1;
+        $rows = $this->connection()->query($sql, [$companyId, $daysBack])->getResultArray();
+        return $this->fillDailySeries($rows, 'count');
+    }
+
+    /**
+     * @return list<array{status:string,count:int}>
+     */
+    protected function fetchStatusDistribution(int $companyId, string $table): array
+    {
+        $allowedTables = ['service_requests', 'work_orders'];
+        if (! in_array($table, $allowedTables, true)) {
+            return [];
+        }
+
+        $sql = "SELECT status, COUNT(1) AS count
+            FROM {$table}
+            WHERE company_id = ?
+              AND deleted_at IS NULL
+            GROUP BY status
+            ORDER BY status ASC";
+        $rows = $this->connection()->query($sql, [$companyId])->getResultArray();
+
+        return array_map(static fn (array $row): array => [
+            'status' => (string) ($row['status'] ?? ''),
+            'count' => (int) ($row['count'] ?? 0),
+        ], $rows);
+    }
+
+    /**
+     * @param list<array<string,mixed>> $rows
+     * @return list<array{date:string,total:float}|array{date:string,count:int}>
+     */
+    protected function fillDailySeries(array $rows, string $valueKey): array
+    {
+        $indexed = [];
+        foreach ($rows as $row) {
+            $day = (string) ($row['day'] ?? '');
+            if ($day === '') {
+                continue;
+            }
+            $indexed[$day] = $row[$valueKey] ?? 0;
+        }
+
+        $series = [];
+        $today = new \DateTimeImmutable('today');
+        $start = $today->sub(new \DateInterval('P' . (self::TREND_DAYS - 1) . 'D'));
+        for ($cursor = $start; $cursor <= $today; $cursor = $cursor->add(new \DateInterval('P1D'))) {
+            $date = $cursor->format('Y-m-d');
+            if ($valueKey === 'total') {
+                $series[] = [
+                    'date' => $date,
+                    'total' => (float) ($indexed[$date] ?? 0),
+                ];
+                continue;
+            }
+
+            $series[] = [
+                'date' => $date,
+                'count' => (int) ($indexed[$date] ?? 0),
+            ];
+        }
+
+        return $series;
+    }
+
 
     /**
      * @return array<string,mixed>
@@ -104,7 +216,15 @@ class DashboardAnalyticsService
      * @return array{
      *   finance: array{due_total:float,paid_total:float,unpaid_total:float,payment_count:int},
      *   operations: array{open_service_requests:int,active_work_orders:int,upcoming_reservations:int},
-     *   residents: array{resident_count:int,active_occupancy_count:int,unit_count:int}
+     *   residents: array{resident_count:int,active_occupancy_count:int,unit_count:int},
+     *   trends: array{
+     *     payments_last_30_days:list<array{date:string,total:float}>,
+     *     service_requests_last_30_days:list<array{date:string,count:int}>
+     *   },
+     *   distributions: array{
+     *     service_request_statuses:list<array{status:string,count:int}>,
+     *     work_order_statuses:list<array{status:string,count:int}>
+     *   }
      * }
      */
     private function emptySummary(): array
@@ -125,6 +245,14 @@ class DashboardAnalyticsService
                 'resident_count' => 0,
                 'active_occupancy_count' => 0,
                 'unit_count' => 0,
+            ],
+            'trends' => [
+                'payments_last_30_days' => $this->fillDailySeries([], 'total'),
+                'service_requests_last_30_days' => $this->fillDailySeries([], 'count'),
+            ],
+            'distributions' => [
+                'service_request_statuses' => [],
+                'work_order_statuses' => [],
             ],
         ];
     }
