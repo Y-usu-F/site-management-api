@@ -62,7 +62,7 @@ export function ResidentForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="resident-first-name" className="block text-sm font-medium">
-            {t('residents.form.firstName')}
+            {t('form.firstName', { ns: 'residents' })}
           </label>
           <input
             id="resident-first-name"
@@ -74,7 +74,7 @@ export function ResidentForm({
         </div>
         <div>
           <label htmlFor="resident-last-name" className="block text-sm font-medium">
-            {t('residents.form.lastName')}
+            {t('form.lastName', { ns: 'residents' })}
           </label>
           <input
             id="resident-last-name"
@@ -89,7 +89,7 @@ export function ResidentForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="resident-identity-number" className="block text-sm font-medium">
-            {t('residents.form.identityNumber')}
+            {t('form.identityNumber', { ns: 'residents' })}
           </label>
           <input
             id="resident-identity-number"
@@ -103,7 +103,7 @@ export function ResidentForm({
         </div>
         <div>
           <label htmlFor="resident-phone" className="block text-sm font-medium">
-            {t('residents.form.phone')}
+            {t('form.phone', { ns: 'residents' })}
           </label>
           <input
             id="resident-phone"
@@ -118,7 +118,7 @@ export function ResidentForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="resident-email" className="block text-sm font-medium">
-            {t('residents.form.email')}
+            {t('form.email', { ns: 'residents' })}
           </label>
           <input
             id="resident-email"
@@ -130,7 +130,7 @@ export function ResidentForm({
         </div>
         <div>
           <label htmlFor="resident-status" className="block text-sm font-medium">
-            {t('residents.form.status')}
+            {t('form.status', { ns: 'residents' })}
           </label>
           <select
             id="resident-status"
@@ -153,7 +153,7 @@ export function ResidentForm({
         disabled={isSubmitting}
         className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
-        {isSubmitting ? t('residents.common.saving') : submitLabel}
+        {isSubmitting ? t('saving', { ns: 'residents' }) : submitLabel}
       </button>
     </form>
   )

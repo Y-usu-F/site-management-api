@@ -32,10 +32,10 @@ export function DueDefinitionsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">{t('finance.common.dueDefinitions')}</h1>
+        <h1 className="text-xl font-semibold">{t('dueDefinitions', { ns: 'finance' })}</h1>
         {canCreate ? (
           <Link to="/finance/due-definitions/new" className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white">
-            {t('common.create')}
+            {t('create', { ns: 'common' })}
           </Link>
         ) : null}
       </div>
@@ -45,22 +45,22 @@ export function DueDefinitionsPage() {
           setSearch(e.target.value)
           setPage(1)
         }}
-        placeholder={t('finance.common.search')}
+        placeholder={t('search', { ns: 'finance' })}
         className="w-full max-w-sm rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
       />
       {items.length === 0 ? (
-        <EmptyState title={t('finance.common.noDueDefinition')} description={t('common.emptyDescription')} />
+        <EmptyState title={t('noDueDefinition', { ns: 'finance' })} description={t('emptyDescription', { ns: 'common' })} />
       ) : (
         <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
           <table className="min-w-full text-sm">
             <thead className="bg-zinc-100 dark:bg-zinc-900">
               <tr>
                 <th className="px-3 py-2 text-left">ID</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.name')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.type')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.amount')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.status')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.actions')}</th>
+                <th className="px-3 py-2 text-left">{t('name', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('type', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('amount', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('status', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('actions', { ns: 'finance' })}</th>
               </tr>
             </thead>
             <tbody>
@@ -74,10 +74,10 @@ export function DueDefinitionsPage() {
                   <td className="px-3 py-2">
                     <div className="flex gap-2">
                       <Link className="text-violet-600" to={`/finance/due-definitions/${row.id}`}>
-                        {t('finance.common.open')}
+                        {t('open', { ns: 'finance' })}
                       </Link>
                       <Link className="text-violet-600" to={`/finance/due-definitions/${row.id}/edit`}>
-                        {t('finance.common.edit')}
+                        {t('edit', { ns: 'finance' })}
                       </Link>
                       {canDelete ? (
                         <button
@@ -85,7 +85,7 @@ export function DueDefinitionsPage() {
                           className="text-red-600"
                           onClick={() => setDeleteId(row.id)}
                         >
-                          {t('finance.common.delete')}
+                          {t('delete', { ns: 'finance' })}
                         </button>
                       ) : null}
                     </div>
@@ -103,31 +103,31 @@ export function DueDefinitionsPage() {
           disabled={page <= 1}
           onClick={() => setPage((p) => p - 1)}
         >
-          {t('common.pagination.prev')}
+          {t('pagination.prev', { ns: 'common' })}
         </button>
-        <span className="text-sm">{t('finance.common.page')} {page}</span>
+        <span className="text-sm">{t('page', { ns: 'finance' })} {page}</span>
         <button
           type="button"
           className="rounded border px-2 py-1 text-sm"
           disabled={(query.data?.items?.length ?? 0) < 10}
           onClick={() => setPage((p) => p + 1)}
         >
-          {t('common.pagination.next')}
+          {t('pagination.next', { ns: 'common' })}
         </button>
       </div>
       <ConfirmDialog
         isOpen={deleteId !== null}
-        title={t('finance.common.deleteConfirmTitle')}
-        description={t('common.confirm')}
-        confirmText={del.isPending ? t('finance.common.deleting') : t('finance.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('deleteConfirmTitle', { ns: 'finance' })}
+        description={t('confirm', { ns: 'common' })}
+        confirmText={del.isPending ? t('deleting', { ns: 'finance' }) : t('delete', { ns: 'finance' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         onClose={() => setDeleteId(null)}
         onConfirm={() => {
           if (deleteId === null) return
           del.mutate(deleteId, {
             onSuccess: () => {
-              toast.success(t('finance.common.deleteSuccess'))
+              toast.success(t('deleteSuccess', { ns: 'finance' }))
               setDeleteId(null)
             },
             onError: (err) => toast.error(getErrorMessage(err)),

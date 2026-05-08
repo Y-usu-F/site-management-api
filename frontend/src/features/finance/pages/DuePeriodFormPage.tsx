@@ -33,7 +33,7 @@ export function DuePeriodFormPage({ mode }: Props) {
   if (!canAccess) {
     return <PermissionDeniedNotice permission={mode === 'create' ? 'due_period.create' : 'due_period.update'} />
   }
-  if (mode === 'edit' && parsedId === null) return <div>{t('common.errorGeneric')}</div>
+  if (mode === 'edit' && parsedId === null) return <div>{t('errorGeneric', { ns: 'common' })}</div>
 
   const mutation = mode === 'create' ? createMutation : updateMutation
   const serverFieldErrors = extractValidationErrors(mutation.error)
@@ -42,22 +42,22 @@ export function DuePeriodFormPage({ mode }: Props) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">
-          {mode === 'create' ? `${t('common.create')} ${t('finance.common.duePeriods')}` : `${t('finance.common.edit')} ${t('finance.common.duePeriods')}`}
+          {mode === 'create' ? `${t('create', { ns: 'common' })} ${t('duePeriods', { ns: 'finance' })}` : `${t('edit', { ns: 'finance' })} ${t('duePeriods', { ns: 'finance' })}`}
         </h1>
         <Link to="/finance/due-periods" className="text-sm text-violet-600">
-          {t('finance.common.back')}
+          {t('back', { ns: 'finance' })}
         </Link>
       </div>
       <DuePeriodForm
         defaultValues={mode === 'edit' ? query.data ?? undefined : undefined}
-        submitLabel={mode === 'create' ? t('finance.common.create') : t('finance.common.save')}
+        submitLabel={mode === 'create' ? t('create', { ns: 'finance' }) : t('save', { ns: 'finance' })}
         isSubmitting={mutation.isPending}
         serverFieldErrors={serverFieldErrors}
         onSubmit={(values) => {
           if (mode === 'create') {
             createMutation.mutate(values, {
               onSuccess: (created) => {
-                toast.success(t('finance.common.createSuccess'))
+                toast.success(t('createSuccess', { ns: 'finance' }))
                 navigate(`/finance/due-periods/${created.id}`)
               },
               onError: (err) => toast.error(getErrorMessage(err)),
@@ -69,7 +69,7 @@ export function DuePeriodFormPage({ mode }: Props) {
             { id: parsedId, body: values },
             {
               onSuccess: () => {
-                toast.success(t('finance.common.updateSuccess'))
+                toast.success(t('updateSuccess', { ns: 'finance' }))
                 navigate(`/finance/due-periods/${parsedId}`)
               },
               onError: (err) => toast.error(getErrorMessage(err)),

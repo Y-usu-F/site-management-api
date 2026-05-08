@@ -60,28 +60,28 @@ export function DepositDetailPage() {
   const [cancelOpen, setCancelOpen] = useState(false)
 
   if (!canView) return <PermissionDeniedNotice permission="deposit.view" />
-  if (parsedId === null) return <div>{t('common.errorGeneric')}</div>
-  if (!query.data) return <div>{t('common.loading')}</div>
+  if (parsedId === null) return <div>{t('errorGeneric', { ns: 'common' })}</div>
+  if (!query.data) return <div>{t('loading', { ns: 'common' })}</div>
   const row = query.data
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t('finance.common.deposits')} #{row.id}</h1>
+        <h1 className="text-xl font-semibold">{t('deposits', { ns: 'finance' })} #{row.id}</h1>
         <Link to="/finance/deposits" className="text-sm text-violet-600">
-          {t('finance.common.back')}
+          {t('back', { ns: 'finance' })}
         </Link>
       </div>
       <div className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
-        <div>{t('finance.common.paymentNo')}: {row.deposit_no}</div>
-        <div>{t('finance.common.site')}: {row.site_id}</div>
-        <div>{t('finance.common.resident')}: {row.resident_profile_id}</div>
-        <div>{t('finance.common.unit')}: {row.unit_id}</div>
-        <div>{t('finance.common.initial')}: <MoneyText amount={row.initial_amount} currency={row.currency} /></div>
-        <div>{t('finance.common.balance')}: <MoneyText amount={row.balance_amount} currency={row.currency} /></div>
-        <div>{t('finance.common.status')}: <FinanceStatusBadge status={row.status} /></div>
-        <div>{t('finance.common.receivedAt')}: {row.received_at ?? '-'}</div>
-        <div>{t('finance.common.notes')}: {row.notes ?? '-'}</div>
+        <div>{t('paymentNo', { ns: 'finance' })}: {row.deposit_no}</div>
+        <div>{t('site', { ns: 'finance' })}: {row.site_id}</div>
+        <div>{t('resident', { ns: 'finance' })}: {row.resident_profile_id}</div>
+        <div>{t('unit', { ns: 'finance' })}: {row.unit_id}</div>
+        <div>{t('initial', { ns: 'finance' })}: <MoneyText amount={row.initial_amount} currency={row.currency} /></div>
+        <div>{t('balance', { ns: 'finance' })}: <MoneyText amount={row.balance_amount} currency={row.currency} /></div>
+        <div>{t('status', { ns: 'finance' })}: <FinanceStatusBadge status={row.status} /></div>
+        <div>{t('receivedAt', { ns: 'finance' })}: {row.received_at ?? '-'}</div>
+        <div>{t('notes', { ns: 'finance' })}: {row.notes ?? '-'}</div>
       </div>
       {canUpdate ? (
         <div>
@@ -93,18 +93,18 @@ export function DepositDetailPage() {
               updateMutation.mutate(
                 { id: row.id, body: { notes: `${row.notes ?? ''}`.trim() || undefined } },
                 {
-                  onSuccess: () => toast.success(t('finance.common.updateSuccess')),
+                  onSuccess: () => toast.success(t('updateSuccess', { ns: 'finance' })),
                   onError: (err) => toast.error(getErrorMessage(err)),
                 },
               )
             }
           >
-            {updateMutation.isPending ? t('common.pleaseWait') : t('finance.common.save')}
+            {updateMutation.isPending ? t('pleaseWait', { ns: 'common' }) : t('save', { ns: 'finance' })}
           </button>
         </div>
       ) : null}
       <div className="grid gap-3 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
-          <h2 className="text-sm font-semibold">{t('finance.common.actions')}</h2>
+          <h2 className="text-sm font-semibold">{t('actions', { ns: 'finance' })}</h2>
         {canReceive ? (
           <button
             type="button"
@@ -112,12 +112,12 @@ export function DepositDetailPage() {
             disabled={receiveMutation.isPending}
             onClick={() =>
               receiveMutation.mutate(row.id, {
-                onSuccess: () => toast.success(t('finance.common.updateSuccess')),
+                onSuccess: () => toast.success(t('updateSuccess', { ns: 'finance' })),
                 onError: (err) => toast.error(getErrorMessage(err)),
               })
             }
           >
-            {receiveMutation.isPending ? t('common.pleaseWait') : t('finance.common.save')}
+            {receiveMutation.isPending ? t('pleaseWait', { ns: 'common' }) : t('save', { ns: 'finance' })}
           </button>
         ) : null}
         {canRefund ? (
@@ -125,7 +125,7 @@ export function DepositDetailPage() {
             <input
               value={refundAmount}
               onChange={(e) => setRefundAmount(e.target.value)}
-              placeholder={t('finance.common.amount')}
+              placeholder={t('amount', { ns: 'finance' })}
               className="rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
             />
             <button
@@ -137,7 +137,7 @@ export function DepositDetailPage() {
                   { id: row.id, amount: Number(refundAmount) },
                   {
                     onSuccess: () => {
-                      toast.success(t('finance.common.updateSuccess'))
+                      toast.success(t('updateSuccess', { ns: 'finance' }))
                       setRefundAmount('')
                     },
                     onError: (err) => toast.error(getErrorMessage(err)),
@@ -145,7 +145,7 @@ export function DepositDetailPage() {
                 )
               }
             >
-              {refundMutation.isPending ? t('common.pleaseWait') : t('finance.common.refund')}
+              {refundMutation.isPending ? t('pleaseWait', { ns: 'common' }) : t('refund', { ns: 'finance' })}
             </button>
           </div>
         ) : null}
@@ -154,7 +154,7 @@ export function DepositDetailPage() {
             <input
               value={deductAmount}
               onChange={(e) => setDeductAmount(e.target.value)}
-              placeholder={t('finance.common.amount')}
+              placeholder={t('amount', { ns: 'finance' })}
               className="rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
             />
             <button
@@ -166,7 +166,7 @@ export function DepositDetailPage() {
                   { id: row.id, amount: Number(deductAmount) },
                   {
                     onSuccess: () => {
-                      toast.success(t('finance.common.updateSuccess'))
+                      toast.success(t('updateSuccess', { ns: 'finance' }))
                       setDeductAmount('')
                     },
                     onError: (err) => toast.error(getErrorMessage(err)),
@@ -174,7 +174,7 @@ export function DepositDetailPage() {
                 )
               }
             >
-              {deductMutation.isPending ? t('common.pleaseWait') : t('finance.common.deduction')}
+              {deductMutation.isPending ? t('pleaseWait', { ns: 'common' }) : t('deduction', { ns: 'finance' })}
             </button>
           </div>
         ) : null}
@@ -183,13 +183,13 @@ export function DepositDetailPage() {
             <input
               value={applyDueItemId}
               onChange={(e) => setApplyDueItemId(e.target.value)}
-              placeholder={t('finance.common.dueItems')}
+              placeholder={t('dueItems', { ns: 'finance' })}
               className="rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
             />
             <input
               value={applyAmount}
               onChange={(e) => setApplyAmount(e.target.value)}
-              placeholder={t('finance.common.amount')}
+              placeholder={t('amount', { ns: 'finance' })}
               className="rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
             />
             <button
@@ -205,7 +205,7 @@ export function DepositDetailPage() {
                   },
                   {
                     onSuccess: () => {
-                      toast.success(t('finance.common.updateSuccess'))
+                      toast.success(t('updateSuccess', { ns: 'finance' }))
                       setApplyDueItemId('')
                       setApplyAmount('')
                     },
@@ -214,7 +214,7 @@ export function DepositDetailPage() {
                 )
               }
             >
-              {applyMutation.isPending ? t('common.pleaseWait') : t('finance.common.applyToDebt')}
+              {applyMutation.isPending ? t('pleaseWait', { ns: 'common' }) : t('applyToDebt', { ns: 'finance' })}
             </button>
           </div>
         ) : null}
@@ -226,20 +226,20 @@ export function DepositDetailPage() {
               disabled={cancelMutation.isPending}
               onClick={() => setCancelOpen(true)}
             >
-              {t('finance.common.cancelDeposit')}
+              {t('cancelDeposit', { ns: 'finance' })}
             </button>
             <ConfirmDialog
               isOpen={cancelOpen}
-              title={t('finance.common.deleteConfirmTitle')}
-              description={t('common.confirm')}
-              confirmText={cancelMutation.isPending ? t('common.pleaseWait') : t('finance.common.cancelDeposit')}
-              cancelText={t('common.cancel')}
+              title={t('deleteConfirmTitle', { ns: 'finance' })}
+              description={t('confirm', { ns: 'common' })}
+              confirmText={cancelMutation.isPending ? t('pleaseWait', { ns: 'common' }) : t('cancelDeposit', { ns: 'finance' })}
+              cancelText={t('cancel', { ns: 'common' })}
               variant="danger"
               onClose={() => setCancelOpen(false)}
               onConfirm={() =>
                 cancelMutation.mutate(row.id, {
                   onSuccess: () => {
-                    toast.success(t('finance.common.cancelDeposit'))
+                    toast.success(t('cancelDeposit', { ns: 'finance' }))
                     setCancelOpen(false)
                   },
                   onError: (err) => toast.error(getErrorMessage(err)),
@@ -251,19 +251,19 @@ export function DepositDetailPage() {
       </div>
       {canListTx ? (
         <div className="space-y-2">
-          <h2 className="text-lg font-semibold">{t('finance.common.transactions')}</h2>
+          <h2 className="text-lg font-semibold">{t('transactions', { ns: 'finance' })}</h2>
           {(txQuery.data?.items ?? []).length === 0 ? (
-            <p className="text-sm text-zinc-500">{t('common.emptyDescription')}</p>
+            <p className="text-sm text-zinc-500">{t('emptyDescription', { ns: 'common' })}</p>
           ) : (
             <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
               <table className="min-w-full text-sm">
                 <thead className="bg-zinc-100 dark:bg-zinc-900">
                   <tr>
                     <th className="px-3 py-2 text-left">ID</th>
-                    <th className="px-3 py-2 text-left">{t('finance.common.type')}</th>
-                    <th className="px-3 py-2 text-left">{t('finance.common.amount')}</th>
-                    <th className="px-3 py-2 text-left">{t('finance.common.date')}</th>
-                    <th className="px-3 py-2 text-left">{t('finance.common.description')}</th>
+                    <th className="px-3 py-2 text-left">{t('type', { ns: 'finance' })}</th>
+                    <th className="px-3 py-2 text-left">{t('amount', { ns: 'finance' })}</th>
+                    <th className="px-3 py-2 text-left">{t('date', { ns: 'finance' })}</th>
+                    <th className="px-3 py-2 text-left">{t('description', { ns: 'finance' })}</th>
                   </tr>
                 </thead>
                 <tbody>

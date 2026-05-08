@@ -198,7 +198,7 @@ export function AppRoutes() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
-        <Route element={withSuspense(<DashboardLayout />, t('common.loading'))}>
+        <Route element={withSuspense(<DashboardLayout />, t('loading', { ns: 'common' }))}>
           <Route path="/dashboard" element={<DashboardHomePage />} />
 
           <Route path="/sites/new" element={<SiteFormPage mode="create" />} />

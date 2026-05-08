@@ -24,21 +24,21 @@ export function DepositFormPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t('common.create')} {t('finance.common.deposits')}</h1>
+        <h1 className="text-xl font-semibold">{t('create', { ns: 'common' })} {t('deposits', { ns: 'finance' })}</h1>
         <Link to="/finance/deposits" className="text-sm text-violet-600">
-          {t('finance.common.back')}
+          {t('back', { ns: 'finance' })}
         </Link>
       </div>
       <DepositForm
         residents={residents.data ?? []}
         units={units.data ?? []}
-        submitLabel={t('finance.common.create')}
+        submitLabel={t('create', { ns: 'finance' })}
         isSubmitting={mutation.isPending}
         serverFieldErrors={extractValidationErrors(mutation.error)}
         onSubmit={(values) => {
           mutation.mutate(values, {
             onSuccess: (created) => {
-              toast.success(t('finance.common.createSuccess'))
+              toast.success(t('createSuccess', { ns: 'finance' }))
               navigate(`/finance/deposits/${created.id}`)
             },
             onError: (err) => toast.error(getErrorMessage(err)),

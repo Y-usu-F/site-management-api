@@ -55,9 +55,9 @@ export function PaymentForm({
         e.preventDefault()
         const next: Record<string, string> = {}
         const parsedSiteId = Number(siteId)
-        if (!Number.isInteger(parsedSiteId) || parsedSiteId <= 0) next.site_id = t('finance.common.validationSiteIdRequired')
+        if (!Number.isInteger(parsedSiteId) || parsedSiteId <= 0) next.site_id = t('validationSiteIdRequired', { ns: 'finance' })
         const parsedAmount = Number(amount)
-        if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) next.amount = t('finance.common.validationAmountPositive')
+        if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) next.amount = t('validationAmountPositive', { ns: 'finance' })
         setClientErrors(next)
         if (Object.keys(next).length > 0) return
         onSubmit({
@@ -74,7 +74,7 @@ export function PaymentForm({
     >
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium">{t('finance.common.siteId')}</label>
+          <label className="block text-sm font-medium">{t('siteId', { ns: 'finance' })}</label>
           <input
             value={siteId}
             onChange={(e) => setSiteId(e.target.value)}
@@ -83,7 +83,7 @@ export function PaymentForm({
           {errors.site_id ? <p className="mt-1 text-xs text-red-600">{errors.site_id}</p> : null}
         </div>
         <div>
-          <label className="block text-sm font-medium">{t('finance.common.amount')}</label>
+          <label className="block text-sm font-medium">{t('amount', { ns: 'finance' })}</label>
           <input
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
@@ -94,13 +94,13 @@ export function PaymentForm({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium">{t('finance.common.resident')}</label>
+          <label className="block text-sm font-medium">{t('resident', { ns: 'finance' })}</label>
           <select
             value={residentId}
             onChange={(e) => setResidentId(e.target.value)}
             className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
           >
-            <option value="">{t('finance.common.residentSelect')}</option>
+            <option value="">{t('residentSelect', { ns: 'finance' })}</option>
             {residents.map((resident) => (
               <option key={resident.id} value={resident.id}>
                 {resident.id} - {(resident.first_name ?? '').trim()} {(resident.last_name ?? '').trim()}
@@ -109,13 +109,13 @@ export function PaymentForm({
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium">{t('finance.common.unit')}</label>
+          <label className="block text-sm font-medium">{t('unit', { ns: 'finance' })}</label>
           <select
             value={unitId}
             onChange={(e) => setUnitId(e.target.value)}
             className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
           >
-            <option value="">{t('finance.common.unitSelect')}</option>
+            <option value="">{t('unitSelect', { ns: 'finance' })}</option>
             {units.map((unit) => (
               <option key={unit.id} value={unit.id}>
                 {unit.id} - {unit.unit_no ?? '-'}
@@ -126,7 +126,7 @@ export function PaymentForm({
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <label className="block text-sm font-medium">{t('finance.common.currency')}</label>
+          <label className="block text-sm font-medium">{t('currency', { ns: 'finance' })}</label>
           <input
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
@@ -134,7 +134,7 @@ export function PaymentForm({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium">{t('finance.common.method')}</label>
+          <label className="block text-sm font-medium">{t('method', { ns: 'finance' })}</label>
           <select
             value={method}
             onChange={(e) => setMethod(e.target.value)}
@@ -148,7 +148,7 @@ export function PaymentForm({
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium">{t('finance.common.paymentDate')}</label>
+          <label className="block text-sm font-medium">{t('paymentDate', { ns: 'finance' })}</label>
           <input
             type="datetime-local"
             value={paymentDate}
@@ -158,7 +158,7 @@ export function PaymentForm({
         </div>
       </div>
       <div>
-        <label className="block text-sm font-medium">{t('finance.common.notes')}</label>
+        <label className="block text-sm font-medium">{t('notes', { ns: 'finance' })}</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -170,7 +170,7 @@ export function PaymentForm({
         disabled={isSubmitting}
         className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
-        {isSubmitting ? t('common.pleaseWait') : submitLabel}
+        {isSubmitting ? t('pleaseWait', { ns: 'common' }) : submitLabel}
       </button>
     </form>
   )

@@ -69,40 +69,40 @@ export function SitesPage() {
   const bulkDeleteMutation = useMutation({
     mutationFn: (ids: number[]) => bulkDeleteSites(ids),
     onSuccess: () => {
-      toast.success(t('site.common.bulkDeleteSitesSuccess'))
+      toast.success(t('bulkDeleteSitesSuccess', { ns: 'site' }))
       clearSelection()
       void qc.invalidateQueries({ queryKey: ['sites'] })
     },
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.bulkDeleteEndpointNotAvailableYet'))
+        toast.error(t('bulkDeleteEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotDeleteSelectedSites')))
+      toast.error(getErrorMessage(err, t('couldNotDeleteSelectedSites', { ns: 'site' })))
     },
   })
 
   const exportMutation = useMutation({
     mutationFn: () => exportSitesExcel(params),
-    onSuccess: () => toast.success(t('site.common.exportStarted')),
+    onSuccess: () => toast.success(t('exportStarted', { ns: 'site' })),
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.exportEndpointNotAvailableYet'))
+        toast.error(t('exportEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotExportSites')))
+      toast.error(getErrorMessage(err, t('couldNotExportSites', { ns: 'site' })))
     },
   })
 
   const templateMutation = useMutation({
     mutationFn: () => downloadSiteTemplate(),
-    onSuccess: () => toast.success(t('site.common.templateDownloaded')),
+    onSuccess: () => toast.success(t('templateDownloaded', { ns: 'site' })),
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.templateEndpointNotAvailableYet'))
+        toast.error(t('templateEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotDownloadTemplate')))
+      toast.error(getErrorMessage(err, t('couldNotDownloadTemplate', { ns: 'site' })))
     },
   })
 
@@ -110,21 +110,19 @@ export function SitesPage() {
     mutationFn: (file: File) => importSitesExcel(file),
     onSuccess: (result) => {
       toast.success(
-        t('site.common.importDone', {
-          inserted: result.inserted_count ?? 0,
+        t('importDone', { ns: 'site', inserted: result.inserted_count ?? 0,
           updated: result.updated_count ?? 0,
-          skipped: result.skipped_count ?? 0,
-        }),
+          skipped: result.skipped_count ?? 0, }),
       )
       setImportOpen(false)
       void qc.invalidateQueries({ queryKey: ['sites'] })
     },
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.importEndpointNotAvailableYet'))
+        toast.error(t('importEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotImportSites')))
+      toast.error(getErrorMessage(err, t('couldNotImportSites', { ns: 'site' })))
     },
   })
 
@@ -137,7 +135,7 @@ export function SitesPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            {t('site.common.sites')}
+            {t('sites', { ns: 'site' })}
           </h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
             {total} site(s)
@@ -147,12 +145,12 @@ export function SitesPage() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="w-full sm:w-72">
             <label htmlFor="site-search" className="sr-only">
-              {t('common.search')}
+              {t('search', { ns: 'common' })}
             </label>
             <input
               id="site-search"
               type="search"
-              placeholder={t('common.search')}
+              placeholder={t('search', { ns: 'common' })}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none ring-violet-500 focus:ring-2 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50"
@@ -163,7 +161,7 @@ export function SitesPage() {
               to="/sites/new"
               className="inline-flex justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
             >
-              {t('site.common.new')}
+              {t('new', { ns: 'site' })}
             </Link>
           ) : null}
         </div>
@@ -184,22 +182,22 @@ export function SitesPage() {
 
       {isPending ? (
         <div className="rounded-xl border border-zinc-200 bg-white p-12 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-          {t('site.common.loading')}
+          {t('loading', { ns: 'site' })}
         </div>
       ) : null}
 
       {isError ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/40">
-          <p className="font-medium text-red-900 dark:text-red-100">{t('common.errorGeneric')}</p>
+          <p className="font-medium text-red-900 dark:text-red-100">{t('errorGeneric', { ns: 'common' })}</p>
           <p className="mt-2 text-sm text-red-800 dark:text-red-200">
-            {error instanceof Error ? error.message : t('common.errorGeneric')}
+            {error instanceof Error ? error.message : t('errorGeneric', { ns: 'common' })}
           </p>
         </div>
       ) : null}
 
       {!isPending && !isError && items.length === 0 ? (
         <EmptyState
-          title={t('common.emptyTitle')}
+          title={t('emptyTitle', { ns: 'common' })}
           description={
             canCreate ? (
               <>
@@ -230,22 +228,22 @@ export function SitesPage() {
                     />
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('site.form.code')}
+                    {t('form.code', { ns: 'site' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('site.form.name')}
+                    {t('form.name', { ns: 'site' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('site.form.address')}
+                    {t('form.address', { ns: 'site' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('site.common.status')}
+                    {t('status', { ns: 'site' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('site.common.updated')}
+                    {t('updated', { ns: 'site' })}
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('site.common.actions')}
+                    {t('actions', { ns: 'site' })}
                   </th>
                 </tr>
               </thead>
@@ -282,7 +280,7 @@ export function SitesPage() {
                         to={`/sites/${site.id}`}
                         className="font-medium text-violet-600 hover:underline"
                       >
-                        {t('site.common.open')}
+                        {t('open', { ns: 'site' })}
                       </Link>
                     </td>
                   </tr>
@@ -303,7 +301,7 @@ export function SitesPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="rounded-lg border border-zinc-300 px-3 py-1 text-xs font-medium disabled:opacity-40 dark:border-zinc-600"
                 >
-                  {t('common.pagination.prev')}
+                  {t('pagination.prev', { ns: 'common' })}
                 </button>
                 <button
                   type="button"
@@ -311,7 +309,7 @@ export function SitesPage() {
                   onClick={() => setPage((p) => p + 1)}
                   className="rounded-lg border border-zinc-300 px-3 py-1 text-xs font-medium disabled:opacity-40 dark:border-zinc-600"
                 >
-                  {t('common.pagination.next')}
+                  {t('pagination.next', { ns: 'common' })}
                 </button>
               </div>
             </div>
@@ -320,10 +318,10 @@ export function SitesPage() {
       ) : null}
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
-        title={t('site.common.deleteSelectedSitesTitle')}
-        description={t('site.common.deleteSelectedSitesDescription', { count: selectedCount })}
-        confirmText={t('site.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('deleteSelectedSitesTitle', { ns: 'site' })}
+        description={t('deleteSelectedSitesDescription', { ns: 'site', count: selectedCount })}
+        confirmText={t('delete', { ns: 'site' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={bulkDeleteMutation.isPending}
         onClose={() => setDeleteConfirmOpen(false)}
@@ -331,7 +329,7 @@ export function SitesPage() {
       />
       <ImportExcelDialog
         isOpen={importOpen}
-        title={t('site.common.importSitesFromExcel')}
+        title={t('importSitesFromExcel', { ns: 'site' })}
         isSubmitting={importMutation.isPending}
         onClose={() => setImportOpen(false)}
         onSubmit={(file) => importMutation.mutate(file)}

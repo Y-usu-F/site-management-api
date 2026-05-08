@@ -47,7 +47,7 @@ export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'create' && siteId === null) {
     return (
       <p className="text-sm">
-        {t('site.common.invalidId')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('invalidId', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
@@ -55,19 +55,19 @@ export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'edit' && blockId === null) {
     return (
       <p className="text-sm">
-        {t('site.common.invalidId')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('invalidId', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
 
   if (mode === 'edit' && loadingBlock) {
-    return <p className="text-sm text-zinc-600">{t('site.common.loading')}</p>
+    return <p className="text-sm text-zinc-600">{t('loading', { ns: 'site' })}</p>
   }
 
   if (mode === 'edit' && !existing) {
     return (
       <p className="text-sm">
-        {t('site.common.notFound')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('notFound', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
@@ -79,26 +79,26 @@ export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">{t('site.common.sites')}</Link>
+        <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${effectiveSiteId}`}>{t('site.common.sites')}</Link>
+        <Link to={`/sites/${effectiveSiteId}`}>{t('sites', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${effectiveSiteId}/blocks`}>{t('site.common.blocks')}</Link>
+        <Link to={`/sites/${effectiveSiteId}/blocks`}>{t('blocks', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
-        <span>{mode === 'create' ? t('site.common.new') : t('site.common.edit')}</span>
+        <span>{mode === 'create' ? t('new', { ns: 'site' }) : t('edit', { ns: 'site' })}</span>
       </nav>
-      <h1 className="text-2xl font-semibold">{mode === 'create' ? `${t('site.common.new')} ${t('site.common.blocks')}` : `${t('site.common.edit')} ${t('site.common.blocks')}`}</h1>
+      <h1 className="text-2xl font-semibold">{mode === 'create' ? `${t('new', { ns: 'site' })} ${t('blocks', { ns: 'site' })}` : `${t('edit', { ns: 'site' })} ${t('blocks', { ns: 'site' })}`}</h1>
 
       {mutationError ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          {getErrorMessage(mutationError, t('site.common.requestFailed'))}
+          {getErrorMessage(mutationError, t('requestFailed', { ns: 'site' }))}
         </div>
       ) : null}
 
       <BlockForm
         siteId={effectiveSiteId}
         defaultValues={existing ?? undefined}
-        submitLabel={mode === 'create' ? t('common.create') : t('common.save')}
+        submitLabel={mode === 'create' ? t('create', { ns: 'common' }) : t('save', { ns: 'common' })}
         isSubmitting={isSubmitting}
         serverFieldErrors={serverErrors}
         onSubmit={(values) => {
@@ -114,12 +114,12 @@ export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
               },
               {
                 onSuccess: (b) => {
-                  toast.success(`${t('site.common.blocks')} ${t('common.create')}`)
+                  toast.success(`${t('blocks', { ns: 'site' })} ${t('create', { ns: 'common' })}`)
                   navigate(`/blocks/${b.id}`)
                 },
                 onError: (e) => {
                   setServerErrors(extractValidationErrors(e))
-                  toast.error(getErrorMessage(e, t('common.errorGeneric')))
+                  toast.error(getErrorMessage(e, t('errorGeneric', { ns: 'common' })))
                 },
               },
             )
@@ -137,12 +137,12 @@ export function BlockFormPage({ mode }: { mode: 'create' | 'edit' }) {
               },
               {
                 onSuccess: (b) => {
-                  toast.success(`${t('site.common.blocks')} ${t('common.update')}`)
+                  toast.success(`${t('blocks', { ns: 'site' })} ${t('update', { ns: 'common' })}`)
                   navigate(`/blocks/${b.id}`)
                 },
                 onError: (e) => {
                   setServerErrors(extractValidationErrors(e))
-                  toast.error(getErrorMessage(e, t('common.errorGeneric')))
+                  toast.error(getErrorMessage(e, t('errorGeneric', { ns: 'common' })))
                 },
               },
             )

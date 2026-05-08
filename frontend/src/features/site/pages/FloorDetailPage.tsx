@@ -44,17 +44,17 @@ export function FloorDetailPage() {
   }
 
   if (id === null) {
-    return <p className="text-sm">{t('site.common.invalidId')}</p>
+    return <p className="text-sm">{t('invalidId', { ns: 'site' })}</p>
   }
 
   if (isPending) {
-    return <p className="text-sm">{t('site.common.loading')}</p>
+    return <p className="text-sm">{t('loading', { ns: 'site' })}</p>
   }
 
   if (isError || !data) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-        {error instanceof Error ? error.message : t('site.common.notFound')}
+        {error instanceof Error ? error.message : t('notFound', { ns: 'site' })}
       </div>
     )
   }
@@ -64,10 +64,10 @@ export function FloorDetailPage() {
   const handleDelete = () => {
     deleteMutation.mutate(floor.id, {
       onSuccess: () => {
-        toast.success(`${t('site.common.floors')} ${t('common.delete')}`)
+        toast.success(`${t('floors', { ns: 'site' })} ${t('delete', { ns: 'common' })}`)
         navigate(`/blocks/${floor.block_id}/floors`)
       },
-      onError: (err) => toast.error(getErrorMessage(err, t('common.errorGeneric'))),
+      onError: (err) => toast.error(getErrorMessage(err, t('errorGeneric', { ns: 'common' }))),
     })
   }
 
@@ -76,15 +76,15 @@ export function FloorDetailPage() {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">{t('site.common.sites')}</Link>
+        <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
         <Link to={`/sites/${floor.site_id}`}>{site?.code ?? floor.site_id}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${floor.site_id}/blocks`}>{t('site.common.blocks')}</Link>
+        <Link to={`/sites/${floor.site_id}/blocks`}>{t('blocks', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
         <Link to={`/blocks/${floor.block_id}`}>{block?.code ?? floor.block_id}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/blocks/${floor.block_id}/floors`}>{t('site.common.floors')}</Link>
+        <Link to={`/blocks/${floor.block_id}/floors`}>{t('floors', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
         <span>{floor.number}</span>
       </nav>
@@ -92,7 +92,7 @@ export function FloorDetailPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">
-            {t('site.common.floors')} {floor.number}
+            {t('floors', { ns: 'site' })} {floor.number}
             {floor.label?.trim() ? ` · ${floor.label}` : ''}
           </h1>
           <p className="text-sm text-zinc-500">{floor.status}</p>
@@ -103,7 +103,7 @@ export function FloorDetailPage() {
               to={`/floors/${floor.id}/units`}
               className="rounded-lg border px-3 py-2 text-sm dark:border-zinc-600"
             >
-              {t('site.common.units')}
+              {t('units', { ns: 'site' })}
             </Link>
           ) : null}
           {canUpdate ? (
@@ -111,7 +111,7 @@ export function FloorDetailPage() {
               to={`/floors/${floor.id}/edit`}
               className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white"
             >
-              {t('site.common.edit')}
+              {t('edit', { ns: 'site' })}
             </Link>
           ) : null}
           {canDelete ? (
@@ -121,7 +121,7 @@ export function FloorDetailPage() {
               disabled={deleteMutation.isPending}
               className="rounded-lg border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50"
             >
-              {deleteMutation.isPending ? t('site.common.deleting') : t('site.common.delete')}
+              {deleteMutation.isPending ? t('deleting', { ns: 'site' }) : t('delete', { ns: 'site' })}
             </button>
           ) : null}
         </div>
@@ -135,20 +135,20 @@ export function FloorDetailPage() {
 
       <dl className="grid max-w-xl gap-4 rounded-xl border p-6 dark:border-zinc-800">
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.form.sortOrder')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('form.sortOrder', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">{floor.sort_order ?? '—'}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.common.updated')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('updated', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">{formatDateTime(floor.updated_at ?? floor.created_at)}</dd>
         </div>
       </dl>
       <ConfirmDialog
         isOpen={confirmOpen}
-        title={t('site.common.delete')}
-        description={t('common.confirm')}
-        confirmText={t('site.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('delete', { ns: 'site' })}
+        description={t('confirm', { ns: 'common' })}
+        confirmText={t('delete', { ns: 'site' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={deleteMutation.isPending}
         onClose={() => setConfirmOpen(false)}

@@ -37,25 +37,25 @@ export function DuePeriodsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">{t('finance.common.duePeriods')}</h1>
+        <h1 className="text-xl font-semibold">{t('duePeriods', { ns: 'finance' })}</h1>
         {canCreate ? (
           <Link to="/finance/due-periods/new" className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white">
-            {t('common.create')}
+            {t('create', { ns: 'common' })}
           </Link>
         ) : null}
       </div>
       {items.length === 0 ? (
-        <EmptyState title={t('finance.common.noDuePeriod')} description={t('common.emptyDescription')} />
+        <EmptyState title={t('noDuePeriod', { ns: 'finance' })} description={t('emptyDescription', { ns: 'common' })} />
       ) : (
         <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
           <table className="min-w-full text-sm">
             <thead className="bg-zinc-100 dark:bg-zinc-900">
               <tr>
                 <th className="px-3 py-2 text-left">ID</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.periodKey')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.dates')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.status')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.actions')}</th>
+                <th className="px-3 py-2 text-left">{t('periodKey', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('dates', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('status', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('actions', { ns: 'finance' })}</th>
               </tr>
             </thead>
             <tbody>
@@ -70,10 +70,10 @@ export function DuePeriodsPage() {
                   <td className="px-3 py-2">
                     <div className="flex flex-wrap gap-2">
                       <Link className="text-violet-600" to={`/finance/due-periods/${row.id}`}>
-                        {t('finance.common.open')}
+                        {t('open', { ns: 'finance' })}
                       </Link>
                       <Link className="text-violet-600" to={`/finance/due-periods/${row.id}/edit`}>
-                        {t('finance.common.edit')}
+                        {t('edit', { ns: 'finance' })}
                       </Link>
                       {canClose ? (
                         <button
@@ -81,12 +81,12 @@ export function DuePeriodsPage() {
                           className="text-amber-600"
                           onClick={() =>
                             closeMutation.mutate(row.id, {
-                              onSuccess: () => toast.success(t('finance.common.closeSuccess')),
+                              onSuccess: () => toast.success(t('closeSuccess', { ns: 'finance' })),
                               onError: (err) => toast.error(getErrorMessage(err)),
                             })
                           }
                         >
-                          {t('finance.common.close')}
+                          {t('close', { ns: 'finance' })}
                         </button>
                       ) : null}
                       {canLock ? (
@@ -95,17 +95,17 @@ export function DuePeriodsPage() {
                           className="text-orange-600"
                           onClick={() =>
                             lockMutation.mutate(row.id, {
-                              onSuccess: () => toast.success(t('finance.common.lockSuccess')),
+                              onSuccess: () => toast.success(t('lockSuccess', { ns: 'finance' })),
                               onError: (err) => toast.error(getErrorMessage(err)),
                             })
                           }
                         >
-                          {t('finance.common.lock')}
+                          {t('lock', { ns: 'finance' })}
                         </button>
                       ) : null}
                       {canDelete ? (
                         <button type="button" className="text-red-600" onClick={() => setDeleteId(row.id)}>
-                          {t('finance.common.delete')}
+                          {t('delete', { ns: 'finance' })}
                         </button>
                       ) : null}
                     </div>
@@ -117,23 +117,23 @@ export function DuePeriodsPage() {
         </div>
       )}
       <div className="flex items-center gap-2">
-        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>{t('common.pagination.prev')}</button>
-        <span className="text-sm">{t('finance.common.page')} {page}</span>
-        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={(query.data?.items?.length ?? 0) < 10} onClick={() => setPage((p) => p + 1)}>{t('common.pagination.next')}</button>
+        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>{t('pagination.prev', { ns: 'common' })}</button>
+        <span className="text-sm">{t('page', { ns: 'finance' })} {page}</span>
+        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={(query.data?.items?.length ?? 0) < 10} onClick={() => setPage((p) => p + 1)}>{t('pagination.next', { ns: 'common' })}</button>
       </div>
       <ConfirmDialog
         isOpen={deleteId !== null}
-        title={t('finance.common.deleteConfirmTitle')}
-        description={t('common.confirm')}
-        confirmText={del.isPending ? t('finance.common.deleting') : t('finance.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('deleteConfirmTitle', { ns: 'finance' })}
+        description={t('confirm', { ns: 'common' })}
+        confirmText={del.isPending ? t('deleting', { ns: 'finance' }) : t('delete', { ns: 'finance' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         onClose={() => setDeleteId(null)}
         onConfirm={() => {
           if (deleteId === null) return
           del.mutate(deleteId, {
             onSuccess: () => {
-              toast.success(t('finance.common.deleteSuccess'))
+              toast.success(t('deleteSuccess', { ns: 'finance' }))
               setDeleteId(null)
             },
             onError: (err) => toast.error(getErrorMessage(err)),

@@ -38,26 +38,26 @@ export function SiteDetailPage() {
   if (id === null) {
     return (
       <div className="rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
-        <p className="text-sm text-zinc-600">{t('site.common.invalidId')}</p>
+        <p className="text-sm text-zinc-600">{t('invalidId', { ns: 'site' })}</p>
         <Link to="/sites" className="mt-2 inline-block text-violet-600">
-          {t('site.common.backToSites')}
+          {t('backToSites', { ns: 'site' })}
         </Link>
       </div>
     )
   }
 
   if (isPending) {
-    return <p className="text-sm text-zinc-600">{t('site.common.loading')}</p>
+    return <p className="text-sm text-zinc-600">{t('loading', { ns: 'site' })}</p>
   }
 
   if (isError || !data) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900">
         <p className="text-sm text-red-800">
-          {error instanceof Error ? error.message : t('site.common.notFound')}
+          {error instanceof Error ? error.message : t('notFound', { ns: 'site' })}
         </p>
         <Link to="/sites" className="mt-2 inline-block text-sm text-violet-600">
-          {t('site.common.backToSites')}
+          {t('backToSites', { ns: 'site' })}
         </Link>
       </div>
     )
@@ -68,10 +68,10 @@ export function SiteDetailPage() {
   const handleDelete = () => {
     deleteMutation.mutate(site.id, {
       onSuccess: () => {
-        toast.success(`${t('site.common.sites')} ${t('common.delete')}`)
+        toast.success(`${t('sites', { ns: 'site' })} ${t('delete', { ns: 'common' })}`)
         navigate('/sites')
       },
-      onError: (err) => toast.error(getErrorMessage(err, t('common.errorGeneric'))),
+      onError: (err) => toast.error(getErrorMessage(err, t('errorGeneric', { ns: 'common' }))),
     })
   }
 
@@ -83,7 +83,7 @@ export function SiteDetailPage() {
         <div>
           <nav className="text-xs text-zinc-500">
             <Link to="/sites" className="hover:text-violet-600">
-              {t('site.common.sites')}
+              {t('sites', { ns: 'site' })}
             </Link>
             <span className="mx-1">/</span>
             <span className="text-zinc-700 dark:text-zinc-300">{site.code}</span>
@@ -99,7 +99,7 @@ export function SiteDetailPage() {
               to={`/sites/${site.id}/blocks`}
               className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-600"
             >
-              {t('site.common.blocks')}
+              {t('blocks', { ns: 'site' })}
             </Link>
           ) : null}
           {canUpdate ? (
@@ -107,7 +107,7 @@ export function SiteDetailPage() {
               to={`/sites/${site.id}/edit`}
               className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white"
             >
-              {t('site.common.edit')}
+              {t('edit', { ns: 'site' })}
             </Link>
           ) : null}
           {canDelete ? (
@@ -117,7 +117,7 @@ export function SiteDetailPage() {
               disabled={deleteMutation.isPending}
               className="rounded-lg border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50 dark:border-red-800 dark:text-red-300"
             >
-              {deleteMutation.isPending ? t('site.common.deleting') : t('site.common.delete')}
+              {deleteMutation.isPending ? t('deleting', { ns: 'site' }) : t('delete', { ns: 'site' })}
             </button>
           ) : null}
         </div>
@@ -131,26 +131,26 @@ export function SiteDetailPage() {
 
       <dl className="grid max-w-xl gap-4 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.common.status')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('status', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">{site.status}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.form.address')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('form.address', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm text-zinc-800 dark:text-zinc-200">
             {site.address?.trim() ? site.address : '—'}
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.common.updated')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('updated', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">{formatDateTime(site.updated_at ?? site.created_at)}</dd>
         </div>
       </dl>
       <ConfirmDialog
         isOpen={confirmOpen}
-        title={t('site.common.delete')}
-        description={t('common.confirm')}
-        confirmText={t('site.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('delete', { ns: 'site' })}
+        description={t('confirm', { ns: 'common' })}
+        confirmText={t('delete', { ns: 'site' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={deleteMutation.isPending}
         onClose={() => setConfirmOpen(false)}

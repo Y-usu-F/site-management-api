@@ -58,8 +58,8 @@ export function ResidentsPage() {
   const totalPages = data?.total_pages ?? 0
   const deletingResident = residents.find((x) => x.id === selectedDeleteId) ?? null
   const statusLabel = (value: string) => {
-    if (value === 'active') return t('residents.common.active')
-    if (value === 'passive') return t('residents.common.passive')
+    if (value === 'active') return t('active', { ns: 'residents' })
+    if (value === 'passive') return t('passive', { ns: 'residents' })
     return value
   }
 
@@ -68,17 +68,17 @@ export function ResidentsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            {t('residents.common.residents')}
+            {t('residents', { ns: 'residents' })}
           </h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            {total} {t('residents.common.resident')}
-            {debouncedSearch ? ` ${t('residents.common.matching', { query: debouncedSearch })}` : ''}.
+            {total} {t('resident', { ns: 'residents' })}
+            {debouncedSearch ? ` ${t('matching', { ns: 'residents', query: debouncedSearch })}` : ''}.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="search"
-            placeholder={t('common.search')}
+            placeholder={t('search', { ns: 'common' })}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none ring-violet-500 focus:ring-2 sm:w-72 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50"
@@ -88,7 +88,7 @@ export function ResidentsPage() {
               to="/residents/new"
               className="inline-flex justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
             >
-              {t('residents.form.createResident')}
+              {t('form.createResident', { ns: 'residents' })}
             </Link>
           ) : null}
         </div>
@@ -96,32 +96,32 @@ export function ResidentsPage() {
 
       {isPending ? (
         <div className="rounded-xl border border-zinc-200 bg-white p-12 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-          {t('residents.common.loading')}
+          {t('loading', { ns: 'residents' })}
         </div>
       ) : null}
 
       {isError ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/40">
-          <p className="font-medium text-red-900 dark:text-red-100">{t('common.errorGeneric')}</p>
+          <p className="font-medium text-red-900 dark:text-red-100">{t('errorGeneric', { ns: 'common' })}</p>
           <p className="mt-2 text-sm text-red-800 dark:text-red-200">
-            {error instanceof Error ? error.message : t('common.errorGeneric')}
+            {error instanceof Error ? error.message : t('errorGeneric', { ns: 'common' })}
           </p>
         </div>
       ) : null}
 
       {!isPending && !isError && residents.length === 0 ? (
         <EmptyState
-          title={t('common.emptyTitle')}
+          title={t('emptyTitle', { ns: 'common' })}
           description={
             canCreate ? (
               <>
                 <Link to="/residents/new" className="text-violet-600 underline">
-                  {t('residents.common.createResidentCta')}
+                  {t('createResidentCta', { ns: 'residents' })}
                 </Link>{' '}
-                {t('residents.common.getStarted')}
+                {t('getStarted', { ns: 'residents' })}
               </>
             ) : (
-              t('residents.common.createPermissionRequiredToAddResidents')
+              t('createPermissionRequiredToAddResidents', { ns: 'residents' })
             )
           }
         />
@@ -134,25 +134,25 @@ export function ResidentsPage() {
               <thead className="bg-zinc-50 dark:bg-zinc-800/80">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('residents.form.firstName')}
+                    {t('form.firstName', { ns: 'residents' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('residents.common.identityNumber')}
+                    {t('identityNumber', { ns: 'residents' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('residents.common.phone')}
+                    {t('phone', { ns: 'residents' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('residents.common.email')}
+                    {t('email', { ns: 'residents' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('residents.common.status')}
+                    {t('status', { ns: 'residents' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('residents.common.updated')}
+                    {t('updated', { ns: 'residents' })}
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {t('residents.common.actions')}
+                    {t('actions', { ns: 'residents' })}
                   </th>
                 </tr>
               </thead>
@@ -178,7 +178,7 @@ export function ResidentsPage() {
                     <td className="px-4 py-3 text-right text-sm">
                       <div className="flex justify-end gap-3">
                         <Link to={`/residents/${resident.id}`} className="font-medium text-violet-600 hover:underline">
-                          {t('residents.common.open')}
+                          {t('open', { ns: 'residents' })}
                         </Link>
                         {canDelete ? (
                           <button
@@ -186,7 +186,7 @@ export function ResidentsPage() {
                             onClick={() => setSelectedDeleteId(resident.id)}
                             className="font-medium text-red-600 hover:underline"
                           >
-                            {t('residents.common.delete')}
+                            {t('delete', { ns: 'residents' })}
                           </button>
                         ) : null}
                       </div>
@@ -199,8 +199,8 @@ export function ResidentsPage() {
           {totalPages > 1 ? (
             <div className="flex items-center justify-between border-t border-zinc-200 px-4 py-3 dark:border-zinc-700">
               <span className="text-xs text-zinc-500">
-                {t('common.pagination.page')} {data?.page ?? page} {t('common.pagination.of')} {totalPages}
-                {isFetching ? ` · ${t('common.pagination.refreshing')}` : ''}
+                {t('pagination.page', { ns: 'common' })} {data?.page ?? page} {t('pagination.of', { ns: 'common' })} {totalPages}
+                {isFetching ? ` · ${t('pagination.refreshing', { ns: 'common' })}` : ''}
               </span>
               <div className="flex gap-2">
                 <button
@@ -209,7 +209,7 @@ export function ResidentsPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="rounded-lg border border-zinc-300 px-3 py-1 text-xs font-medium disabled:opacity-40 dark:border-zinc-600"
                 >
-                  {t('common.pagination.prev')}
+                  {t('pagination.prev', { ns: 'common' })}
                 </button>
                 <button
                   type="button"
@@ -217,7 +217,7 @@ export function ResidentsPage() {
                   onClick={() => setPage((p) => p + 1)}
                   className="rounded-lg border border-zinc-300 px-3 py-1 text-xs font-medium disabled:opacity-40 dark:border-zinc-600"
                 >
-                  {t('common.pagination.next')}
+                  {t('pagination.next', { ns: 'common' })}
                 </button>
               </div>
             </div>
@@ -227,16 +227,16 @@ export function ResidentsPage() {
 
       <ConfirmDialog
         isOpen={selectedDeleteId !== null}
-        title={t('residents.common.deleteResidentTitle')}
+        title={t('deleteResidentTitle', { ns: 'residents' })}
         description={
           deletingResident
-            ? t('residents.common.deleteResidentDescriptionNamed', {
+            ? t('deleteResidentDescriptionNamed', { ns: 'residents', defaultValue: {
                 name: `${deletingResident.first_name} ${deletingResident.last_name}`,
-              })
-            : t('residents.common.deleteResidentDescriptionGeneric')
+              } })
+            : t('deleteResidentDescriptionGeneric', { ns: 'residents' })
         }
-        confirmText={t('residents.common.delete')}
-        cancelText={t('common.cancel')}
+        confirmText={t('delete', { ns: 'residents' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={deleteMutation.isPending}
         onClose={() => setSelectedDeleteId(null)}
@@ -244,10 +244,10 @@ export function ResidentsPage() {
           if (selectedDeleteId === null) return
           deleteMutation.mutate(selectedDeleteId, {
             onSuccess: () => {
-              toast.success(t('residents.common.residentDeleted'))
+              toast.success(t('residentDeleted', { ns: 'residents' }))
               setSelectedDeleteId(null)
             },
-            onError: (err) => toast.error(getErrorMessage(err, t('residents.common.residentDeleteFailed'))),
+            onError: (err) => toast.error(getErrorMessage(err, t('residentDeleteFailed', { ns: 'residents' }))),
           })
         }}
       />

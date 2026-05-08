@@ -42,17 +42,17 @@ export function BlockDetailPage() {
   }
 
   if (id === null) {
-    return <p className="text-sm text-zinc-600">{t('site.common.invalidId')}</p>
+    return <p className="text-sm text-zinc-600">{t('invalidId', { ns: 'site' })}</p>
   }
 
   if (isPending) {
-    return <p className="text-sm text-zinc-600">{t('site.common.loading')}</p>
+    return <p className="text-sm text-zinc-600">{t('loading', { ns: 'site' })}</p>
   }
 
   if (isError || !data) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-        {error instanceof Error ? error.message : t('site.common.notFound')}
+        {error instanceof Error ? error.message : t('notFound', { ns: 'site' })}
       </div>
     )
   }
@@ -62,10 +62,10 @@ export function BlockDetailPage() {
   const handleDelete = () => {
     deleteMutation.mutate(block.id, {
       onSuccess: () => {
-        toast.success(`${t('site.common.blocks')} ${t('common.delete')}`)
+        toast.success(`${t('blocks', { ns: 'site' })} ${t('delete', { ns: 'common' })}`)
         navigate(`/sites/${block.site_id}/blocks`)
       },
-      onError: (err) => toast.error(getErrorMessage(err, t('common.errorGeneric'))),
+      onError: (err) => toast.error(getErrorMessage(err, t('errorGeneric', { ns: 'common' }))),
     })
   }
 
@@ -75,7 +75,7 @@ export function BlockDetailPage() {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to="/sites" className="hover:text-violet-600">
-          {t('site.common.sites')}
+          {t('sites', { ns: 'site' })}
         </Link>
         <span className="mx-1">/</span>
         <Link to={`/sites/${block.site_id}`} className="hover:text-violet-600">
@@ -83,7 +83,7 @@ export function BlockDetailPage() {
         </Link>
         <span className="mx-1">/</span>
         <Link to={`/sites/${block.site_id}/blocks`} className="hover:text-violet-600">
-          {t('site.common.blocks')}
+          {t('blocks', { ns: 'site' })}
         </Link>
         <span className="mx-1">/</span>
         <span>{block.code}</span>
@@ -100,7 +100,7 @@ export function BlockDetailPage() {
               to={`/blocks/${block.id}/floors`}
               className="rounded-lg border px-3 py-2 text-sm dark:border-zinc-600"
             >
-              {t('site.common.floors')}
+              {t('floors', { ns: 'site' })}
             </Link>
           ) : null}
           {canUpdate ? (
@@ -108,7 +108,7 @@ export function BlockDetailPage() {
               to={`/blocks/${block.id}/edit`}
               className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white"
             >
-              {t('site.common.edit')}
+              {t('edit', { ns: 'site' })}
             </Link>
           ) : null}
           {canDelete ? (
@@ -118,7 +118,7 @@ export function BlockDetailPage() {
               disabled={deleteMutation.isPending}
               className="rounded-lg border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50"
             >
-              {deleteMutation.isPending ? t('site.common.deleting') : t('site.common.delete')}
+              {deleteMutation.isPending ? t('deleting', { ns: 'site' }) : t('delete', { ns: 'site' })}
             </button>
           ) : null}
         </div>
@@ -132,24 +132,24 @@ export function BlockDetailPage() {
 
       <dl className="grid max-w-xl gap-4 rounded-xl border p-6 dark:border-zinc-800">
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.common.status')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('status', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">{block.status}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.form.sortOrder')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('form.sortOrder', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">{block.sort_order ?? '—'}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.common.updated')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('updated', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">{formatDateTime(block.updated_at ?? block.created_at)}</dd>
         </div>
       </dl>
       <ConfirmDialog
         isOpen={confirmOpen}
-        title={t('site.common.delete')}
-        description={t('common.confirm')}
-        confirmText={t('site.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('delete', { ns: 'site' })}
+        description={t('confirm', { ns: 'common' })}
+        confirmText={t('delete', { ns: 'site' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={deleteMutation.isPending}
         onClose={() => setConfirmOpen(false)}

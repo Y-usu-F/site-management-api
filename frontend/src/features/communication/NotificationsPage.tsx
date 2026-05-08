@@ -43,7 +43,7 @@ export function NotificationsPage() {
   async function handleMarkRead(id: number) {
     try {
       await markRead.mutateAsync(id)
-      toast.success(t('notifications.markedRead'))
+      toast.success(t('markedRead', { ns: 'notifications' }))
     } catch (e) {
       toast.error(getErrorMessage(e))
     }
@@ -52,7 +52,7 @@ export function NotificationsPage() {
   async function handleMarkAllRead() {
     try {
       const result = await markAllRead.mutateAsync()
-      toast.success(t('notifications.markedAllRead', { count: result.marked_count }))
+      toast.success(t('markedAllRead', { ns: 'notifications', count: result.marked_count }))
     } catch (e) {
       toast.error(getErrorMessage(e))
     }
@@ -66,9 +66,9 @@ export function NotificationsPage() {
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold">{t('notifications.title')}</h1>
+          <h1 className="text-xl font-semibold">{t('title', { ns: 'notifications' })}</h1>
           <p className="text-sm text-zinc-500">
-            {t('notifications.unreadOnPage')}:{' '}
+            {t('unreadOnPage', { ns: 'notifications' })}:{' '}
             <span className="font-medium text-zinc-900 dark:text-zinc-100">{unreadOnPage}</span>
           </p>
         </div>
@@ -113,19 +113,19 @@ export function NotificationsPage() {
       {list.isLoading ? (
         <div className="text-sm text-zinc-500">{t('loading', { ns: 'common' })}</div>
       ) : list.isError ? (
-        <div className="text-sm text-red-600">{t('notifications.listFailed')}</div>
+        <div className="text-sm text-red-600">{t('listFailed', { ns: 'notifications' })}</div>
       ) : items.length === 0 ? (
-        <EmptyState title={t('notifications.emptyTitle')} description={t('notifications.emptyDescription')} />
+        <EmptyState title={t('emptyTitle', { ns: 'notifications' })} description={t('emptyDescription', { ns: 'notifications' })} />
       ) : (
         <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
           <table className="w-full text-left text-sm">
             <thead className="bg-zinc-50 text-xs uppercase tracking-wide text-zinc-500 dark:bg-zinc-950">
               <tr>
                 <th className="px-3 py-2">ID</th>
-                <th className="px-3 py-2">{t('notifications.table.message')}</th>
-                <th className="px-3 py-2">{t('notifications.table.status')}</th>
-                <th className="px-3 py-2">{t('notifications.table.read')}</th>
-                <th className="px-3 py-2">{t('notifications.table.actions')}</th>
+                <th className="px-3 py-2">{t('table.message', { ns: 'notifications' })}</th>
+                <th className="px-3 py-2">{t('table.status', { ns: 'notifications' })}</th>
+                <th className="px-3 py-2">{t('table.read', { ns: 'notifications' })}</th>
+                <th className="px-3 py-2">{t('table.actions', { ns: 'notifications' })}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">

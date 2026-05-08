@@ -66,7 +66,7 @@ export function BlockForm({
     <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
       <div>
         <label htmlFor="block-name" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.form.name')}
+          {t('form.name', { ns: 'site' })}
         </label>
         <input
           id="block-name"
@@ -78,7 +78,7 @@ export function BlockForm({
       </div>
       <div>
         <label htmlFor="block-code" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.form.code')}
+          {t('form.code', { ns: 'site' })}
         </label>
         <input
           id="block-code"
@@ -93,7 +93,7 @@ export function BlockForm({
           htmlFor="block-sort"
           className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
         >
-          {t('site.form.sortOrder')}
+          {t('form.sortOrder', { ns: 'site' })}
         </label>
         <input
           id="block-sort"
@@ -101,7 +101,7 @@ export function BlockForm({
           inputMode="numeric"
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
-          placeholder={t('site.form.optional')}
+          placeholder={t('form.optional', { ns: 'site' })}
           className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
         />
         {errors.sort_order ? (
@@ -110,7 +110,7 @@ export function BlockForm({
       </div>
       <div>
         <label htmlFor="block-status" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.common.status')}
+          {t('status', { ns: 'site' })}
         </label>
         <select
           id="block-status"
@@ -132,7 +132,7 @@ export function BlockForm({
           disabled={isSubmitting}
           className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
-          {isSubmitting ? t('site.form.saving') : submitLabel}
+          {isSubmitting ? t('form.saving', { ns: 'site' }) : submitLabel}
         </button>
       </div>
     </form>

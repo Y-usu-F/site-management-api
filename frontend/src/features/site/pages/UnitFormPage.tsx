@@ -52,19 +52,19 @@ export function UnitFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'create' && floorId === null) {
     return (
       <p className="text-sm">
-        {t('site.common.invalidId')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('invalidId', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
 
   if (mode === 'create' && loadingFloor) {
-    return <p className="text-sm">{t('site.common.loading')}</p>
+    return <p className="text-sm">{t('loading', { ns: 'site' })}</p>
   }
 
   if (mode === 'create' && !floor) {
     return (
       <p className="text-sm">
-        {t('site.common.notFound')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('notFound', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
@@ -72,19 +72,19 @@ export function UnitFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'edit' && unitId === null) {
     return (
       <p className="text-sm">
-        {t('site.common.invalidId')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('invalidId', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
 
   if (mode === 'edit' && loadingUnit) {
-    return <p className="text-sm">{t('site.common.loading')}</p>
+    return <p className="text-sm">{t('loading', { ns: 'site' })}</p>
   }
 
   if (mode === 'edit' && !existing) {
     return (
       <p className="text-sm">
-        {t('site.common.notFound')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('notFound', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
@@ -99,17 +99,17 @@ export function UnitFormPage({ mode }: { mode: 'create' | 'edit' }) {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">{t('site.common.sites')}</Link>
+        <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/floors/${effectiveFloorId}/units`}>{t('site.common.units')}</Link>
+        <Link to={`/floors/${effectiveFloorId}/units`}>{t('units', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
-        <span>{mode === 'create' ? t('site.common.new') : t('site.common.edit')}</span>
+        <span>{mode === 'create' ? t('new', { ns: 'site' }) : t('edit', { ns: 'site' })}</span>
       </nav>
-      <h1 className="text-2xl font-semibold">{mode === 'create' ? `${t('site.common.new')} ${t('site.common.units')}` : `${t('site.common.edit')} ${t('site.common.units')}`}</h1>
+      <h1 className="text-2xl font-semibold">{mode === 'create' ? `${t('new', { ns: 'site' })} ${t('units', { ns: 'site' })}` : `${t('edit', { ns: 'site' })} ${t('units', { ns: 'site' })}`}</h1>
 
       {mutationError ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          {getErrorMessage(mutationError, t('site.common.requestFailed'))}
+          {getErrorMessage(mutationError, t('requestFailed', { ns: 'site' }))}
         </div>
       ) : null}
 
@@ -118,7 +118,7 @@ export function UnitFormPage({ mode }: { mode: 'create' | 'edit' }) {
         blockId={effectiveBlockId}
         floorId={effectiveFloorId}
         defaultValues={existing ?? undefined}
-        submitLabel={mode === 'create' ? t('common.create') : t('common.save')}
+        submitLabel={mode === 'create' ? t('create', { ns: 'common' }) : t('save', { ns: 'common' })}
         isSubmitting={isSubmitting}
         serverFieldErrors={serverErrors}
         onSubmit={(values) => {
@@ -138,12 +138,12 @@ export function UnitFormPage({ mode }: { mode: 'create' | 'edit' }) {
           if (mode === 'create') {
             createMut.mutate(body, {
               onSuccess: (u) => {
-                toast.success(`${t('site.common.units')} ${t('common.create')}`)
+                toast.success(`${t('units', { ns: 'site' })} ${t('create', { ns: 'common' })}`)
                 navigate(`/units/${u.id}`)
               },
               onError: (e) => {
                 setServerErrors(extractValidationErrors(e))
-                toast.error(getErrorMessage(e, t('common.errorGeneric')))
+                toast.error(getErrorMessage(e, t('errorGeneric', { ns: 'common' })))
               },
             })
           } else if (unitId !== null && existing) {
@@ -151,12 +151,12 @@ export function UnitFormPage({ mode }: { mode: 'create' | 'edit' }) {
               { id: unitId, body },
               {
                 onSuccess: (u) => {
-                  toast.success(`${t('site.common.units')} ${t('common.update')}`)
+                  toast.success(`${t('units', { ns: 'site' })} ${t('update', { ns: 'common' })}`)
                   navigate(`/units/${u.id}`)
                 },
                 onError: (e) => {
                   setServerErrors(extractValidationErrors(e))
-                  toast.error(getErrorMessage(e, t('common.errorGeneric')))
+                  toast.error(getErrorMessage(e, t('errorGeneric', { ns: 'common' })))
                 },
               },
             )

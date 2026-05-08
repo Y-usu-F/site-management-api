@@ -26,11 +26,11 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
     <form className="space-y-4" onSubmit={(e) => {
       e.preventDefault()
       if (!siteId || Number(siteId) <= 0) {
-        setClientError(t('operations.common.validationSiteRequired'))
+        setClientError(t('validationSiteRequired', { ns: 'operations' }))
         return
       }
       if (name.trim().length < 2) {
-        setClientError(t('operations.common.validationNameMin'))
+        setClientError(t('validationNameMin', { ns: 'operations' }))
         return
       }
       setClientError(null)
@@ -47,29 +47,29 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
         <SearchableLookupSelect
-          label={t('operations.common.site')}
-          placeholder={t('operations.common.site')}
+          label={t('site', { ns: 'operations' })}
+          placeholder={t('site', { ns: 'operations' })}
           value={siteId}
           onChange={setSiteId}
           queryKey="sites"
           queryFn={listLookupSites}
         />
-        <input value={blockId} onChange={(e) => setBlockId(e.target.value)} placeholder={t('operations.common.block')} className="rounded border px-3 py-2 text-sm" />
+        <input value={blockId} onChange={(e) => setBlockId(e.target.value)} placeholder={t('block', { ns: 'operations' })} className="rounded border px-3 py-2 text-sm" />
         <SearchableLookupSelect
-          label={t('operations.common.unit')}
-          placeholder={t('operations.common.unit')}
+          label={t('unit', { ns: 'operations' })}
+          placeholder={t('unit', { ns: 'operations' })}
           value={unitId}
           onChange={setUnitId}
           queryKey="units"
           queryFn={listLookupUnits}
         />
-        <input value={assetNo} onChange={(e) => setAssetNo(e.target.value)} placeholder={t('operations.common.code')} className="rounded border px-3 py-2 text-sm" />
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('operations.common.name')} className="rounded border px-3 py-2 text-sm" />
+        <input value={assetNo} onChange={(e) => setAssetNo(e.target.value)} placeholder={t('code', { ns: 'operations' })} className="rounded border px-3 py-2 text-sm" />
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('name', { ns: 'operations' })} className="rounded border px-3 py-2 text-sm" />
         <input type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} className="rounded border px-3 py-2 text-sm" />
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <select value={assetType} onChange={(e) => setAssetType(e.target.value)} className="rounded border px-3 py-2 text-sm" aria-label={t('operations.common.assetType')}>
-          <option value="elevator">{t('operations.common.assetTypeElevator')}</option><option value="generator">{t('operations.common.assetTypeGenerator')}</option><option value="camera">{t('operations.common.assetTypeCamera')}</option><option value="fire_system">{t('operations.common.assetTypeFireSystem')}</option><option value="hydrophore">{t('operations.common.assetTypeHydrophore')}</option><option value="door_system">{t('operations.common.assetTypeDoorSystem')}</option><option value="garden_equipment">{t('operations.common.assetTypeGardenEquipment')}</option><option value="cleaning_equipment">{t('operations.common.assetTypeCleaningEquipment')}</option><option value="other">{t('operations.common.assetTypeOther')}</option>
+        <select value={assetType} onChange={(e) => setAssetType(e.target.value)} className="rounded border px-3 py-2 text-sm" aria-label={t('assetType', { ns: 'operations' })}>
+          <option value="elevator">{t('assetTypeElevator', { ns: 'operations' })}</option><option value="generator">{t('assetTypeGenerator', { ns: 'operations' })}</option><option value="camera">{t('assetTypeCamera', { ns: 'operations' })}</option><option value="fire_system">{t('assetTypeFireSystem', { ns: 'operations' })}</option><option value="hydrophore">{t('assetTypeHydrophore', { ns: 'operations' })}</option><option value="door_system">{t('assetTypeDoorSystem', { ns: 'operations' })}</option><option value="garden_equipment">{t('assetTypeGardenEquipment', { ns: 'operations' })}</option><option value="cleaning_equipment">{t('assetTypeCleaningEquipment', { ns: 'operations' })}</option><option value="other">{t('assetTypeOther', { ns: 'operations' })}</option>
         </select>
         <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded border px-3 py-2 text-sm">
           <option value="active">active</option><option value="maintenance">maintenance</option><option value="broken">broken</option><option value="retired">retired</option>
@@ -77,7 +77,7 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
       </div>
       {clientError ? <p className="text-xs text-red-600">{clientError}</p> : null}
       <button type="submit" disabled={isSubmitting} className="rounded bg-violet-600 px-4 py-2 text-sm text-white disabled:opacity-50">
-        {isSubmitting ? t('common.pleaseWait') : submitLabel}
+        {isSubmitting ? t('pleaseWait', { ns: 'common' }) : submitLabel}
       </button>
     </form>
   )

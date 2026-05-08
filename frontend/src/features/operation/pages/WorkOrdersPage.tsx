@@ -23,24 +23,24 @@ export function WorkOrdersPage() {
   const items = query.data?.items ?? []
   const total = query.data?.total ?? 0
   const statusOptionLabel = (value: string) => {
-    if (value === 'open') return t('operations.common.statusOpen')
-    if (value === 'in_progress') return t('operations.common.statusInProgress')
-    if (value === 'completed') return t('operations.common.statusCompleted')
-    if (value === 'cancelled') return t('operations.common.statusCancelled')
+    if (value === 'open') return t('statusOpen', { ns: 'operations' })
+    if (value === 'in_progress') return t('statusInProgress', { ns: 'operations' })
+    if (value === 'completed') return t('statusCompleted', { ns: 'operations' })
+    if (value === 'cancelled') return t('statusCancelled', { ns: 'operations' })
     return value
   }
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t('operations.common.workOrders')}</h1>
+        <h1 className="text-xl font-semibold">{t('workOrders', { ns: 'operations' })}</h1>
         {canCreate ? (
           <Link to="/operations/work-orders/new" className="rounded bg-violet-600 px-3 py-2 text-sm text-white">
-            {t('operations.common.new')}
+            {t('new', { ns: 'operations' })}
           </Link>
         ) : null}
       </div>
       <label className="text-sm">
-        <span className="mb-1 block text-zinc-600 dark:text-zinc-300">{t('operations.common.status')}</span>
+        <span className="mb-1 block text-zinc-600 dark:text-zinc-300">{t('status', { ns: 'operations' })}</span>
         <select
           value={status}
           onChange={(event) => {
@@ -49,28 +49,28 @@ export function WorkOrdersPage() {
           }}
           className="rounded border border-zinc-300 px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
         >
-          <option value="">{t('operations.common.all')}</option>
+          <option value="">{t('all', { ns: 'operations' })}</option>
           <option value="open">{statusOptionLabel('open')}</option>
           <option value="in_progress">{statusOptionLabel('in_progress')}</option>
           <option value="completed">{statusOptionLabel('completed')}</option>
           <option value="cancelled">{statusOptionLabel('cancelled')}</option>
         </select>
       </label>
-      <p className="text-sm text-zinc-500">{t('operations.common.totalRecords')}: {total}</p>
+      <p className="text-sm text-zinc-500">{t('totalRecords', { ns: 'operations' })}: {total}</p>
       {query.isLoading ? <div className="text-sm text-zinc-500">Yukleniyor...</div> : null}
-      {query.isError ? <EmptyState title={t('operations.common.listFailed')} description={t('common.errorGeneric')} /> : null}
+      {query.isError ? <EmptyState title={t('listFailed', { ns: 'operations' })} description={t('errorGeneric', { ns: 'common' })} /> : null}
       {!query.isLoading && !query.isError && items.length === 0 ? (
-        <EmptyState title={t('common.emptyTitle')} description={t('operations.common.createFirst')} />
+        <EmptyState title={t('emptyTitle', { ns: 'common' })} description={t('createFirst', { ns: 'operations' })} />
       ) : null}
       {!query.isLoading && !query.isError && items.length > 0 ? (
         <table className="min-w-full overflow-hidden rounded-xl border border-zinc-200 text-sm dark:border-zinc-800">
           <thead className="bg-zinc-100 dark:bg-zinc-900">
             <tr>
               <th className="px-3 py-2 text-left">ID</th>
-              <th className="px-3 py-2 text-left">{t('operations.common.serviceRequests')}</th>
-              <th className="px-3 py-2 text-left">{t('operations.common.vendor')}</th>
-              <th className="px-3 py-2 text-left">{t('operations.common.status')}</th>
-              <th className="px-3 py-2 text-left">{t('operations.common.action')}</th>
+              <th className="px-3 py-2 text-left">{t('serviceRequests', { ns: 'operations' })}</th>
+              <th className="px-3 py-2 text-left">{t('vendor', { ns: 'operations' })}</th>
+              <th className="px-3 py-2 text-left">{t('status', { ns: 'operations' })}</th>
+              <th className="px-3 py-2 text-left">{t('action', { ns: 'operations' })}</th>
             </tr>
           </thead>
           <tbody>
@@ -84,7 +84,7 @@ export function WorkOrdersPage() {
                   <div className="flex items-center gap-2">
                     {canView ? (
                       <Link className="text-violet-600" to={`/operations/work-orders/${row.id}`}>
-                        {t('operations.common.open')}
+                        {t('open', { ns: 'operations' })}
                       </Link>
                     ) : null}
                     <OperationActionButtons entity="work_order" id={row.id} />
@@ -102,16 +102,16 @@ export function WorkOrdersPage() {
           onClick={() => setPage((p) => p - 1)}
           className="rounded border px-2 py-1 text-sm"
         >
-          {t('common.pagination.prev')}
+          {t('pagination.prev', { ns: 'common' })}
         </button>
-        <span className="text-sm">{t('operations.common.page')} {page}</span>
+        <span className="text-sm">{t('page', { ns: 'operations' })} {page}</span>
         <button
           type="button"
           disabled={(query.data?.items?.length ?? 0) < 10}
           onClick={() => setPage((p) => p + 1)}
           className="rounded border px-2 py-1 text-sm"
         >
-          {t('common.pagination.next')}
+          {t('pagination.next', { ns: 'common' })}
         </button>
       </div>
     </div>

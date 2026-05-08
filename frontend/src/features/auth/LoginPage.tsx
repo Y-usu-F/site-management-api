@@ -30,7 +30,7 @@ export function LoginPage() {
         setFormError(error.message)
         return
       }
-      setFormError(t('auth.login.genericError'))
+      setFormError(t('login.genericError', { ns: 'auth' }))
     },
   })
 
@@ -48,10 +48,10 @@ export function LoginPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-100 px-4 dark:bg-zinc-950">
       <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         <h1 className="text-center text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-          {t('auth.login.title')}
+          {t('login.title', { ns: 'auth' })}
         </h1>
         <p className="mt-1 text-center text-sm text-zinc-500 dark:text-zinc-400">
-          {t('auth.login.subtitle')}
+          {t('login.subtitle', { ns: 'auth' })}
         </p>
         <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
           <div>
@@ -59,7 +59,7 @@ export function LoginPage() {
               htmlFor="email"
               className="block text-xs font-medium uppercase tracking-wide text-zinc-500"
             >
-              {t('auth.login.email')}
+              {t('login.email', { ns: 'auth' })}
             </label>
             <input
               id="email"
@@ -76,7 +76,7 @@ export function LoginPage() {
               htmlFor="password"
               className="block text-xs font-medium uppercase tracking-wide text-zinc-500"
             >
-              {t('auth.login.password')}
+              {t('login.password', { ns: 'auth' })}
             </label>
             <input
               id="password"
@@ -98,7 +98,7 @@ export function LoginPage() {
             disabled={loginMutation.isPending}
             className="flex w-full justify-center rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loginMutation.isPending ? t('auth.login.submitting') : t('auth.login.submit')}
+            {loginMutation.isPending ? t('login.submitting', { ns: 'auth' }) : t('login.submit', { ns: 'auth' })}
           </button>
         </form>
       </div>

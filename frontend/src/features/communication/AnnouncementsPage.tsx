@@ -5,8 +5,8 @@ export function AnnouncementsPage() {
   const { t } = useTranslation(['notifications'])
   return (
     <PlaceholderPage
-      title={t('notifications.announcementsTitle')}
-      subtitle={t('notifications.announcementsSubtitle')}
+      title={t('announcementsTitle', { ns: 'notifications' })}
+      subtitle={t('announcementsSubtitle', { ns: 'notifications' })}
     />
   )
 }

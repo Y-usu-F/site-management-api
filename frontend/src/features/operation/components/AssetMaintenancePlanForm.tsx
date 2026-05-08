@@ -30,11 +30,11 @@ export function AssetMaintenancePlanForm({
     <form className="space-y-4" onSubmit={(e) => {
       e.preventDefault()
       if (!assetId || Number(assetId) <= 0) {
-        setClientError(t('operations.common.validationAssetRequired'))
+        setClientError(t('validationAssetRequired', { ns: 'operations' }))
         return
       }
       if (!nextDueDate) {
-        setClientError(t('operations.common.validationNextDueRequired'))
+        setClientError(t('validationNextDueRequired', { ns: 'operations' }))
         return
       }
       setClientError(null)
@@ -50,16 +50,16 @@ export function AssetMaintenancePlanForm({
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
         <SearchableLookupSelect
-          label={t('operations.common.assets')}
-          placeholder={t('operations.common.assets')}
+          label={t('assets', { ns: 'operations' })}
+          placeholder={t('assets', { ns: 'operations' })}
           value={assetId}
           onChange={setAssetId}
           queryKey="assets"
           queryFn={listLookupAssets}
         />
-        <input value={frequencyInterval} onChange={(e) => setFrequencyInterval(e.target.value)} placeholder={t('operations.common.interval')} className="rounded border px-3 py-2 text-sm" />
+        <input value={frequencyInterval} onChange={(e) => setFrequencyInterval(e.target.value)} placeholder={t('interval', { ns: 'operations' })} className="rounded border px-3 py-2 text-sm" />
         <input type="date" value={nextDueDate} onChange={(e) => setNextDueDate(e.target.value)} className="rounded border px-3 py-2 text-sm" />
-        <input value={vendorName} onChange={(e) => setVendorName(e.target.value)} placeholder={t('operations.common.vendor')} className="rounded border px-3 py-2 text-sm" />
+        <input value={vendorName} onChange={(e) => setVendorName(e.target.value)} placeholder={t('vendor', { ns: 'operations' })} className="rounded border px-3 py-2 text-sm" />
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <select value={frequencyType} onChange={(e) => setFrequencyType(e.target.value)} className="rounded border px-3 py-2 text-sm">
@@ -69,10 +69,10 @@ export function AssetMaintenancePlanForm({
           <option value="active">active</option><option value="paused">paused</option><option value="cancelled">cancelled</option>
         </select>
       </div>
-      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('operations.common.notes')} className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
+      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('notes', { ns: 'operations' })} className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
       {clientError ? <p className="text-xs text-red-600">{clientError}</p> : null}
       <button type="submit" disabled={isSubmitting} className="rounded bg-violet-600 px-4 py-2 text-sm text-white disabled:opacity-50">
-        {isSubmitting ? t('common.pleaseWait') : submitLabel}
+        {isSubmitting ? t('pleaseWait', { ns: 'common' }) : submitLabel}
       </button>
     </form>
   )

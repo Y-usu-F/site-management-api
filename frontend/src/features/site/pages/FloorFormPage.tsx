@@ -52,19 +52,19 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'create' && blockId === null) {
     return (
       <p className="text-sm">
-        {t('site.common.invalidId')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('invalidId', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
 
   if (mode === 'create' && loadingBlock) {
-    return <p className="text-sm">{t('site.common.loading')}</p>
+    return <p className="text-sm">{t('loading', { ns: 'site' })}</p>
   }
 
   if (mode === 'create' && !block) {
     return (
       <p className="text-sm">
-        {t('site.common.notFound')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('notFound', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
@@ -72,19 +72,19 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'edit' && floorId === null) {
     return (
       <p className="text-sm">
-        {t('site.common.invalidId')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('invalidId', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
 
   if (mode === 'edit' && loadingFloor) {
-    return <p className="text-sm">{t('site.common.loading')}</p>
+    return <p className="text-sm">{t('loading', { ns: 'site' })}</p>
   }
 
   if (mode === 'edit' && !existing) {
     return (
       <p className="text-sm">
-        {t('site.common.notFound')}. <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('notFound', { ns: 'site' })}. <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
@@ -98,19 +98,19 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">{t('site.common.sites')}</Link>
+        <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${effectiveSiteId}`}>{t('site.common.sites')}</Link>
+        <Link to={`/sites/${effectiveSiteId}`}>{t('sites', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/blocks/${effectiveBlockId}/floors`}>{t('site.common.floors')}</Link>
+        <Link to={`/blocks/${effectiveBlockId}/floors`}>{t('floors', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
-        <span>{mode === 'create' ? t('site.common.new') : t('site.common.edit')}</span>
+        <span>{mode === 'create' ? t('new', { ns: 'site' }) : t('edit', { ns: 'site' })}</span>
       </nav>
-      <h1 className="text-2xl font-semibold">{mode === 'create' ? `${t('site.common.new')} ${t('site.common.floors')}` : `${t('site.common.edit')} ${t('site.common.floors')}`}</h1>
+      <h1 className="text-2xl font-semibold">{mode === 'create' ? `${t('new', { ns: 'site' })} ${t('floors', { ns: 'site' })}` : `${t('edit', { ns: 'site' })} ${t('floors', { ns: 'site' })}`}</h1>
 
       {mutationError ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          {getErrorMessage(mutationError, t('site.common.requestFailed'))}
+          {getErrorMessage(mutationError, t('requestFailed', { ns: 'site' }))}
         </div>
       ) : null}
 
@@ -118,7 +118,7 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
         siteId={effectiveSiteId}
         blockId={effectiveBlockId}
         defaultValues={existing ?? undefined}
-        submitLabel={mode === 'create' ? t('common.create') : t('common.save')}
+        submitLabel={mode === 'create' ? t('create', { ns: 'common' }) : t('save', { ns: 'common' })}
         isSubmitting={isSubmitting}
         serverFieldErrors={serverErrors}
         onSubmit={(values) => {
@@ -135,12 +135,12 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
               },
               {
                 onSuccess: (f) => {
-                  toast.success(`${t('site.common.floors')} ${t('common.create')}`)
+                  toast.success(`${t('floors', { ns: 'site' })} ${t('create', { ns: 'common' })}`)
                   navigate(`/floors/${f.id}`)
                 },
                 onError: (e) => {
                   setServerErrors(extractValidationErrors(e))
-                  toast.error(getErrorMessage(e, t('common.errorGeneric')))
+                  toast.error(getErrorMessage(e, t('errorGeneric', { ns: 'common' })))
                 },
               },
             )
@@ -159,12 +159,12 @@ export function FloorFormPage({ mode }: { mode: 'create' | 'edit' }) {
               },
               {
                 onSuccess: (f) => {
-                  toast.success(`${t('site.common.floors')} ${t('common.update')}`)
+                  toast.success(`${t('floors', { ns: 'site' })} ${t('update', { ns: 'common' })}`)
                   navigate(`/floors/${f.id}`)
                 },
                 onError: (e) => {
                   setServerErrors(extractValidationErrors(e))
-                  toast.error(getErrorMessage(e, t('common.errorGeneric')))
+                  toast.error(getErrorMessage(e, t('errorGeneric', { ns: 'common' })))
                 },
               },
             )

@@ -47,17 +47,17 @@ export function UnitDetailPage() {
   }
 
   if (id === null) {
-    return <p className="text-sm">{t('site.common.invalidId')}</p>
+    return <p className="text-sm">{t('invalidId', { ns: 'site' })}</p>
   }
 
   if (isPending) {
-    return <p className="text-sm">{t('site.common.loading')}</p>
+    return <p className="text-sm">{t('loading', { ns: 'site' })}</p>
   }
 
   if (isError || !data) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-        {error instanceof Error ? error.message : t('site.common.notFound')}
+        {error instanceof Error ? error.message : t('notFound', { ns: 'site' })}
       </div>
     )
   }
@@ -67,10 +67,10 @@ export function UnitDetailPage() {
   const handleDelete = () => {
     deleteMutation.mutate(unit.id, {
       onSuccess: () => {
-        toast.success(`${t('site.common.units')} ${t('common.delete')}`)
+        toast.success(`${t('units', { ns: 'site' })} ${t('delete', { ns: 'common' })}`)
         navigate(`/floors/${unit.floor_id}/units`)
       },
-      onError: (err) => toast.error(getErrorMessage(err, t('common.errorGeneric'))),
+      onError: (err) => toast.error(getErrorMessage(err, t('errorGeneric', { ns: 'common' }))),
     })
   }
 
@@ -79,19 +79,19 @@ export function UnitDetailPage() {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">{t('site.common.sites')}</Link>
+        <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
         <Link to={`/sites/${unit.site_id}`}>{site?.code ?? unit.site_id}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${unit.site_id}/blocks`}>{t('site.common.blocks')}</Link>
+        <Link to={`/sites/${unit.site_id}/blocks`}>{t('blocks', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
         <Link to={`/blocks/${unit.block_id}`}>{block?.code ?? unit.block_id}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/blocks/${unit.block_id}/floors`}>{t('site.common.floors')}</Link>
+        <Link to={`/blocks/${unit.block_id}/floors`}>{t('floors', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/floors/${unit.floor_id}`}>{t('site.common.floors')} {floor?.number ?? ''}</Link>
+        <Link to={`/floors/${unit.floor_id}`}>{t('floors', { ns: 'site' })} {floor?.number ?? ''}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/floors/${unit.floor_id}/units`}>{t('site.common.units')}</Link>
+        <Link to={`/floors/${unit.floor_id}/units`}>{t('units', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
         <span>{unit.unit_no}</span>
       </nav>
@@ -107,7 +107,7 @@ export function UnitDetailPage() {
               to={`/units/${unit.id}/occupancies`}
               className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-600"
             >
-              {t('residents.common.occupancies')}
+              {t('occupancies', { ns: 'residents' })}
             </Link>
           ) : null}
           {canUpdate ? (
@@ -115,7 +115,7 @@ export function UnitDetailPage() {
               to={`/units/${unit.id}/edit`}
               className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white"
             >
-              {t('site.common.edit')}
+              {t('edit', { ns: 'site' })}
             </Link>
           ) : null}
           {canDelete ? (
@@ -125,7 +125,7 @@ export function UnitDetailPage() {
               disabled={deleteMutation.isPending}
               className="rounded-lg border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50"
             >
-              {deleteMutation.isPending ? t('site.common.deleting') : t('site.common.delete')}
+              {deleteMutation.isPending ? t('deleting', { ns: 'site' }) : t('delete', { ns: 'site' })}
             </button>
           ) : null}
         </div>
@@ -139,33 +139,33 @@ export function UnitDetailPage() {
 
       <dl className="grid max-w-xl gap-4 rounded-xl border p-6 dark:border-zinc-800">
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.form.type')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('form.type', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">{unit.type?.trim() ? unit.type : '—'}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.form.grossNetLand')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('form.grossNetLand', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">
             {unit.gross_area ?? '—'} / {unit.net_area ?? '—'} /{' '}
             {unit.land_share != null && unit.land_share !== '' ? String(unit.land_share) : '—'}
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.form.occupantName')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('form.occupantName', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">
             {unit.occupant_name?.trim() ? unit.occupant_name : '—'}
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('site.common.updated')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('updated', { ns: 'site' })}</dt>
           <dd className="mt-1 text-sm">{formatDateTime(unit.updated_at ?? unit.created_at)}</dd>
         </div>
       </dl>
       <ConfirmDialog
         isOpen={confirmOpen}
-        title={t('site.common.delete')}
-        description={t('common.confirm')}
-        confirmText={t('site.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('delete', { ns: 'site' })}
+        description={t('confirm', { ns: 'common' })}
+        confirmText={t('delete', { ns: 'site' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={deleteMutation.isPending}
         onClose={() => setConfirmOpen(false)}

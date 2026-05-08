@@ -38,19 +38,19 @@ export function ResidentFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'edit' && id === null) {
     return (
       <p className="text-sm text-zinc-600">
-        {t('residents.common.invalidResidentId')}. <Link to="/residents">{t('common.back')}</Link>
+        {t('invalidResidentId', { ns: 'residents' })}. <Link to="/residents">{t('back', { ns: 'common' })}</Link>
       </p>
     )
   }
 
   if (mode === 'edit' && isPending) {
-    return <p className="text-sm text-zinc-600">{t('residents.common.loading')}</p>
+    return <p className="text-sm text-zinc-600">{t('loading', { ns: 'residents' })}</p>
   }
 
   if (mode === 'edit' && !existing) {
     return (
       <p className="text-sm text-red-600">
-        {t('residents.common.notFound')}. <Link to="/residents">{t('common.back')}</Link>
+        {t('notFound', { ns: 'residents' })}. <Link to="/residents">{t('back', { ns: 'common' })}</Link>
       </p>
     )
   }
@@ -62,7 +62,7 @@ export function ResidentFormPage({ mode }: { mode: 'create' | 'edit' }) {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to="/residents" className="hover:text-violet-600">
-          {t('residents.common.residents')}
+          {t('residents', { ns: 'residents' })}
         </Link>
         {mode === 'edit' && existing ? (
           <>
@@ -71,29 +71,29 @@ export function ResidentFormPage({ mode }: { mode: 'create' | 'edit' }) {
               {existing.first_name} {existing.last_name}
             </Link>
             <span className="mx-1">/</span>
-            <span>{t('residents.common.edit')}</span>
+            <span>{t('edit', { ns: 'residents' })}</span>
           </>
         ) : (
           <>
             <span className="mx-1">/</span>
-            <span>{t('residents.common.new')}</span>
+            <span>{t('new', { ns: 'residents' })}</span>
           </>
         )}
       </nav>
 
       <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-        {mode === 'create' ? t('residents.form.createResident') : t('residents.common.edit')}
+        {mode === 'create' ? t('form.createResident', { ns: 'residents' }) : t('edit', { ns: 'residents' })}
       </h1>
 
       {mutationError ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-          <p>{getErrorMessage(mutationError, t('residents.common.requestFailed'))}</p>
+          <p>{getErrorMessage(mutationError, t('requestFailed', { ns: 'residents' }))}</p>
         </div>
       ) : null}
 
       <ResidentForm
         defaultValues={existing ?? undefined}
-        submitLabel={mode === 'create' ? t('residents.form.createResident') : t('residents.form.saveChanges')}
+        submitLabel={mode === 'create' ? t('form.createResident', { ns: 'residents' }) : t('form.saveChanges', { ns: 'residents' })}
         isSubmitting={isSubmitting}
         serverFieldErrors={serverErrors}
         onSubmit={(values) => {
@@ -101,12 +101,12 @@ export function ResidentFormPage({ mode }: { mode: 'create' | 'edit' }) {
           if (mode === 'create') {
             createMut.mutate(values, {
               onSuccess: (created) => {
-                toast.success(t('residents.common.residentCreated'))
+                toast.success(t('residentCreated', { ns: 'residents' }))
                 navigate(`/residents/${created.id}`)
               },
               onError: (err) => {
                 setServerErrors(extractValidationErrors(err))
-                toast.error(getErrorMessage(err, t('residents.common.residentCreateFailed')))
+                toast.error(getErrorMessage(err, t('residentCreateFailed', { ns: 'residents' })))
               },
             })
           } else if (id !== null) {
@@ -114,12 +114,12 @@ export function ResidentFormPage({ mode }: { mode: 'create' | 'edit' }) {
               { id, body: values },
               {
                 onSuccess: (updated) => {
-                  toast.success(t('residents.common.residentUpdated'))
+                  toast.success(t('residentUpdated', { ns: 'residents' }))
                   navigate(`/residents/${updated.id}`)
                 },
                 onError: (err) => {
                   setServerErrors(extractValidationErrors(err))
-                  toast.error(getErrorMessage(err, t('residents.common.residentUpdateFailed')))
+                  toast.error(getErrorMessage(err, t('residentUpdateFailed', { ns: 'residents' })))
                 },
               },
             )

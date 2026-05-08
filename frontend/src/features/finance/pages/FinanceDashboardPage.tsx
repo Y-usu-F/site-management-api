@@ -22,38 +22,38 @@ export function FinanceDashboardPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold">{t('finance.title')}</h1>
+      <h1 className="text-xl font-semibold">{t('title', { ns: 'finance' })}</h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <FinanceStatCard
           to="/finance/due-items"
-          title={t('finance.widgets.dueItemsTitle')}
+          title={t('widgets.dueItemsTitle', { ns: 'finance' })}
           value={dueItems.data?.total ?? 0}
-          description={t('finance.widgets.dueItemsDescription')}
+          description={t('widgets.dueItemsDescription', { ns: 'finance' })}
         />
         <FinanceStatCard
           to="/finance/payments"
-          title={t('finance.widgets.paymentsTitle')}
+          title={t('widgets.paymentsTitle', { ns: 'finance' })}
           value={payments.data?.total ?? 0}
-          description={t('finance.widgets.paymentsDescription')}
+          description={t('widgets.paymentsDescription', { ns: 'finance' })}
         />
         <FinanceStatCard
           to="/finance/deposits"
-          title={t('finance.widgets.depositsTitle')}
+          title={t('widgets.depositsTitle', { ns: 'finance' })}
           value={deposits.data?.total ?? 0}
-          description={t('finance.widgets.depositsDescription')}
+          description={t('widgets.depositsDescription', { ns: 'finance' })}
         />
         <FinanceStatCard
           to="/finance/due-periods"
-          title={t('finance.widgets.duePeriodsTitle')}
+          title={t('widgets.duePeriodsTitle', { ns: 'finance' })}
           value={duePeriods.data?.total ?? 0}
-          description={t('finance.widgets.duePeriodsDescription')}
+          description={t('widgets.duePeriodsDescription', { ns: 'finance' })}
         />
         <Link
           to="/finance/due-definitions"
           className="rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-violet-300 dark:border-zinc-800 dark:bg-zinc-900"
         >
-          <div className="text-base font-medium">{t('finance.widgets.dueDefinitionsTitle')}</div>
-          <div className="mt-1 text-sm text-zinc-500">{t('finance.widgets.dueDefinitionsDescription')}</div>
+          <div className="text-base font-medium">{t('widgets.dueDefinitionsTitle', { ns: 'finance' })}</div>
+          <div className="mt-1 text-sm text-zinc-500">{t('widgets.dueDefinitionsDescription', { ns: 'finance' })}</div>
         </Link>
       </div>
     </div>

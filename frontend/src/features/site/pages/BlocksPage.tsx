@@ -79,59 +79,57 @@ export function BlocksPage() {
   const bulkDeleteMutation = useMutation({
     mutationFn: (ids: number[]) => bulkDeleteBlocks(ids),
     onSuccess: () => {
-      toast.success(t('site.common.bulkDeleteBlocksSuccess'))
+      toast.success(t('bulkDeleteBlocksSuccess', { ns: 'site' }))
       clearSelection()
       void qc.invalidateQueries({ queryKey: ['blocks'] })
     },
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.bulkDeleteEndpointNotAvailableYet'))
+        toast.error(t('bulkDeleteEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotDeleteSelectedBlocks')))
+      toast.error(getErrorMessage(err, t('couldNotDeleteSelectedBlocks', { ns: 'site' })))
     },
   })
   const exportMutation = useMutation({
     mutationFn: () => exportBlocksExcel(params),
-    onSuccess: () => toast.success(t('site.common.exportStarted')),
+    onSuccess: () => toast.success(t('exportStarted', { ns: 'site' })),
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.exportEndpointNotAvailableYet'))
+        toast.error(t('exportEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotExportBlocks')))
+      toast.error(getErrorMessage(err, t('couldNotExportBlocks', { ns: 'site' })))
     },
   })
   const templateMutation = useMutation({
     mutationFn: () => downloadBlockTemplate(),
-    onSuccess: () => toast.success(t('site.common.templateDownloaded')),
+    onSuccess: () => toast.success(t('templateDownloaded', { ns: 'site' })),
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.templateEndpointNotAvailableYet'))
+        toast.error(t('templateEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotDownloadTemplate')))
+      toast.error(getErrorMessage(err, t('couldNotDownloadTemplate', { ns: 'site' })))
     },
   })
   const importMutation = useMutation({
     mutationFn: (file: File) => importBlocksExcel(file),
     onSuccess: (result) => {
       toast.success(
-        t('site.common.importDone', {
-          inserted: result.inserted_count ?? 0,
+        t('importDone', { ns: 'site', inserted: result.inserted_count ?? 0,
           updated: result.updated_count ?? 0,
-          skipped: result.skipped_count ?? 0,
-        }),
+          skipped: result.skipped_count ?? 0, }),
       )
       setImportOpen(false)
       void qc.invalidateQueries({ queryKey: ['blocks'] })
     },
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.importEndpointNotAvailableYet'))
+        toast.error(t('importEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotImportBlocks')))
+      toast.error(getErrorMessage(err, t('couldNotImportBlocks', { ns: 'site' })))
     },
   })
 
@@ -142,7 +140,7 @@ export function BlocksPage() {
   if (siteId === null) {
     return (
       <p className="text-sm text-zinc-600">
-        {t('site.common.invalidSite')} <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('invalidSite', { ns: 'site' })} <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
@@ -151,27 +149,27 @@ export function BlocksPage() {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to="/sites" className="hover:text-violet-600">
-          {t('site.common.sites')}
+          {t('sites', { ns: 'site' })}
         </Link>
         <span className="mx-1">/</span>
         <Link to={`/sites/${siteId}`} className="hover:text-violet-600">
           {site?.code ?? site?.name ?? `Site ${siteId}`}
         </Link>
         <span className="mx-1">/</span>
-        <span className="text-zinc-700 dark:text-zinc-300">{t('site.common.blocks')}</span>
+        <span className="text-zinc-700 dark:text-zinc-300">{t('blocks', { ns: 'site' })}</span>
       </nav>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('site.common.blocks')}</h1>
+          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('blocks', { ns: 'site' })}</h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            {t('site.common.blocksForSite', { count: data?.total ?? 0 })}
+            {t('blocksForSite', { ns: 'site', count: data?.total ?? 0 })}
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="search"
-            placeholder={t('site.common.searchNameOrCode')}
+            placeholder={t('searchNameOrCode', { ns: 'site' })}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950 sm:w-72"
@@ -181,7 +179,7 @@ export function BlocksPage() {
               to={`/sites/${siteId}/blocks/new`}
               className="inline-flex justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white"
             >
-              {t('site.common.new')}
+              {t('new', { ns: 'site' })}
             </Link>
           ) : null}
         </div>
@@ -201,25 +199,25 @@ export function BlocksPage() {
       />
 
       {isPending ? (
-        <div className="rounded-xl border p-12 text-center text-sm text-zinc-600">{t('site.common.loading')}</div>
+        <div className="rounded-xl border p-12 text-center text-sm text-zinc-600">{t('loading', { ns: 'site' })}</div>
       ) : null}
 
       {isError ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-          {error instanceof Error ? error.message : t('common.errorGeneric')}
+          {error instanceof Error ? error.message : t('errorGeneric', { ns: 'common' })}
         </div>
       ) : null}
 
       {!isPending && !isError && items.length === 0 ? (
         <EmptyState
-          title={t('common.emptyTitle')}
+          title={t('emptyTitle', { ns: 'common' })}
           description={
             canCreate ? (
               <Link className="text-violet-600 underline" to={`/sites/${siteId}/blocks/new`}>
-                {t('site.common.createOne')}
+                {t('createOne', { ns: 'site' })}
               </Link>
             ) : (
-              t('site.common.createPermissionRequiredForBlocks')
+              t('createPermissionRequiredForBlocks', { ns: 'site' })
             )
           }
         />
@@ -236,23 +234,23 @@ export function BlocksPage() {
                       type="checkbox"
                       checked={allSelected}
                       onChange={toggleAllCurrentPage}
-                      aria-label={t('site.common.selectAllBlocksOnPage')}
+                      aria-label={t('selectAllBlocksOnPage', { ns: 'site' })}
                     />
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
-                    {t('site.form.code')}
+                    {t('form.code', { ns: 'site' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
-                    {t('site.form.name')}
+                    {t('form.name', { ns: 'site' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
-                    {t('site.common.status')}
+                    {t('status', { ns: 'site' })}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
-                    {t('site.common.updated')}
+                    {t('updated', { ns: 'site' })}
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-zinc-500">
-                    {t('site.common.actions')}
+                    {t('actions', { ns: 'site' })}
                   </th>
                 </tr>
               </thead>
@@ -264,7 +262,7 @@ export function BlocksPage() {
                         type="checkbox"
                         checked={selectedIds.includes(row.id)}
                         onChange={() => toggleOne(row.id)}
-                        aria-label={t('site.common.selectBlockWithCode', { code: row.code })}
+                        aria-label={t('selectBlockWithCode', { ns: 'site', code: row.code })}
                       />
                     </td>
                     <td className="px-4 py-3 font-mono text-sm">{row.code}</td>
@@ -275,7 +273,7 @@ export function BlocksPage() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Link className="text-violet-600" to={`/blocks/${row.id}`}>
-                        {t('site.common.open')}
+                        {t('open', { ns: 'site' })}
                       </Link>
                     </td>
                   </tr>
@@ -286,8 +284,8 @@ export function BlocksPage() {
           {totalPages > 1 ? (
             <div className="flex items-center justify-between border-t px-4 py-3 text-xs">
               <span>
-                {t('common.pagination.page')} {data?.page ?? page} {t('common.pagination.of')} {totalPages}
-                {isFetching ? ` · ${t('common.pagination.refreshing')}` : ''}
+                {t('pagination.page', { ns: 'common' })} {data?.page ?? page} {t('pagination.of', { ns: 'common' })} {totalPages}
+                {isFetching ? ` · ${t('pagination.refreshing', { ns: 'common' })}` : ''}
               </span>
               <div className="flex gap-2">
                 <button
@@ -296,7 +294,7 @@ export function BlocksPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  {t('common.pagination.prev')}
+                  {t('pagination.prev', { ns: 'common' })}
                 </button>
                 <button
                   type="button"
@@ -304,7 +302,7 @@ export function BlocksPage() {
                   onClick={() => setPage((p) => p + 1)}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  {t('common.pagination.next')}
+                  {t('pagination.next', { ns: 'common' })}
                 </button>
               </div>
             </div>
@@ -313,10 +311,10 @@ export function BlocksPage() {
       ) : null}
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
-        title={t('site.common.deleteSelectedBlocksTitle')}
-        description={t('site.common.deleteSelectedBlocksDescription', { count: selectedCount })}
-        confirmText={t('site.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('deleteSelectedBlocksTitle', { ns: 'site' })}
+        description={t('deleteSelectedBlocksDescription', { ns: 'site', count: selectedCount })}
+        confirmText={t('delete', { ns: 'site' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={bulkDeleteMutation.isPending}
         onClose={() => setDeleteConfirmOpen(false)}
@@ -324,7 +322,7 @@ export function BlocksPage() {
       />
       <ImportExcelDialog
         isOpen={importOpen}
-        title={t('site.common.importBlocksFromExcel')}
+        title={t('importBlocksFromExcel', { ns: 'site' })}
         isSubmitting={importMutation.isPending}
         onClose={() => setImportOpen(false)}
         onSubmit={(file) => importMutation.mutate(file)}

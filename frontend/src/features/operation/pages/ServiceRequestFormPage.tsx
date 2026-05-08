@@ -30,25 +30,25 @@ export function ServiceRequestFormPage({ mode }: Props) {
   const mutation = mode === 'create' ? createMutation : updateMutation
 
   if (!canAccess) return <PermissionDeniedNotice permission={mode === 'create' ? 'service_request.create' : 'service_request.update'} />
-  if (mode === 'edit' && parsedId === null) return <div>{t('operations.common.invalidId')}</div>
+  if (mode === 'edit' && parsedId === null) return <div>{t('invalidId', { ns: 'operations' })}</div>
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between"><h1 className="text-xl font-semibold">{mode === 'create' ? t('operations.common.create') : t('operations.common.edit')} {t('operations.common.serviceRequests')}</h1><Link to="/operations/service-requests" className="text-sm text-violet-600">{t('operations.common.back')}</Link></div>
+      <div className="flex items-center justify-between"><h1 className="text-xl font-semibold">{mode === 'create' ? t('create', { ns: 'operations' }) : t('edit', { ns: 'operations' })} {t('serviceRequests', { ns: 'operations' })}</h1><Link to="/operations/service-requests" className="text-sm text-violet-600">{t('back', { ns: 'operations' })}</Link></div>
       <ServiceRequestForm
         defaultValues={mode === 'edit' ? (detail.data as unknown as Record<string, unknown>) : undefined}
         isSubmitting={mutation.isPending}
-        submitLabel={mode === 'create' ? t('operations.common.create') : t('operations.common.save')}
+        submitLabel={mode === 'create' ? t('create', { ns: 'operations' }) : t('save', { ns: 'operations' })}
         serverFieldErrors={extractValidationErrors(mutation.error)}
         onSubmit={(values) => {
           if (mode === 'create') {
             createMutation.mutate(values, {
-              onSuccess: (created) => { toast.success(t('operations.common.createSuccess')); navigate(`/operations/service-requests/${created.id}`) },
+              onSuccess: (created) => { toast.success(t('createSuccess', { ns: 'operations' })); navigate(`/operations/service-requests/${created.id}`) },
               onError: (err) => toast.error(getErrorMessage(err)),
             })
           } else if (parsedId !== null) {
             updateMutation.mutate({ id: parsedId, body: values }, {
-              onSuccess: () => { toast.success(t('operations.common.updateSuccess')); navigate(`/operations/service-requests/${parsedId}`) },
+              onSuccess: () => { toast.success(t('updateSuccess', { ns: 'operations' })); navigate(`/operations/service-requests/${parsedId}`) },
               onError: (err) => toast.error(getErrorMessage(err)),
             })
           }

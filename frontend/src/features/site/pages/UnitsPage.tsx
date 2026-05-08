@@ -87,59 +87,57 @@ export function UnitsPage() {
   const bulkDeleteMutation = useMutation({
     mutationFn: (ids: number[]) => bulkDeleteUnits(ids),
     onSuccess: () => {
-      toast.success(t('site.common.bulkDeleteUnitsSuccess'))
+      toast.success(t('bulkDeleteUnitsSuccess', { ns: 'site' }))
       clearSelection()
       void qc.invalidateQueries({ queryKey: ['units'] })
     },
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.bulkDeleteEndpointNotAvailableYet'))
+        toast.error(t('bulkDeleteEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotDeleteSelectedUnits')))
+      toast.error(getErrorMessage(err, t('couldNotDeleteSelectedUnits', { ns: 'site' })))
     },
   })
   const exportMutation = useMutation({
     mutationFn: () => exportUnitsExcel(params),
-    onSuccess: () => toast.success(t('site.common.exportStarted')),
+    onSuccess: () => toast.success(t('exportStarted', { ns: 'site' })),
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.exportEndpointNotAvailableYet'))
+        toast.error(t('exportEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotExportUnits')))
+      toast.error(getErrorMessage(err, t('couldNotExportUnits', { ns: 'site' })))
     },
   })
   const templateMutation = useMutation({
     mutationFn: () => downloadUnitTemplate(),
-    onSuccess: () => toast.success(t('site.common.templateDownloaded')),
+    onSuccess: () => toast.success(t('templateDownloaded', { ns: 'site' })),
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.templateEndpointNotAvailableYet'))
+        toast.error(t('templateEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotDownloadTemplate')))
+      toast.error(getErrorMessage(err, t('couldNotDownloadTemplate', { ns: 'site' })))
     },
   })
   const importMutation = useMutation({
     mutationFn: (file: File) => importUnitsExcel(file),
     onSuccess: (result) => {
       toast.success(
-        t('site.common.importDone', {
-          inserted: result.inserted_count ?? 0,
+        t('importDone', { ns: 'site', inserted: result.inserted_count ?? 0,
           updated: result.updated_count ?? 0,
-          skipped: result.skipped_count ?? 0,
-        }),
+          skipped: result.skipped_count ?? 0, }),
       )
       setImportOpen(false)
       void qc.invalidateQueries({ queryKey: ['units'] })
     },
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.importEndpointNotAvailableYet'))
+        toast.error(t('importEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotImportUnits')))
+      toast.error(getErrorMessage(err, t('couldNotImportUnits', { ns: 'site' })))
     },
   })
 
@@ -150,7 +148,7 @@ export function UnitsPage() {
   if (floorId === null) {
     return (
       <p className="text-sm">
-        {t('site.common.invalidFloor')} <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('invalidFloor', { ns: 'site' })} <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
@@ -158,30 +156,30 @@ export function UnitsPage() {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">{t('site.common.sites')}</Link>
+        <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
         <Link to={`/sites/${siteId}`}>{site?.code ?? siteId}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${siteId}/blocks`}>{t('site.common.blocks')}</Link>
+        <Link to={`/sites/${siteId}/blocks`}>{t('blocks', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
         <Link to={`/blocks/${blockId}`}>{block?.code ?? blockId}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/blocks/${blockId}/floors`}>{t('site.common.floors')}</Link>
+        <Link to={`/blocks/${blockId}/floors`}>{t('floors', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/floors/${floorId}`}>{t('site.common.floorWithNumber', { number: floor?.number ?? '' })}</Link>
+        <Link to={`/floors/${floorId}`}>{t('floorWithNumber', { ns: 'site', number: floor?.number ?? '' })}</Link>
         <span className="mx-1">/</span>
-        <span>{t('site.common.units')}</span>
+        <span>{t('units', { ns: 'site' })}</span>
       </nav>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">{t('site.common.units')}</h1>
-          <p className="mt-1 text-sm text-zinc-600">{t('site.common.unitsOnFloor', { count: data?.total ?? 0 })}</p>
+          <h1 className="text-2xl font-semibold">{t('units', { ns: 'site' })}</h1>
+          <p className="mt-1 text-sm text-zinc-600">{t('unitsOnFloor', { ns: 'site', count: data?.total ?? 0 })}</p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="search"
-            placeholder={t('site.common.searchUnitNoOrOccupant')}
+            placeholder={t('searchUnitNoOrOccupant', { ns: 'site' })}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full rounded-lg border px-3 py-2 text-sm sm:w-72 dark:border-zinc-600 dark:bg-zinc-950"
@@ -191,7 +189,7 @@ export function UnitsPage() {
               to={`/floors/${floorId}/units/new`}
               className="inline-flex justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white"
             >
-              {t('site.common.new')}
+              {t('new', { ns: 'site' })}
             </Link>
           ) : null}
         </div>
@@ -211,25 +209,25 @@ export function UnitsPage() {
       />
 
       {isPending ? (
-        <div className="rounded-xl border p-12 text-center text-sm">{t('site.common.loading')}</div>
+        <div className="rounded-xl border p-12 text-center text-sm">{t('loading', { ns: 'site' })}</div>
       ) : null}
 
       {isError ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-          {error instanceof Error ? error.message : t('common.errorGeneric')}
+          {error instanceof Error ? error.message : t('errorGeneric', { ns: 'common' })}
         </div>
       ) : null}
 
       {!isPending && !isError && items.length === 0 ? (
         <EmptyState
-          title={t('common.emptyTitle')}
+          title={t('emptyTitle', { ns: 'common' })}
           description={
             canCreate ? (
               <Link className="text-violet-600 underline" to={`/floors/${floorId}/units/new`}>
-                {t('site.common.createOne')}
+                {t('createOne', { ns: 'site' })}
               </Link>
             ) : (
-              t('site.common.createPermissionRequiredForUnits')
+              t('createPermissionRequiredForUnits', { ns: 'site' })
             )
           }
         />
@@ -245,15 +243,15 @@ export function UnitsPage() {
                     type="checkbox"
                     checked={allSelected}
                     onChange={toggleAllCurrentPage}
-                    aria-label={t('site.common.selectAllUnitsOnPage')}
+                    aria-label={t('selectAllUnitsOnPage', { ns: 'site' })}
                   />
                 </th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.form.unitNumber')}</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.form.type')}</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.common.area')}</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.common.status')}</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.common.updated')}</th>
-                <th className="px-4 py-3 text-right text-xs uppercase text-zinc-500">{t('site.common.actions')}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('form.unitNumber', { ns: 'site' })}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('form.type', { ns: 'site' })}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('area', { ns: 'site' })}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('status', { ns: 'site' })}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('updated', { ns: 'site' })}</th>
+                <th className="px-4 py-3 text-right text-xs uppercase text-zinc-500">{t('actions', { ns: 'site' })}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -264,15 +262,15 @@ export function UnitsPage() {
                       type="checkbox"
                       checked={selectedIds.includes(row.id)}
                       onChange={() => toggleOne(row.id)}
-                      aria-label={t('site.common.selectUnitWithNo', { no: row.unit_no })}
+                      aria-label={t('selectUnitWithNo', { ns: 'site', no: row.unit_no })}
                     />
                   </td>
                   <td className="px-4 py-3 font-mono text-sm">{row.unit_no}</td>
                   <td className="px-4 py-3 text-sm">{row.type?.trim() ? row.type : '—'}</td>
                   <td className="px-4 py-3 text-xs text-zinc-600">
-                    {t('site.common.grossShort')} {row.gross_area ?? '—'} / {t('site.common.netShort')} {row.net_area ?? '—'}
+                    {t('grossShort', { ns: 'site' })} {row.gross_area ?? '—'} / {t('netShort', { ns: 'site' })} {row.net_area ?? '—'}
                     {row.land_share != null && row.land_share !== '' ? (
-                      <span className="block">{t('site.common.land')} {String(row.land_share)}</span>
+                      <span className="block">{t('land', { ns: 'site' })} {String(row.land_share)}</span>
                     ) : null}
                   </td>
                   <td className="px-4 py-3 text-sm">{row.status}</td>
@@ -281,7 +279,7 @@ export function UnitsPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link className="text-violet-600" to={`/units/${row.id}`}>
-                      {t('site.common.open')}
+                      {t('open', { ns: 'site' })}
                     </Link>
                   </td>
                 </tr>
@@ -291,8 +289,8 @@ export function UnitsPage() {
           {totalPages > 1 ? (
             <div className="flex justify-between border-t px-4 py-3 text-xs">
               <span>
-                {t('common.pagination.page')} {data?.page ?? page} {t('common.pagination.of')} {totalPages}
-                {isFetching ? ` · ${t('common.pagination.refreshing')}` : ''}
+                {t('pagination.page', { ns: 'common' })} {data?.page ?? page} {t('pagination.of', { ns: 'common' })} {totalPages}
+                {isFetching ? ` · ${t('pagination.refreshing', { ns: 'common' })}` : ''}
               </span>
               <div className="flex gap-2">
                 <button
@@ -301,7 +299,7 @@ export function UnitsPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  {t('common.pagination.prev')}
+                  {t('pagination.prev', { ns: 'common' })}
                 </button>
                 <button
                   type="button"
@@ -309,7 +307,7 @@ export function UnitsPage() {
                   onClick={() => setPage((p) => p + 1)}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  {t('common.pagination.next')}
+                  {t('pagination.next', { ns: 'common' })}
                 </button>
               </div>
             </div>
@@ -318,10 +316,10 @@ export function UnitsPage() {
       ) : null}
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
-        title={t('site.common.deleteSelectedUnitsTitle')}
-        description={t('site.common.deleteSelectedUnitsDescription', { count: selectedCount })}
-        confirmText={t('site.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('deleteSelectedUnitsTitle', { ns: 'site' })}
+        description={t('deleteSelectedUnitsDescription', { ns: 'site', count: selectedCount })}
+        confirmText={t('delete', { ns: 'site' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={bulkDeleteMutation.isPending}
         onClose={() => setDeleteConfirmOpen(false)}
@@ -329,7 +327,7 @@ export function UnitsPage() {
       />
       <ImportExcelDialog
         isOpen={importOpen}
-        title={t('site.common.importUnitsFromExcel')}
+        title={t('importUnitsFromExcel', { ns: 'site' })}
         isSubmitting={importMutation.isPending}
         onClose={() => setImportOpen(false)}
         onSubmit={(file) => importMutation.mutate(file)}

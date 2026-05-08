@@ -68,14 +68,14 @@ export function UnitOccupanciesPage() {
   const createMut = useMutation({
     mutationFn: createOccupancy,
     onSuccess: () => {
-      toast.success(t('residents.common.occupancyCreated'))
+      toast.success(t('occupancyCreated', { ns: 'residents' }))
       setServerErrors({})
       setForm(defaultPayload(unitId ?? 0))
       void qc.invalidateQueries({ queryKey: ['unit-occupancies'] })
     },
     onError: (err) => {
       setServerErrors(extractValidationErrors(err))
-      toast.error(getErrorMessage(err, t('residents.common.occupancyCreateFailed')))
+      toast.error(getErrorMessage(err, t('occupancyCreateFailed', { ns: 'residents' })))
     },
   })
 
@@ -83,7 +83,7 @@ export function UnitOccupanciesPage() {
     mutationFn: ({ id, body }: { id: number; body: Partial<OccupancyPayload> }) =>
       updateOccupancy(id, body),
     onSuccess: () => {
-      toast.success(t('residents.common.occupancyUpdated'))
+      toast.success(t('occupancyUpdated', { ns: 'residents' }))
       setServerErrors({})
       setEditId(null)
       setForm(defaultPayload(unitId ?? 0))
@@ -91,22 +91,22 @@ export function UnitOccupanciesPage() {
     },
     onError: (err) => {
       setServerErrors(extractValidationErrors(err))
-      toast.error(getErrorMessage(err, t('residents.common.occupancyUpdateFailed')))
+      toast.error(getErrorMessage(err, t('occupancyUpdateFailed', { ns: 'residents' })))
     },
   })
 
   const deleteMut = useMutation({
     mutationFn: deleteOccupancy,
     onSuccess: () => {
-      toast.success(t('residents.common.occupancyDeleted'))
+      toast.success(t('occupancyDeleted', { ns: 'residents' }))
       setConfirmDeleteId(null)
       void qc.invalidateQueries({ queryKey: ['unit-occupancies'] })
     },
-    onError: (err) => toast.error(getErrorMessage(err, t('residents.common.occupancyDeleteFailed'))),
+    onError: (err) => toast.error(getErrorMessage(err, t('occupancyDeleteFailed', { ns: 'residents' }))),
   })
 
   if (!canList) return <PermissionDeniedNotice permission="unit_occupancy.list" />
-  if (unitId === null) return <p className="text-sm text-zinc-600">{t('residents.common.invalidUnitId')}</p>
+  if (unitId === null) return <p className="text-sm text-zinc-600">{t('invalidUnitId', { ns: 'residents' })}</p>
 
   const rows = occupanciesQ.data?.items ?? []
   const residentOptions = residentsQ.data?.items ?? []
@@ -130,13 +130,13 @@ export function UnitOccupanciesPage() {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to={`/units/${unitId}`} className="hover:text-violet-600">
-          {t('residents.common.unitWithId', { id: unitId })}
+          {t('unitWithId', { ns: 'residents', id: unitId })}
         </Link>
         <span className="mx-1">/</span>
-        <span>{t('residents.common.occupancies')}</span>
+        <span>{t('occupancies', { ns: 'residents' })}</span>
       </nav>
 
-      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('residents.common.occupancies')}</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('occupancies', { ns: 'residents' })}</h1>
 
       {(canCreate || (canUpdate && editId !== null)) && (
         <form
@@ -156,13 +156,13 @@ export function UnitOccupanciesPage() {
           }}
         >
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium">{t('residents.common.resident')}</label>
+            <label className="block text-sm font-medium">{t('resident', { ns: 'residents' })}</label>
             <select
               value={form.resident_profile_id}
               onChange={(e) => setForm((p) => ({ ...p, resident_profile_id: Number(e.target.value) }))}
               className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
             >
-              <option value={0}>{t('residents.common.selectResident')}</option>
+              <option value={0}>{t('selectResident', { ns: 'residents' })}</option>
               {residentOptions.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.first_name} {r.last_name}
@@ -174,7 +174,7 @@ export function UnitOccupanciesPage() {
             ) : null}
           </div>
           <div>
-            <label className="block text-sm font-medium">{t('residents.common.relationshipType')}</label>
+            <label className="block text-sm font-medium">{t('relationshipType', { ns: 'residents' })}</label>
             <select
               value={form.relationship_type}
               onChange={(e) => setForm((p) => ({ ...p, relationship_type: e.target.value }))}
@@ -187,7 +187,7 @@ export function UnitOccupanciesPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">{t('residents.common.status')}</label>
+            <label className="block text-sm font-medium">{t('status', { ns: 'residents' })}</label>
             <select
               value={form.status}
               onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))}
@@ -198,7 +198,7 @@ export function UnitOccupanciesPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">{t('residents.common.startDate')}</label>
+            <label className="block text-sm font-medium">{t('startDate', { ns: 'residents' })}</label>
             <input
               type="date"
               value={form.start_date}
@@ -208,7 +208,7 @@ export function UnitOccupanciesPage() {
             {serverErrors.start_date ? <p className="mt-1 text-xs text-red-600">{serverErrors.start_date}</p> : null}
           </div>
           <div>
-            <label className="block text-sm font-medium">{t('residents.common.endDate')}</label>
+            <label className="block text-sm font-medium">{t('endDate', { ns: 'residents' })}</label>
             <input
               type="date"
               value={form.end_date ?? ''}
@@ -223,7 +223,7 @@ export function UnitOccupanciesPage() {
               checked={Boolean(form.is_primary)}
               onChange={(e) => setForm((p) => ({ ...p, is_primary: e.target.checked }))}
             />
-            {t('residents.common.primary')}
+            {t('primary', { ns: 'residents' })}
           </label>
           <div className="sm:col-span-2 flex gap-2">
             <button
@@ -231,7 +231,7 @@ export function UnitOccupanciesPage() {
               disabled={isSubmitting}
               className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
-              {isSubmitting ? t('residents.common.saving') : editId === null ? t('residents.common.createOccupancy') : t('residents.common.save')}
+              {isSubmitting ? t('saving', { ns: 'residents' }) : editId === null ? t('createOccupancy', { ns: 'residents' }) : t('save', { ns: 'residents' })}
             </button>
             {editId !== null ? (
               <button
@@ -243,22 +243,22 @@ export function UnitOccupanciesPage() {
                   setForm(defaultPayload(unitId))
                 }}
               >
-                {t('residents.common.cancelEdit')}
+                {t('cancelEdit', { ns: 'residents' })}
               </button>
             ) : null}
           </div>
         </form>
       )}
 
-      {occupanciesQ.isPending ? <p className="text-sm text-zinc-500">{t('residents.common.loading')}</p> : null}
+      {occupanciesQ.isPending ? <p className="text-sm text-zinc-500">{t('loading', { ns: 'residents' })}</p> : null}
       {occupanciesQ.isError ? (
         <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {getErrorMessage(occupanciesQ.error, t('residents.common.occupancyLoadFailed'))}
+          {getErrorMessage(occupanciesQ.error, t('occupancyLoadFailed', { ns: 'residents' }))}
         </p>
       ) : null}
 
       {!occupanciesQ.isPending && !occupanciesQ.isError && rows.length === 0 ? (
-        <EmptyState title={t('common.emptyTitle')} description={t('common.emptyDescription')} />
+        <EmptyState title={t('emptyTitle', { ns: 'common' })} description={t('emptyDescription', { ns: 'common' })} />
       ) : null}
 
       {rows.length > 0 ? (
@@ -267,12 +267,12 @@ export function UnitOccupanciesPage() {
             <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
               <thead className="bg-zinc-50 dark:bg-zinc-800/80">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.resident')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.type')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.date')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.primary')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.status')}</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.actions')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('resident', { ns: 'residents' })}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('type', { ns: 'residents' })}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('date', { ns: 'residents' })}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('primary', { ns: 'residents' })}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('status', { ns: 'residents' })}</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('actions', { ns: 'residents' })}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -283,7 +283,7 @@ export function UnitOccupanciesPage() {
                     <td className="px-4 py-3 text-sm">
                       {row.start_date} {row.end_date ? `- ${row.end_date}` : ''}
                     </td>
-                    <td className="px-4 py-3 text-sm">{Number(row.is_primary) === 1 ? t('residents.common.yes') : t('residents.common.no')}</td>
+                    <td className="px-4 py-3 text-sm">{Number(row.is_primary) === 1 ? t('yes', { ns: 'residents' }) : t('no', { ns: 'residents' })}</td>
                     <td className="px-4 py-3 text-sm">{row.status}</td>
                     <td className="px-4 py-3 text-right text-sm">
                       <div className="flex justify-end gap-3">
@@ -293,7 +293,7 @@ export function UnitOccupanciesPage() {
                             className="text-violet-600 hover:underline"
                             onClick={() => loadForEdit(row)}
                           >
-                            {t('common.edit')}
+                            {t('edit', { ns: 'common' })}
                           </button>
                         ) : null}
                         {canDelete ? (
@@ -302,7 +302,7 @@ export function UnitOccupanciesPage() {
                             className="text-red-600 hover:underline"
                             onClick={() => setConfirmDeleteId(row.id)}
                           >
-                            {t('common.delete')}
+                            {t('delete', { ns: 'common' })}
                           </button>
                         ) : null}
                       </div>
@@ -317,10 +317,10 @@ export function UnitOccupanciesPage() {
 
       <ConfirmDialog
         isOpen={confirmDeleteId !== null}
-        title={t('residents.common.deleteOccupancyTitle')}
-        description={t('residents.common.deleteOccupancyDescription')}
-        confirmText={t('common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('deleteOccupancyTitle', { ns: 'residents' })}
+        description={t('deleteOccupancyDescription', { ns: 'residents' })}
+        confirmText={t('delete', { ns: 'common' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={deleteMut.isPending}
         onClose={() => setConfirmDeleteId(null)}

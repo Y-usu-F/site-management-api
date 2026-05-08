@@ -49,7 +49,7 @@ export function NotificationBell() {
   async function handleMarkRead(id: number) {
     try {
       await markRead.mutateAsync(id)
-      toast.success(t('notifications.markedRead'))
+      toast.success(t('markedRead', { ns: 'notifications' }))
     } catch (e) {
       toast.error(getErrorMessage(e))
     }
@@ -58,7 +58,7 @@ export function NotificationBell() {
   async function handleMarkAllRead() {
     try {
       const result = await markAllRead.mutateAsync()
-      toast.success(t('notifications.markedAllRead', { count: result.marked_count }))
+      toast.success(t('markedAllRead', { ns: 'notifications', count: result.marked_count }))
     } catch (e) {
       toast.error(getErrorMessage(e))
     }
@@ -85,7 +85,7 @@ export function NotificationBell() {
       {open ? (
         <div className="absolute right-0 z-50 mt-2 w-96 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-950">
           <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 text-sm font-semibold dark:border-zinc-800">
-            <span>{t('notifications.title')}</span>
+            <span>{t('title', { ns: 'notifications' })}</span>
             <div className="flex items-center gap-3">
               {canMarkRead ? (
                 <button
@@ -110,9 +110,9 @@ export function NotificationBell() {
           {list.isLoading ? (
             <div className="px-4 py-3 text-sm text-zinc-500">{t('loading', { ns: 'common' })}</div>
           ) : list.isError ? (
-            <div className="px-4 py-3 text-sm text-red-600">{t('notifications.listFailed')}</div>
+            <div className="px-4 py-3 text-sm text-red-600">{t('listFailed', { ns: 'notifications' })}</div>
           ) : items.length === 0 ? (
-            <div className="px-4 py-3 text-sm text-zinc-500">{t('notifications.emptyDescription')}</div>
+            <div className="px-4 py-3 text-sm text-zinc-500">{t('emptyDescription', { ns: 'notifications' })}</div>
           ) : (
             <div className="divide-y divide-zinc-100 dark:divide-zinc-900">
               {items.map((n) => {
@@ -134,7 +134,7 @@ export function NotificationBell() {
                         isUnread ? 'font-semibold' : 'font-medium',
                       ].join(' ')}
                     >
-                      {t('notifications.notificationLabel')} #{n.id}
+                      {t('notificationLabel', { ns: 'notifications' })} #{n.id}
                     </div>
                     <div className="mt-0.5 text-xs text-zinc-500">
                       message_id: {n.message_id} • {n.read_at ? t('status.read', { ns: 'common' }) : t('status.unread', { ns: 'common' })}

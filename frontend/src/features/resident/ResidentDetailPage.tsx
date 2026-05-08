@@ -55,14 +55,14 @@ export function ResidentDetailPage() {
   if (!canView) {
     return <PermissionDeniedNotice permission="resident.view" />
   }
-  if (id === null) return <p className="text-sm text-zinc-600">{t('residents.common.invalidResidentId')}</p>
-  if (isPending) return <p className="text-sm text-zinc-600">{t('residents.common.loading')}</p>
+  if (id === null) return <p className="text-sm text-zinc-600">{t('invalidResidentId', { ns: 'residents' })}</p>
+  if (isPending) return <p className="text-sm text-zinc-600">{t('loading', { ns: 'residents' })}</p>
 
   if (isError || !data) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/40">
         <p className="text-sm text-red-800 dark:text-red-200">
-          {error instanceof Error ? error.message : t('residents.common.notFound')}
+          {error instanceof Error ? error.message : t('notFound', { ns: 'residents' })}
         </p>
       </div>
     )
@@ -76,7 +76,7 @@ export function ResidentDetailPage() {
         <div>
           <nav className="text-xs text-zinc-500">
             <Link to="/residents" className="hover:text-violet-600">
-              {t('residents.common.residents')}
+              {t('residents', { ns: 'residents' })}
             </Link>
             <span className="mx-1">/</span>
             <span className="text-zinc-700 dark:text-zinc-300">
@@ -93,17 +93,17 @@ export function ResidentDetailPage() {
         <div className="flex flex-wrap gap-2">
           {canContacts ? (
             <Link to={`/residents/${resident.id}/contacts`} className="rounded-lg border px-3 py-2 text-sm dark:border-zinc-700">
-              {t('residents.common.contacts')}
+              {t('contacts', { ns: 'residents' })}
             </Link>
           ) : null}
           {canVehicles ? (
             <Link to={`/residents/${resident.id}/vehicles`} className="rounded-lg border px-3 py-2 text-sm dark:border-zinc-700">
-              {t('residents.common.vehicles')}
+              {t('vehicles', { ns: 'residents' })}
             </Link>
           ) : null}
           {canUpdate ? (
             <Link to={`/residents/${resident.id}/edit`} className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white">
-              {t('common.edit')}
+              {t('edit', { ns: 'common' })}
             </Link>
           ) : null}
           {canDelete ? (
@@ -113,7 +113,7 @@ export function ResidentDetailPage() {
               disabled={deleteMutation.isPending}
               className="rounded-lg border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50 dark:border-red-800 dark:text-red-300"
             >
-              {deleteMutation.isPending ? t('common.pleaseWait') : t('common.delete')}
+              {deleteMutation.isPending ? t('pleaseWait', { ns: 'common' }) : t('delete', { ns: 'common' })}
             </button>
           ) : null}
         </div>
@@ -121,19 +121,19 @@ export function ResidentDetailPage() {
 
       <dl className="grid max-w-3xl gap-4 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:grid-cols-2">
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('residents.common.phone')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('phone', { ns: 'residents' })}</dt>
           <dd className="mt-1 text-sm">{resident.phone?.trim() ? resident.phone : '—'}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('residents.common.email')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('email', { ns: 'residents' })}</dt>
           <dd className="mt-1 text-sm">{resident.email?.trim() ? resident.email : '—'}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('residents.common.status')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('status', { ns: 'residents' })}</dt>
           <dd className="mt-1 text-sm">{resident.status}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('residents.common.updated')}</dt>
+          <dt className="text-xs font-semibold uppercase text-zinc-500">{t('updated', { ns: 'residents' })}</dt>
           <dd className="mt-1 text-sm">{formatDateTime(resident.updated_at ?? resident.created_at)}</dd>
         </div>
       </dl>
@@ -141,9 +141,9 @@ export function ResidentDetailPage() {
       {canContacts ? (
         <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.contacts')}</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{t('contacts', { ns: 'residents' })}</h2>
             <Link to={`/residents/${resident.id}/contacts`} className="text-sm text-violet-600 hover:underline">
-              {t('residents.common.open')}
+              {t('open', { ns: 'residents' })}
             </Link>
           </div>
           {contactsQ.data?.items.length ? (
@@ -155,7 +155,7 @@ export function ResidentDetailPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-zinc-500">{t('common.emptyDescription')}</p>
+            <p className="text-sm text-zinc-500">{t('emptyDescription', { ns: 'common' })}</p>
           )}
         </section>
       ) : null}
@@ -163,9 +163,9 @@ export function ResidentDetailPage() {
       {canVehicles ? (
         <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.vehicles')}</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{t('vehicles', { ns: 'residents' })}</h2>
             <Link to={`/residents/${resident.id}/vehicles`} className="text-sm text-violet-600 hover:underline">
-              {t('residents.common.open')}
+              {t('open', { ns: 'residents' })}
             </Link>
           </div>
           {vehiclesQ.data?.items.length ? (
@@ -177,44 +177,44 @@ export function ResidentDetailPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-zinc-500">{t('common.emptyDescription')}</p>
+            <p className="text-sm text-zinc-500">{t('emptyDescription', { ns: 'common' })}</p>
           )}
         </section>
       ) : null}
 
       {canOccupancies ? (
         <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.occupancies')}</h2>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-500">{t('occupancies', { ns: 'residents' })}</h2>
           {occupanciesQ.data?.items.length ? (
             <ul className="space-y-1 text-sm">
               {occupanciesQ.data.items.map((o) => (
                 <li key={o.id}>
-                  {t('site.form.unitNumber')} #{o.unit_id} · {o.relationship_type} · {o.status}
+                  {t('form.unitNumber', { ns: 'site' })} #{o.unit_id} · {o.relationship_type} · {o.status}
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-zinc-500">{t('common.emptyDescription')}</p>
+            <p className="text-sm text-zinc-500">{t('emptyDescription', { ns: 'common' })}</p>
           )}
         </section>
       ) : null}
 
       <ConfirmDialog
         isOpen={confirmOpen}
-        title={t('residents.common.delete')}
-        description={t('common.confirm')}
-        confirmText={t('residents.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('delete', { ns: 'residents' })}
+        description={t('confirm', { ns: 'common' })}
+        confirmText={t('delete', { ns: 'residents' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={deleteMutation.isPending}
         onClose={() => setConfirmOpen(false)}
         onConfirm={() => {
           deleteMutation.mutate(resident.id, {
             onSuccess: () => {
-              toast.success(`${t('residents.common.resident')} ${t('common.delete')}`)
+              toast.success(`${t('resident', { ns: 'residents' })} ${t('delete', { ns: 'common' })}`)
               navigate('/residents')
             },
-            onError: (err) => toast.error(getErrorMessage(err, t('common.errorGeneric'))),
+            onError: (err) => toast.error(getErrorMessage(err, t('errorGeneric', { ns: 'common' }))),
           })
         }}
       />

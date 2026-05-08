@@ -53,7 +53,7 @@ export function SiteForm({
     <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
       <div>
         <label htmlFor="site-name" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.form.name')}
+          {t('form.name', { ns: 'site' })}
         </label>
         <input
           id="site-name"
@@ -66,7 +66,7 @@ export function SiteForm({
       </div>
       <div>
         <label htmlFor="site-code" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.form.code')}
+          {t('form.code', { ns: 'site' })}
         </label>
         <input
           id="site-code"
@@ -79,7 +79,7 @@ export function SiteForm({
       </div>
       <div>
         <label htmlFor="site-address" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.form.address')}
+          {t('form.address', { ns: 'site' })}
         </label>
         <textarea
           id="site-address"
@@ -92,7 +92,7 @@ export function SiteForm({
       </div>
       <div>
         <label htmlFor="site-status" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.common.status')}
+          {t('status', { ns: 'site' })}
         </label>
         <select
           id="site-status"
@@ -114,7 +114,7 @@ export function SiteForm({
           disabled={isSubmitting}
           className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
-          {isSubmitting ? t('site.form.saving') : submitLabel}
+          {isSubmitting ? t('form.saving', { ns: 'site' }) : submitLabel}
         </button>
       </div>
     </form>

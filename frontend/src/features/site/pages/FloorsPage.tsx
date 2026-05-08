@@ -85,59 +85,57 @@ export function FloorsPage() {
   const bulkDeleteMutation = useMutation({
     mutationFn: (ids: number[]) => bulkDeleteFloors(ids),
     onSuccess: () => {
-      toast.success(t('site.common.bulkDeleteFloorsSuccess'))
+      toast.success(t('bulkDeleteFloorsSuccess', { ns: 'site' }))
       clearSelection()
       void qc.invalidateQueries({ queryKey: ['floors'] })
     },
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.bulkDeleteEndpointNotAvailableYet'))
+        toast.error(t('bulkDeleteEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotDeleteSelectedFloors')))
+      toast.error(getErrorMessage(err, t('couldNotDeleteSelectedFloors', { ns: 'site' })))
     },
   })
   const exportMutation = useMutation({
     mutationFn: () => exportFloorsExcel(params),
-    onSuccess: () => toast.success(t('site.common.exportStarted')),
+    onSuccess: () => toast.success(t('exportStarted', { ns: 'site' })),
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.exportEndpointNotAvailableYet'))
+        toast.error(t('exportEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotExportFloors')))
+      toast.error(getErrorMessage(err, t('couldNotExportFloors', { ns: 'site' })))
     },
   })
   const templateMutation = useMutation({
     mutationFn: () => downloadFloorTemplate(),
-    onSuccess: () => toast.success(t('site.common.templateDownloaded')),
+    onSuccess: () => toast.success(t('templateDownloaded', { ns: 'site' })),
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.templateEndpointNotAvailableYet'))
+        toast.error(t('templateEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotDownloadTemplate')))
+      toast.error(getErrorMessage(err, t('couldNotDownloadTemplate', { ns: 'site' })))
     },
   })
   const importMutation = useMutation({
     mutationFn: (file: File) => importFloorsExcel(file),
     onSuccess: (result) => {
       toast.success(
-        t('site.common.importDone', {
-          inserted: result.inserted_count ?? 0,
+        t('importDone', { ns: 'site', inserted: result.inserted_count ?? 0,
           updated: result.updated_count ?? 0,
-          skipped: result.skipped_count ?? 0,
-        }),
+          skipped: result.skipped_count ?? 0, }),
       )
       setImportOpen(false)
       void qc.invalidateQueries({ queryKey: ['floors'] })
     },
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error(t('site.common.importEndpointNotAvailableYet'))
+        toast.error(t('importEndpointNotAvailableYet', { ns: 'site' }))
         return
       }
-      toast.error(getErrorMessage(err, t('site.common.couldNotImportFloors')))
+      toast.error(getErrorMessage(err, t('couldNotImportFloors', { ns: 'site' })))
     },
   })
 
@@ -148,7 +146,7 @@ export function FloorsPage() {
   if (blockId === null) {
     return (
       <p className="text-sm">
-        {t('site.common.invalidBlock')} <Link to="/sites">{t('site.common.sites')}</Link>
+        {t('invalidBlock', { ns: 'site' })} <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
       </p>
     )
   }
@@ -156,26 +154,26 @@ export function FloorsPage() {
   return (
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
-        <Link to="/sites">{t('site.common.sites')}</Link>
+        <Link to="/sites">{t('sites', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
         <Link to={`/sites/${siteId}`}>{site?.code ?? `Site ${siteId}`}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/sites/${siteId}/blocks`}>{t('site.common.blocks')}</Link>
+        <Link to={`/sites/${siteId}/blocks`}>{t('blocks', { ns: 'site' })}</Link>
         <span className="mx-1">/</span>
         <Link to={`/blocks/${blockId}`}>{block?.code ?? `Block ${blockId}`}</Link>
         <span className="mx-1">/</span>
-        <span>{t('site.common.floors')}</span>
+        <span>{t('floors', { ns: 'site' })}</span>
       </nav>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">{t('site.common.floors')}</h1>
-          <p className="mt-1 text-sm text-zinc-600">{t('site.common.floorsCount', { count: data?.total ?? 0 })}</p>
+          <h1 className="text-2xl font-semibold">{t('floors', { ns: 'site' })}</h1>
+          <p className="mt-1 text-sm text-zinc-600">{t('floorsCount', { ns: 'site', count: data?.total ?? 0 })}</p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="search"
-            placeholder={t('site.common.searchLabelOrNumber')}
+            placeholder={t('searchLabelOrNumber', { ns: 'site' })}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full rounded-lg border px-3 py-2 text-sm sm:w-72 dark:border-zinc-600 dark:bg-zinc-950"
@@ -185,7 +183,7 @@ export function FloorsPage() {
               to={`/blocks/${blockId}/floors/new`}
               className="inline-flex justify-center rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white"
             >
-              {t('site.common.new')}
+              {t('new', { ns: 'site' })}
             </Link>
           ) : null}
         </div>
@@ -205,25 +203,25 @@ export function FloorsPage() {
       />
 
       {isPending ? (
-        <div className="rounded-xl border p-12 text-center text-sm">{t('site.common.loading')}</div>
+        <div className="rounded-xl border p-12 text-center text-sm">{t('loading', { ns: 'site' })}</div>
       ) : null}
 
       {isError ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-          {error instanceof Error ? error.message : t('common.errorGeneric')}
+          {error instanceof Error ? error.message : t('errorGeneric', { ns: 'common' })}
         </div>
       ) : null}
 
       {!isPending && !isError && items.length === 0 ? (
         <EmptyState
-          title={t('common.emptyTitle')}
+          title={t('emptyTitle', { ns: 'common' })}
           description={
             canCreate ? (
               <Link className="text-violet-600 underline" to={`/blocks/${blockId}/floors/new`}>
-                {t('site.common.addFloor')}
+                {t('addFloor', { ns: 'site' })}
               </Link>
             ) : (
-              t('site.common.createPermissionRequiredForFloors')
+              t('createPermissionRequiredForFloors', { ns: 'site' })
             )
           }
         />
@@ -239,14 +237,14 @@ export function FloorsPage() {
                     type="checkbox"
                     checked={allSelected}
                     onChange={toggleAllCurrentPage}
-                    aria-label={t('site.common.selectAllFloorsOnPage')}
+                    aria-label={t('selectAllFloorsOnPage', { ns: 'site' })}
                   />
                 </th>
                 <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">#</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.form.floorLabel')}</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.common.status')}</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.common.updated')}</th>
-                <th className="px-4 py-3 text-right text-xs uppercase text-zinc-500">{t('site.common.actions')}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('form.floorLabel', { ns: 'site' })}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('status', { ns: 'site' })}</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('updated', { ns: 'site' })}</th>
+                <th className="px-4 py-3 text-right text-xs uppercase text-zinc-500">{t('actions', { ns: 'site' })}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -257,7 +255,7 @@ export function FloorsPage() {
                       type="checkbox"
                       checked={selectedIds.includes(row.id)}
                       onChange={() => toggleOne(row.id)}
-                      aria-label={t('site.common.selectFloorWithNumber', { number: row.number })}
+                      aria-label={t('selectFloorWithNumber', { ns: 'site', number: row.number })}
                     />
                   </td>
                   <td className="px-4 py-3 font-mono text-sm">{row.number}</td>
@@ -268,7 +266,7 @@ export function FloorsPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link className="text-violet-600" to={`/floors/${row.id}`}>
-                      {t('site.common.open')}
+                      {t('open', { ns: 'site' })}
                     </Link>
                   </td>
                 </tr>
@@ -278,8 +276,8 @@ export function FloorsPage() {
           {totalPages > 1 ? (
             <div className="flex justify-between border-t px-4 py-3 text-xs">
               <span>
-                {t('common.pagination.page')} {data?.page ?? page} {t('common.pagination.of')} {totalPages}
-                {isFetching ? ` · ${t('common.pagination.refreshing')}` : ''}
+                {t('pagination.page', { ns: 'common' })} {data?.page ?? page} {t('pagination.of', { ns: 'common' })} {totalPages}
+                {isFetching ? ` · ${t('pagination.refreshing', { ns: 'common' })}` : ''}
               </span>
               <div className="flex gap-2">
                 <button
@@ -288,7 +286,7 @@ export function FloorsPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  {t('common.pagination.prev')}
+                  {t('pagination.prev', { ns: 'common' })}
                 </button>
                 <button
                   type="button"
@@ -296,7 +294,7 @@ export function FloorsPage() {
                   onClick={() => setPage((p) => p + 1)}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  {t('common.pagination.next')}
+                  {t('pagination.next', { ns: 'common' })}
                 </button>
               </div>
             </div>
@@ -305,10 +303,10 @@ export function FloorsPage() {
       ) : null}
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
-        title={t('site.common.deleteSelectedFloorsTitle')}
-        description={t('site.common.deleteSelectedFloorsDescription', { count: selectedCount })}
-        confirmText={t('site.common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('deleteSelectedFloorsTitle', { ns: 'site' })}
+        description={t('deleteSelectedFloorsDescription', { ns: 'site', count: selectedCount })}
+        confirmText={t('delete', { ns: 'site' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={bulkDeleteMutation.isPending}
         onClose={() => setDeleteConfirmOpen(false)}
@@ -316,7 +314,7 @@ export function FloorsPage() {
       />
       <ImportExcelDialog
         isOpen={importOpen}
-        title={t('site.common.importFloorsFromExcel')}
+        title={t('importFloorsFromExcel', { ns: 'site' })}
         isSubmitting={importMutation.isPending}
         onClose={() => setImportOpen(false)}
         onSubmit={(file) => importMutation.mutate(file)}

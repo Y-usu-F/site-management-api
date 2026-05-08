@@ -42,7 +42,7 @@ export function SearchableLookupSelect({
       <input
         value={search}
         onChange={(event) => setSearch(event.target.value)}
-        placeholder={`${placeholder} ${t('common.search')}`}
+        placeholder={`${placeholder} ${t('search', { ns: 'common' })}`}
         className="w-full rounded border px-3 py-2 text-sm"
       />
       <select
@@ -59,9 +59,9 @@ export function SearchableLookupSelect({
           </option>
         ))}
       </select>
-      {lookupQuery.isLoading ? <p className="text-xs text-zinc-500">{t('operations.common.loadingOptions')}</p> : null}
-      {lookupQuery.isError ? <p className="text-xs text-red-600">{t('operations.common.optionsFailed')}</p> : null}
-      {value && selectedLabel ? <p className="text-xs text-zinc-500">{t('operations.common.selected')}: {selectedLabel}</p> : null}
+      {lookupQuery.isLoading ? <p className="text-xs text-zinc-500">{t('loadingOptions', { ns: 'operations' })}</p> : null}
+      {lookupQuery.isError ? <p className="text-xs text-red-600">{t('optionsFailed', { ns: 'operations' })}</p> : null}
+      {value && selectedLabel ? <p className="text-xs text-zinc-500">{t('selected', { ns: 'operations' })}: {selectedLabel}</p> : null}
     </div>
   )
 }

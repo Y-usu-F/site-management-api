@@ -30,11 +30,11 @@ export function CommonAreaReservationForm({
     <form className="space-y-4" onSubmit={(e) => {
       e.preventDefault()
       if (!commonAreaId || Number(commonAreaId) <= 0) {
-        setClientError(t('operations.common.validationCommonAreaRequired'))
+        setClientError(t('validationCommonAreaRequired', { ns: 'operations' }))
         return
       }
       if (!startAt || !endAt) {
-        setClientError(t('operations.common.validationDateRangeRequired'))
+        setClientError(t('validationDateRangeRequired', { ns: 'operations' }))
         return
       }
       setClientError(null)
@@ -50,37 +50,37 @@ export function CommonAreaReservationForm({
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
         <SearchableLookupSelect
-          label={t('operations.common.commonAreas')}
-          placeholder={t('operations.common.commonAreas')}
+          label={t('commonAreas', { ns: 'operations' })}
+          placeholder={t('commonAreas', { ns: 'operations' })}
           value={commonAreaId}
           onChange={setCommonAreaId}
           queryKey="common-areas"
           queryFn={listLookupCommonAreas}
         />
         <SearchableLookupSelect
-          label={t('operations.common.resident')}
-          placeholder={t('operations.common.resident')}
+          label={t('resident', { ns: 'operations' })}
+          placeholder={t('resident', { ns: 'operations' })}
           value={residentId}
           onChange={setResidentId}
           queryKey="residents"
           queryFn={listLookupResidents}
         />
         <SearchableLookupSelect
-          label={t('operations.common.unit')}
-          placeholder={t('operations.common.unit')}
+          label={t('unit', { ns: 'operations' })}
+          placeholder={t('unit', { ns: 'operations' })}
           value={unitId}
           onChange={setUnitId}
           queryKey="units"
           queryFn={listLookupUnits}
         />
-        <input value={participantCount} onChange={(e) => setParticipantCount(e.target.value)} placeholder={t('operations.common.participantCount')} className="rounded border px-3 py-2 text-sm" />
+        <input value={participantCount} onChange={(e) => setParticipantCount(e.target.value)} placeholder={t('participantCount', { ns: 'operations' })} className="rounded border px-3 py-2 text-sm" />
         <input type="datetime-local" value={startAt} onChange={(e) => setStartAt(e.target.value)} className="rounded border px-3 py-2 text-sm" />
         <input type="datetime-local" value={endAt} onChange={(e) => setEndAt(e.target.value)} className="rounded border px-3 py-2 text-sm" />
       </div>
-      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('operations.common.notes')} className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
+      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('notes', { ns: 'operations' })} className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
       {clientError ? <p className="text-xs text-red-600">{clientError}</p> : null}
       <button type="submit" disabled={isSubmitting} className="rounded bg-violet-600 px-4 py-2 text-sm text-white disabled:opacity-50">
-        {isSubmitting ? t('common.pleaseWait') : submitLabel}
+        {isSubmitting ? t('pleaseWait', { ns: 'common' }) : submitLabel}
       </button>
     </form>
   )

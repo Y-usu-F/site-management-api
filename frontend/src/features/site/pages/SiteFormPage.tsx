@@ -39,19 +39,19 @@ export function SiteFormPage({ mode }: { mode: 'create' | 'edit' }) {
   if (mode === 'edit' && id === null) {
     return (
       <p className="text-sm text-zinc-600">
-        {t('site.common.invalidId')}. <Link to="/sites">{t('common.back')}</Link>
+        {t('invalidId', { ns: 'site' })}. <Link to="/sites">{t('back', { ns: 'common' })}</Link>
       </p>
     )
   }
 
   if (mode === 'edit' && isPending) {
-    return <p className="text-sm text-zinc-600">{t('site.common.loading')}</p>
+    return <p className="text-sm text-zinc-600">{t('loading', { ns: 'site' })}</p>
   }
 
   if (mode === 'edit' && !existing) {
     return (
       <p className="text-sm text-red-600">
-        {t('site.common.notFound')}. <Link to="/sites">{t('common.back')}</Link>
+        {t('notFound', { ns: 'site' })}. <Link to="/sites">{t('back', { ns: 'common' })}</Link>
       </p>
     )
   }
@@ -63,7 +63,7 @@ export function SiteFormPage({ mode }: { mode: 'create' | 'edit' }) {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to="/sites" className="hover:text-violet-600">
-          {t('site.common.sites')}
+          {t('sites', { ns: 'site' })}
         </Link>
         {mode === 'edit' && existing ? (
           <>
@@ -72,28 +72,28 @@ export function SiteFormPage({ mode }: { mode: 'create' | 'edit' }) {
               {existing.code}
             </Link>
             <span className="mx-1">/</span>
-            <span>{t('site.common.edit')}</span>
+            <span>{t('edit', { ns: 'site' })}</span>
           </>
         ) : (
           <>
             <span className="mx-1">/</span>
-            <span>{t('site.common.new')}</span>
+            <span>{t('new', { ns: 'site' })}</span>
           </>
         )}
       </nav>
       <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-        {mode === 'create' ? `${t('site.common.new')} ${t('site.common.sites')}` : `${t('site.common.edit')} ${t('site.common.sites')}`}
+        {mode === 'create' ? `${t('new', { ns: 'site' })} ${t('sites', { ns: 'site' })}` : `${t('edit', { ns: 'site' })} ${t('sites', { ns: 'site' })}`}
       </h1>
 
       {mutationError ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-          <p>{getErrorMessage(mutationError, t('site.common.requestFailed'))}</p>
+          <p>{getErrorMessage(mutationError, t('requestFailed', { ns: 'site' }))}</p>
         </div>
       ) : null}
 
       <SiteForm
         defaultValues={existing ?? undefined}
-        submitLabel={mode === 'create' ? t('common.create') : t('site.common.saveChanges')}
+        submitLabel={mode === 'create' ? t('create', { ns: 'common' }) : t('saveChanges', { ns: 'site' })}
         isSubmitting={isSubmitting}
         serverFieldErrors={serverErrors}
         onSubmit={(values) => {
@@ -101,12 +101,12 @@ export function SiteFormPage({ mode }: { mode: 'create' | 'edit' }) {
           if (mode === 'create') {
             createMut.mutate(values, {
               onSuccess: (created) => {
-                toast.success(`${t('site.common.sites')} ${t('common.create')}`)
+                toast.success(`${t('sites', { ns: 'site' })} ${t('create', { ns: 'common' })}`)
                 navigate(`/sites/${created.id}`)
               },
               onError: (err) => {
                 setServerErrors(extractValidationErrors(err))
-                toast.error(getErrorMessage(err, t('common.errorGeneric')))
+                toast.error(getErrorMessage(err, t('errorGeneric', { ns: 'common' })))
               },
             })
           } else if (id !== null) {
@@ -114,12 +114,12 @@ export function SiteFormPage({ mode }: { mode: 'create' | 'edit' }) {
               { id, body: values },
               {
                 onSuccess: (updated) => {
-                  toast.success(`${t('site.common.sites')} ${t('common.update')}`)
+                  toast.success(`${t('sites', { ns: 'site' })} ${t('update', { ns: 'common' })}`)
                   navigate(`/sites/${updated.id}`)
                 },
                 onError: (err) => {
                   setServerErrors(extractValidationErrors(err))
-                  toast.error(getErrorMessage(err, t('common.errorGeneric')))
+                  toast.error(getErrorMessage(err, t('errorGeneric', { ns: 'common' })))
                 },
               },
             )

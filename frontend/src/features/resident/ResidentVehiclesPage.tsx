@@ -59,14 +59,14 @@ export function ResidentVehiclesPage() {
   const createMut = useMutation({
     mutationFn: createResidentVehicle,
     onSuccess: () => {
-      toast.success(t('residents.common.vehicleCreated'))
+      toast.success(t('vehicleCreated', { ns: 'residents' }))
       setForm(emptyPayload(residentId ?? 0))
       setServerErrors({})
       void qc.invalidateQueries({ queryKey: ['resident-vehicles'] })
     },
     onError: (err) => {
       setServerErrors(extractValidationErrors(err))
-      toast.error(getErrorMessage(err, t('residents.common.vehicleCreateFailed')))
+      toast.error(getErrorMessage(err, t('vehicleCreateFailed', { ns: 'residents' })))
     },
   })
 
@@ -74,7 +74,7 @@ export function ResidentVehiclesPage() {
     mutationFn: ({ id, body }: { id: number; body: Partial<VehiclePayload> }) =>
       updateResidentVehicle(id, body),
     onSuccess: () => {
-      toast.success(t('residents.common.vehicleUpdated'))
+      toast.success(t('vehicleUpdated', { ns: 'residents' }))
       setEditId(null)
       setForm(emptyPayload(residentId ?? 0))
       setServerErrors({})
@@ -82,22 +82,22 @@ export function ResidentVehiclesPage() {
     },
     onError: (err) => {
       setServerErrors(extractValidationErrors(err))
-      toast.error(getErrorMessage(err, t('residents.common.vehicleUpdateFailed')))
+      toast.error(getErrorMessage(err, t('vehicleUpdateFailed', { ns: 'residents' })))
     },
   })
 
   const deleteMut = useMutation({
     mutationFn: deleteResidentVehicle,
     onSuccess: () => {
-      toast.success(t('residents.common.vehicleDeleted'))
+      toast.success(t('vehicleDeleted', { ns: 'residents' }))
       setConfirmDeleteId(null)
       void qc.invalidateQueries({ queryKey: ['resident-vehicles'] })
     },
-    onError: (err) => toast.error(getErrorMessage(err, t('residents.common.vehicleDeleteFailed'))),
+    onError: (err) => toast.error(getErrorMessage(err, t('vehicleDeleteFailed', { ns: 'residents' }))),
   })
 
   if (!canList) return <PermissionDeniedNotice permission="resident_vehicle.list" />
-  if (residentId === null) return <p className="text-sm text-zinc-600">{t('residents.common.invalidResidentId')}</p>
+  if (residentId === null) return <p className="text-sm text-zinc-600">{t('invalidResidentId', { ns: 'residents' })}</p>
 
   const rows = vehiclesQ.data?.items ?? []
   const isSubmitting = createMut.isPending || updateMut.isPending
@@ -120,12 +120,12 @@ export function ResidentVehiclesPage() {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to={`/residents/${residentId}`} className="hover:text-violet-600">
-          {t('residents.common.resident')} {residentId}
+          {t('resident', { ns: 'residents' })} {residentId}
         </Link>
         <span className="mx-1">/</span>
-        <span>{t('residents.common.vehicles')}</span>
+        <span>{t('vehicles', { ns: 'residents' })}</span>
       </nav>
-      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('residents.common.vehicles')}</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('vehicles', { ns: 'residents' })}</h1>
 
       {(canCreate || (canUpdate && editId !== null)) && (
         <form
@@ -145,7 +145,7 @@ export function ResidentVehiclesPage() {
           }}
         >
           <div>
-            <label className="block text-sm font-medium">{t('residents.common.plate')}</label>
+            <label className="block text-sm font-medium">{t('plate', { ns: 'residents' })}</label>
             <input
               value={form.plate_number}
               onChange={(e) => setForm((p) => ({ ...p, plate_number: e.target.value }))}
@@ -156,7 +156,7 @@ export function ResidentVehiclesPage() {
             ) : null}
           </div>
           <div>
-            <label className="block text-sm font-medium">{t('residents.common.status')}</label>
+            <label className="block text-sm font-medium">{t('status', { ns: 'residents' })}</label>
             <select
               value={form.status}
               onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))}
@@ -167,7 +167,7 @@ export function ResidentVehiclesPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">{t('residents.common.brand')}</label>
+            <label className="block text-sm font-medium">{t('brand', { ns: 'residents' })}</label>
             <input
               value={form.brand ?? ''}
               onChange={(e) => setForm((p) => ({ ...p, brand: e.target.value }))}
@@ -175,7 +175,7 @@ export function ResidentVehiclesPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">{t('residents.common.model')}</label>
+            <label className="block text-sm font-medium">{t('model', { ns: 'residents' })}</label>
             <input
               value={form.model ?? ''}
               onChange={(e) => setForm((p) => ({ ...p, model: e.target.value }))}
@@ -183,7 +183,7 @@ export function ResidentVehiclesPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">{t('residents.common.color')}</label>
+            <label className="block text-sm font-medium">{t('color', { ns: 'residents' })}</label>
             <input
               value={form.color ?? ''}
               onChange={(e) => setForm((p) => ({ ...p, color: e.target.value }))}
@@ -196,7 +196,7 @@ export function ResidentVehiclesPage() {
               disabled={isSubmitting}
               className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
-              {isSubmitting ? t('residents.common.saving') : editId === null ? t('residents.common.createVehicle') : t('residents.common.save')}
+              {isSubmitting ? t('saving', { ns: 'residents' }) : editId === null ? t('createVehicle', { ns: 'residents' }) : t('save', { ns: 'residents' })}
             </button>
             {editId !== null ? (
               <button
@@ -208,7 +208,7 @@ export function ResidentVehiclesPage() {
                   setForm(emptyPayload(residentId))
                 }}
               >
-                {t('residents.common.cancelEdit')}
+                {t('cancelEdit', { ns: 'residents' })}
               </button>
             ) : null}
           </div>
@@ -216,7 +216,7 @@ export function ResidentVehiclesPage() {
       )}
 
       {!vehiclesQ.isPending && !vehiclesQ.isError && rows.length === 0 ? (
-        <EmptyState title={t('common.emptyTitle')} description={t('common.emptyDescription')} />
+        <EmptyState title={t('emptyTitle', { ns: 'common' })} description={t('emptyDescription', { ns: 'common' })} />
       ) : null}
 
       {rows.length > 0 ? (
@@ -225,11 +225,11 @@ export function ResidentVehiclesPage() {
             <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
               <thead className="bg-zinc-50 dark:bg-zinc-800/80">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.plate')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.brandModel')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.color')}</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.status')}</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.actions')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('plate', { ns: 'residents' })}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('brandModel', { ns: 'residents' })}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('color', { ns: 'residents' })}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('status', { ns: 'residents' })}</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('actions', { ns: 'residents' })}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -245,12 +245,12 @@ export function ResidentVehiclesPage() {
                       <div className="flex justify-end gap-3">
                         {canUpdate ? (
                           <button type="button" className="text-violet-600 hover:underline" onClick={() => loadForEdit(row)}>
-                            {t('common.edit')}
+                            {t('edit', { ns: 'common' })}
                           </button>
                         ) : null}
                         {canDelete ? (
                           <button type="button" className="text-red-600 hover:underline" onClick={() => setConfirmDeleteId(row.id)}>
-                            {t('common.delete')}
+                            {t('delete', { ns: 'common' })}
                           </button>
                         ) : null}
                       </div>
@@ -265,10 +265,10 @@ export function ResidentVehiclesPage() {
 
       <ConfirmDialog
         isOpen={confirmDeleteId !== null}
-        title={t('residents.common.deleteVehicleTitle')}
-        description={t('residents.common.deleteVehicleDescription')}
-        confirmText={t('common.delete')}
-        cancelText={t('common.cancel')}
+        title={t('deleteVehicleTitle', { ns: 'residents' })}
+        description={t('deleteVehicleDescription', { ns: 'residents' })}
+        confirmText={t('delete', { ns: 'common' })}
+        cancelText={t('cancel', { ns: 'common' })}
         variant="danger"
         isLoading={deleteMut.isPending}
         onClose={() => setConfirmDeleteId(null)}

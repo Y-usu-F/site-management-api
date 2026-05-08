@@ -5,8 +5,8 @@ export function DueItemsPage() {
   const { t } = useTranslation(['finance'])
   return (
     <PlaceholderPage
-      title={t('finance.common.dueItems')}
-      subtitle={t('finance.widgets.dueItemsDescription')}
+      title={t('dueItems', { ns: 'finance' })}
+      subtitle={t('widgets.dueItemsDescription', { ns: 'finance' })}
     />
   )
 }

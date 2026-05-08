@@ -5,8 +5,8 @@ export function PaymentsPage() {
   const { t } = useTranslation(['finance'])
   return (
     <PlaceholderPage
-      title={t('finance.common.payments')}
-      subtitle={t('finance.widgets.paymentsDescription')}
+      title={t('payments', { ns: 'finance' })}
+      subtitle={t('widgets.paymentsDescription', { ns: 'finance' })}
     />
   )
 }

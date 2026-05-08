@@ -19,7 +19,7 @@ export function PlaceholderPage({ title, subtitle }: PlaceholderPageProps) {
         </p>
       ) : null}
       <p className="mt-6 rounded-lg bg-zinc-50 px-4 py-3 font-mono text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-        {t('common.placeholderWiring')}
+        {t('placeholderWiring', { ns: 'common' })}
       </p>
     </div>
   )

@@ -13,18 +13,18 @@ interface OperationActionButtonsProps {
   className?: string
 }
 
-function labelForAction(action: OperationActionName, t: (key: string) => string): string {
+function labelForAction(action: OperationActionName, t: (key: string, options?: Record<string, unknown>) => string): string {
   switch (action) {
     case 'approve':
-      return t('operations.actions.approve')
+      return t('actions.approve', { ns: 'operations' })
     case 'reject':
-      return t('operations.actions.reject')
+      return t('actions.reject', { ns: 'operations' })
     case 'cancel':
-      return t('operations.actions.cancel')
+      return t('actions.cancel', { ns: 'operations' })
     case 'start':
-      return t('operations.actions.start')
+      return t('actions.start', { ns: 'operations' })
     case 'complete':
-      return t('operations.actions.complete')
+      return t('actions.complete', { ns: 'operations' })
   }
 }
 
@@ -69,10 +69,10 @@ export function OperationActionButtons({ entity, id, className }: OperationActio
       </div>
       <ConfirmDialog
         isOpen={pendingAction !== null}
-        title={t('operations.actions.confirmTitle')}
+        title={t('actions.confirmTitle', { ns: 'operations' })}
         description={pendingAction ? actionMap[pendingAction].actionConfig?.confirmText ?? '' : ''}
-        confirmText={pendingAction ? labelForAction(pendingAction, t) : t('operations.actions.fallbackConfirm')}
-        cancelText={t('operations.actions.fallbackCancel')}
+        confirmText={pendingAction ? labelForAction(pendingAction, t) : t('actions.fallbackConfirm', { ns: 'operations' })}
+        cancelText={t('actions.fallbackCancel', { ns: 'operations' })}
         variant="danger"
         isLoading={isLoading}
         onClose={() => setPendingAction(null)}
@@ -80,7 +80,7 @@ export function OperationActionButtons({ entity, id, className }: OperationActio
           if (!pendingAction) return
           actionMap[pendingAction].run(id, {
             onSuccess: () => {
-              toast.success(t('operations.actions.success'))
+              toast.success(t('actions.success', { ns: 'operations' }))
               setPendingAction(null)
             },
             onError: (error) => {

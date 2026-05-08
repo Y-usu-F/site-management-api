@@ -24,21 +24,21 @@ export function PaymentFormPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t('finance.common.newPayment')}</h1>
+        <h1 className="text-xl font-semibold">{t('newPayment', { ns: 'finance' })}</h1>
         <Link to="/finance/payments" className="text-sm text-violet-600">
-          {t('finance.common.back')}
+          {t('back', { ns: 'finance' })}
         </Link>
       </div>
       <PaymentForm
         residents={residents.data ?? []}
         units={units.data ?? []}
-        submitLabel={t('finance.common.create')}
+        submitLabel={t('create', { ns: 'finance' })}
         isSubmitting={mutation.isPending}
         serverFieldErrors={extractValidationErrors(mutation.error)}
         onSubmit={(values) => {
           mutation.mutate(values, {
             onSuccess: (created) => {
-              toast.success(t('finance.common.createSuccess'))
+              toast.success(t('createSuccess', { ns: 'finance' }))
               navigate(`/finance/payments/${created.id}`)
             },
             onError: (err) => toast.error(getErrorMessage(err)),

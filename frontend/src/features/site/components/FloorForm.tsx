@@ -74,7 +74,7 @@ export function FloorForm({
     <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
       <div>
         <label htmlFor="floor-number" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.form.floorNumber')}
+          {t('form.floorNumber', { ns: 'site' })}
         </label>
         <input
           id="floor-number"
@@ -88,20 +88,20 @@ export function FloorForm({
       </div>
       <div>
         <label htmlFor="floor-label" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.form.floorLabel')}
+          {t('form.floorLabel', { ns: 'site' })}
         </label>
         <input
           id="floor-label"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          placeholder={t('site.form.floorLabel')}
+          placeholder={t('form.floorLabel', { ns: 'site' })}
           className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
         />
         {errors.label ? <p className="mt-1 text-xs text-red-600">{errors.label}</p> : null}
       </div>
       <div>
         <label htmlFor="floor-sort" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.form.sortOrder')}
+          {t('form.sortOrder', { ns: 'site' })}
         </label>
         <input
           id="floor-sort"
@@ -109,7 +109,7 @@ export function FloorForm({
           inputMode="numeric"
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
-          placeholder={t('site.form.optional')}
+          placeholder={t('form.optional', { ns: 'site' })}
           className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
         />
         {errors.sort_order ? (
@@ -118,7 +118,7 @@ export function FloorForm({
       </div>
       <div>
         <label htmlFor="floor-status" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.common.status')}
+          {t('status', { ns: 'site' })}
         </label>
         <select
           id="floor-status"
@@ -140,7 +140,7 @@ export function FloorForm({
           disabled={isSubmitting}
           className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
-          {isSubmitting ? t('site.form.saving') : submitLabel}
+          {isSubmitting ? t('form.saving', { ns: 'site' }) : submitLabel}
         </button>
       </div>
     </form>

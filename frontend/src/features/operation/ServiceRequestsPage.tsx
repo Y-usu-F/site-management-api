@@ -5,8 +5,8 @@ export function ServiceRequestsPage() {
   const { t } = useTranslation(['operations'])
   return (
     <PlaceholderPage
-      title={t('operations.common.serviceRequests')}
-      subtitle={t('operations.widgets.openServiceRequestsDescription')}
+      title={t('serviceRequests', { ns: 'operations' })}
+      subtitle={t('widgets.openServiceRequestsDescription', { ns: 'operations' })}
     />
   )
 }

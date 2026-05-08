@@ -5,8 +5,8 @@ export function RolesPage() {
   const { t } = useTranslation(['navigation'])
   return (
     <PlaceholderPage
-      title={t('navigation.roles')}
-      subtitle={t('navigation.rolesSubtitle')}
+      title={t('roles', { ns: 'navigation' })}
+      subtitle={t('rolesSubtitle', { ns: 'navigation' })}
     />
   )
 }

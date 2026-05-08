@@ -24,40 +24,40 @@ export function OperationsDashboardPage() {
   const upcomingReservationsCount =
     (summary?.reservations.pending ?? 0) + (summary?.reservations.approved ?? 0)
   const summaryDescription = !canServiceRequests
-    ? t('operations.summary.permissionRequired')
+    ? t('summary.permissionRequired', { ns: 'operations' })
     : summaryQuery.isLoading
-      ? t('operations.summary.loading')
+      ? t('summary.loading', { ns: 'operations' })
       : summaryQuery.isError
-        ? t('operations.summary.failed')
+        ? t('summary.failed', { ns: 'operations' })
         : ''
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold">{t('operations.title')}</h1>
+      <h1 className="text-xl font-semibold">{t('title', { ns: 'operations' })}</h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <FinanceStatCard
           to="/operations/service-requests"
-          title={t('operations.widgets.openServiceRequestsTitle')}
+          title={t('widgets.openServiceRequestsTitle', { ns: 'operations' })}
           value={summary?.service_requests.open ?? 0}
-          description={summaryDescription || t('operations.widgets.openServiceRequestsDescription')}
+          description={summaryDescription || t('widgets.openServiceRequestsDescription', { ns: 'operations' })}
         />
         <FinanceStatCard
           to="/operations/work-orders"
-          title={t('operations.widgets.activeWorkOrdersTitle')}
+          title={t('widgets.activeWorkOrdersTitle', { ns: 'operations' })}
           value={summary?.work_orders.in_progress ?? 0}
-          description={summaryDescription || t('operations.widgets.activeWorkOrdersDescription')}
+          description={summaryDescription || t('widgets.activeWorkOrdersDescription', { ns: 'operations' })}
         />
         <FinanceStatCard
           to="/operations/common-area-reservations"
-          title={t('operations.widgets.upcomingReservationsTitle')}
+          title={t('widgets.upcomingReservationsTitle', { ns: 'operations' })}
           value={upcomingReservationsCount}
-          description={summaryDescription || t('operations.widgets.upcomingReservationsDescription')}
+          description={summaryDescription || t('widgets.upcomingReservationsDescription', { ns: 'operations' })}
         />
         <FinanceStatCard
           to="/operations/asset-maintenance-plans"
-          title={t('operations.widgets.activeMaintenancePlansTitle')}
+          title={t('widgets.activeMaintenancePlansTitle', { ns: 'operations' })}
           value={summary?.maintenance.active_plans ?? 0}
-          description={summaryDescription || t('operations.widgets.activeMaintenancePlansDescription')}
+          description={summaryDescription || t('widgets.activeMaintenancePlansDescription', { ns: 'operations' })}
         />
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -36,9 +36,9 @@ export function ServiceRequestForm({
       onSubmit={(e) => {
         e.preventDefault()
         const next: Record<string, string> = {}
-        if (!siteId || Number(siteId) <= 0) next.site_id = t('operations.common.validationSiteRequired')
-        if (title.trim().length < 3) next.title = t('operations.common.validationTitleMin')
-        if (description.trim().length < 3) next.description = t('operations.common.validationDescriptionMin')
+        if (!siteId || Number(siteId) <= 0) next.site_id = t('validationSiteRequired', { ns: 'operations' })
+        if (title.trim().length < 3) next.title = t('validationTitleMin', { ns: 'operations' })
+        if (description.trim().length < 3) next.description = t('validationDescriptionMin', { ns: 'operations' })
         setClientErrors(next)
         if (Object.keys(next).length > 0) return
         onSubmit({
@@ -55,45 +55,45 @@ export function ServiceRequestForm({
     >
       <div className="grid gap-3 sm:grid-cols-2">
         <SearchableLookupSelect
-          label={t('operations.common.site')}
-          placeholder={t('operations.common.site')}
+          label={t('site', { ns: 'operations' })}
+          placeholder={t('site', { ns: 'operations' })}
           value={siteId}
           onChange={setSiteId}
           queryKey="sites"
           queryFn={listLookupSites}
         />
         <SearchableLookupSelect
-          label={t('operations.common.unit')}
-          placeholder={t('operations.common.unit')}
+          label={t('unit', { ns: 'operations' })}
+          placeholder={t('unit', { ns: 'operations' })}
           value={unitId}
           onChange={setUnitId}
           queryKey="units"
           queryFn={listLookupUnits}
         />
         <SearchableLookupSelect
-          label={t('operations.common.resident')}
-          placeholder={t('operations.common.resident')}
+          label={t('resident', { ns: 'operations' })}
+          placeholder={t('resident', { ns: 'operations' })}
           value={residentId}
           onChange={setResidentId}
           queryKey="residents"
           queryFn={listLookupResidents}
         />
-        <input value={categoryId} onChange={(e) => setCategoryId(e.target.value)} placeholder={t('operations.common.category')} className="rounded border px-3 py-2 text-sm" />
+        <input value={categoryId} onChange={(e) => setCategoryId(e.target.value)} placeholder={t('category', { ns: 'operations' })} className="rounded border px-3 py-2 text-sm" />
       </div>
-      <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('operations.common.title')} className="w-full rounded border px-3 py-2 text-sm" />
+      <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('title', { ns: 'operations' })} className="w-full rounded border px-3 py-2 text-sm" />
       {errors.title ? <p className="text-xs text-red-600">{errors.title}</p> : null}
-      <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('operations.common.description')} className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
+      <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('description', { ns: 'operations' })} className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
       {errors.description ? <p className="text-xs text-red-600">{errors.description}</p> : null}
       <div className="grid gap-3 sm:grid-cols-2">
-        <select value={priority} onChange={(e) => setPriority(e.target.value)} className="rounded border px-3 py-2 text-sm" aria-label={t('operations.common.priority')}>
-          <option value="low">{t('operations.common.priorityLow')}</option><option value="normal">{t('operations.common.priorityNormal')}</option><option value="high">{t('operations.common.priorityHigh')}</option><option value="urgent">{t('operations.common.priorityUrgent')}</option>
+        <select value={priority} onChange={(e) => setPriority(e.target.value)} className="rounded border px-3 py-2 text-sm" aria-label={t('priority', { ns: 'operations' })}>
+          <option value="low">{t('priorityLow', { ns: 'operations' })}</option><option value="normal">{t('priorityNormal', { ns: 'operations' })}</option><option value="high">{t('priorityHigh', { ns: 'operations' })}</option><option value="urgent">{t('priorityUrgent', { ns: 'operations' })}</option>
         </select>
-        <select value={source} onChange={(e) => setSource(e.target.value)} className="rounded border px-3 py-2 text-sm" aria-label={t('operations.common.sourcePanel')}>
-          <option value="panel">{t('operations.common.sourcePanel')}</option><option value="mobile">{t('operations.common.sourceMobile')}</option><option value="admin">{t('operations.common.sourceAdmin')}</option>
+        <select value={source} onChange={(e) => setSource(e.target.value)} className="rounded border px-3 py-2 text-sm" aria-label={t('sourcePanel', { ns: 'operations' })}>
+          <option value="panel">{t('sourcePanel', { ns: 'operations' })}</option><option value="mobile">{t('sourceMobile', { ns: 'operations' })}</option><option value="admin">{t('sourceAdmin', { ns: 'operations' })}</option>
         </select>
       </div>
       <button type="submit" disabled={isSubmitting} className="rounded bg-violet-600 px-4 py-2 text-sm text-white disabled:opacity-50">
-        {isSubmitting ? t('common.pleaseWait') : submitLabel}
+        {isSubmitting ? t('pleaseWait', { ns: 'common' }) : submitLabel}
       </button>
     </form>
   )

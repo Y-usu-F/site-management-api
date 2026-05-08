@@ -38,7 +38,7 @@ export function DueItemsPage() {
   const items = query.data?.items ?? []
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold">{t('finance.common.dueItems')}</h1>
+      <h1 className="text-xl font-semibold">{t('dueItems', { ns: 'finance' })}</h1>
       <div className="grid gap-3 rounded-xl border border-zinc-200 p-3 sm:grid-cols-4 dark:border-zinc-800">
         <select
           value={status}
@@ -48,7 +48,7 @@ export function DueItemsPage() {
           }}
           className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
         >
-          <option value="">{t('finance.common.statusAll')}</option>
+          <option value="">{t('statusAll', { ns: 'finance' })}</option>
           <option value="unpaid">unpaid</option>
           <option value="partial">partial</option>
           <option value="paid">paid</option>
@@ -62,7 +62,7 @@ export function DueItemsPage() {
           }}
           className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
         >
-          <option value="">{t('finance.common.duePeriodAll')}</option>
+          <option value="">{t('duePeriodAll', { ns: 'finance' })}</option>
           {(duePeriods.data?.items ?? []).map((period) => (
             <option key={period.id} value={period.id}>
               #{period.id} - {period.period_key}
@@ -75,7 +75,7 @@ export function DueItemsPage() {
             setUnitId(e.target.value)
             setPage(1)
           }}
-          placeholder={t('finance.common.unitId')}
+          placeholder={t('unitId', { ns: 'finance' })}
           className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
         />
         <button
@@ -88,28 +88,28 @@ export function DueItemsPage() {
             setPage(1)
           }}
         >
-          {t('finance.common.clearFilters')}
+          {t('clearFilters', { ns: 'finance' })}
         </button>
       </div>
       <p className="text-xs text-zinc-500">
-        {t('finance.common.infoDueDefinitionFilterUnsupported')}
+        {t('infoDueDefinitionFilterUnsupported', { ns: 'finance' })}
       </p>
       {items.length === 0 ? (
-        <EmptyState title={t('finance.common.noDueItem')} description={t('common.emptyDescription')} />
+        <EmptyState title={t('noDueItem', { ns: 'finance' })} description={t('emptyDescription', { ns: 'common' })} />
       ) : (
         <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
           <table className="min-w-full text-sm">
             <thead className="bg-zinc-100 dark:bg-zinc-900">
               <tr>
                 <th className="px-3 py-2 text-left">ID</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.unit')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.dueDefinition')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.amount')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.paid')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.remaining')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.status')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.dueDate')}</th>
-                <th className="px-3 py-2 text-left">{t('finance.common.action')}</th>
+                <th className="px-3 py-2 text-left">{t('unit', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('dueDefinition', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('amount', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('paid', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('remaining', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('status', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('dueDate', { ns: 'finance' })}</th>
+                <th className="px-3 py-2 text-left">{t('action', { ns: 'finance' })}</th>
               </tr>
             </thead>
             <tbody>
@@ -127,7 +127,7 @@ export function DueItemsPage() {
                   <td className="px-3 py-2">{row.due_date}</td>
                   <td className="px-3 py-2">
                     <Link to={`/finance/due-items/${row.id}`} className="text-violet-600">
-                      {t('finance.common.open')}
+                      {t('open', { ns: 'finance' })}
                     </Link>
                   </td>
                 </tr>
@@ -137,9 +137,9 @@ export function DueItemsPage() {
         </div>
       )}
       <div className="flex items-center gap-2">
-        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>{t('common.pagination.prev')}</button>
-        <span className="text-sm">{t('finance.common.page')} {page}</span>
-        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={(query.data?.items?.length ?? 0) < 10} onClick={() => setPage((p) => p + 1)}>{t('common.pagination.next')}</button>
+        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>{t('pagination.prev', { ns: 'common' })}</button>
+        <span className="text-sm">{t('page', { ns: 'finance' })} {page}</span>
+        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={(query.data?.items?.length ?? 0) < 10} onClick={() => setPage((p) => p + 1)}>{t('pagination.next', { ns: 'common' })}</button>
       </div>
     </div>
   )

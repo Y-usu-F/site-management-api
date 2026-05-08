@@ -90,7 +90,7 @@ export function UnitForm({
     <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
       <div>
         <label htmlFor="unit-no" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.form.unitNumber')}
+          {t('form.unitNumber', { ns: 'site' })}
         </label>
         <input
           id="unit-no"
@@ -102,13 +102,13 @@ export function UnitForm({
       </div>
       <div>
         <label htmlFor="unit-type" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.form.type')}
+          {t('form.type', { ns: 'site' })}
         </label>
         <input
           id="unit-type"
           value={type}
           onChange={(e) => setType(e.target.value)}
-          placeholder={t('site.form.type')}
+          placeholder={t('form.type', { ns: 'site' })}
           className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
         />
         {errors.type ? <p className="mt-1 text-xs text-red-600">{errors.type}</p> : null}
@@ -119,7 +119,7 @@ export function UnitForm({
             htmlFor="unit-gross"
             className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
           >
-            {t('site.form.grossArea')}
+            {t('form.grossArea', { ns: 'site' })}
           </label>
           <input
             id="unit-gross"
@@ -133,7 +133,7 @@ export function UnitForm({
         </div>
         <div>
           <label htmlFor="unit-net" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            {t('site.form.netArea')}
+            {t('form.netArea', { ns: 'site' })}
           </label>
           <input
             id="unit-net"
@@ -148,7 +148,7 @@ export function UnitForm({
             htmlFor="unit-land"
             className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
           >
-            {t('site.form.landShare')}
+            {t('form.landShare', { ns: 'site' })}
           </label>
           <input
             id="unit-land"
@@ -166,7 +166,7 @@ export function UnitForm({
           htmlFor="unit-occupant"
           className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
         >
-          {t('site.form.occupantName')}
+          {t('form.occupantName', { ns: 'site' })}
         </label>
         <input
           id="unit-occupant"
@@ -180,7 +180,7 @@ export function UnitForm({
       </div>
       <div>
         <label htmlFor="unit-status" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t('site.common.status')}
+          {t('status', { ns: 'site' })}
         </label>
         <select
           id="unit-status"
@@ -202,7 +202,7 @@ export function UnitForm({
           disabled={isSubmitting}
           className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
-          {isSubmitting ? t('site.form.saving') : submitLabel}
+          {isSubmitting ? t('form.saving', { ns: 'site' }) : submitLabel}
         </button>
       </div>
     </form>
