@@ -1,4 +1,5 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { DuePeriodForm } from '@/features/finance/components/DuePeriodForm'
 import {
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function DuePeriodFormPage({ mode }: Props) {
+  const { t } = useTranslation(['finance', 'common'])
   const navigate = useNavigate()
   const { id } = useParams()
   const parsedId = parsePositiveInt(id)
@@ -31,7 +33,7 @@ export function DuePeriodFormPage({ mode }: Props) {
   if (!canAccess) {
     return <PermissionDeniedNotice permission={mode === 'create' ? 'due_period.create' : 'due_period.update'} />
   }
-  if (mode === 'edit' && parsedId === null) return <div>Gecersiz ID.</div>
+  if (mode === 'edit' && parsedId === null) return <div>{t('common.errorGeneric')}</div>
 
   const mutation = mode === 'create' ? createMutation : updateMutation
   const serverFieldErrors = extractValidationErrors(mutation.error)
@@ -40,22 +42,22 @@ export function DuePeriodFormPage({ mode }: Props) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">
-          {mode === 'create' ? 'New due period' : 'Edit due period'}
+          {mode === 'create' ? `${t('common.create')} ${t('finance.common.duePeriods')}` : `${t('finance.common.edit')} ${t('finance.common.duePeriods')}`}
         </h1>
         <Link to="/finance/due-periods" className="text-sm text-violet-600">
-          Back
+          {t('finance.common.back')}
         </Link>
       </div>
       <DuePeriodForm
         defaultValues={mode === 'edit' ? query.data ?? undefined : undefined}
-        submitLabel={mode === 'create' ? 'Create' : 'Save'}
+        submitLabel={mode === 'create' ? t('finance.common.create') : t('finance.common.save')}
         isSubmitting={mutation.isPending}
         serverFieldErrors={serverFieldErrors}
         onSubmit={(values) => {
           if (mode === 'create') {
             createMutation.mutate(values, {
               onSuccess: (created) => {
-                toast.success('Due period olusturuldu.')
+                toast.success(t('finance.common.createSuccess'))
                 navigate(`/finance/due-periods/${created.id}`)
               },
               onError: (err) => toast.error(getErrorMessage(err)),
@@ -67,7 +69,7 @@ export function DuePeriodFormPage({ mode }: Props) {
             { id: parsedId, body: values },
             {
               onSuccess: () => {
-                toast.success('Due period guncellendi.')
+                toast.success(t('finance.common.updateSuccess'))
                 navigate(`/finance/due-periods/${parsedId}`)
               },
               onError: (err) => toast.error(getErrorMessage(err)),

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { listLookupResidents, listLookupUnits } from '@/features/finance/api/lookupsApi'
@@ -10,6 +11,7 @@ import { useToast } from '@/shared/hooks/useToast'
 import { extractValidationErrors, getErrorMessage } from '@/shared/lib/extractValidationErrors'
 
 export function DepositFormPage() {
+  const { t } = useTranslation(['finance', 'common'])
   const canCreate = useEffectiveCan('deposit.create')
   const navigate = useNavigate()
   const toast = useToast()
@@ -22,21 +24,21 @@ export function DepositFormPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">New deposit</h1>
+        <h1 className="text-xl font-semibold">{t('common.create')} {t('finance.common.deposits')}</h1>
         <Link to="/finance/deposits" className="text-sm text-violet-600">
-          Back
+          {t('finance.common.back')}
         </Link>
       </div>
       <DepositForm
         residents={residents.data ?? []}
         units={units.data ?? []}
-        submitLabel="Create deposit"
+        submitLabel={t('finance.common.create')}
         isSubmitting={mutation.isPending}
         serverFieldErrors={extractValidationErrors(mutation.error)}
         onSubmit={(values) => {
           mutation.mutate(values, {
             onSuccess: (created) => {
-              toast.success('Deposit olusturuldu.')
+              toast.success(t('finance.common.createSuccess'))
               navigate(`/finance/deposits/${created.id}`)
             },
             onError: (err) => toast.error(getErrorMessage(err)),

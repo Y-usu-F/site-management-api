@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 import { useDeleteDueDefinitionMutation } from '@/features/finance/hooks/useDueDefinitionMutations'
@@ -14,6 +15,7 @@ import { useToast } from '@/shared/hooks/useToast'
 import { getErrorMessage } from '@/shared/lib/extractValidationErrors'
 
 export function DueDefinitionsPage() {
+  const { t } = useTranslation(['finance', 'common'])
   const canList = useEffectiveCan('due_definition.list')
   const canCreate = useEffectiveCan('due_definition.create')
   const canDelete = useEffectiveCan('due_definition.delete')
@@ -30,10 +32,10 @@ export function DueDefinitionsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Due definitions</h1>
+        <h1 className="text-xl font-semibold">{t('finance.common.dueDefinitions')}</h1>
         {canCreate ? (
           <Link to="/finance/due-definitions/new" className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white">
-            New due definition
+            {t('common.create')}
           </Link>
         ) : null}
       </div>
@@ -43,22 +45,22 @@ export function DueDefinitionsPage() {
           setSearch(e.target.value)
           setPage(1)
         }}
-        placeholder="Search"
+        placeholder={t('finance.common.search')}
         className="w-full max-w-sm rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
       />
       {items.length === 0 ? (
-        <EmptyState title="Due definition yok" description="Yeni due definition olusturabilirsiniz." />
+        <EmptyState title={t('finance.common.noDueDefinition')} description={t('common.emptyDescription')} />
       ) : (
         <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
           <table className="min-w-full text-sm">
             <thead className="bg-zinc-100 dark:bg-zinc-900">
               <tr>
                 <th className="px-3 py-2 text-left">ID</th>
-                <th className="px-3 py-2 text-left">Name</th>
-                <th className="px-3 py-2 text-left">Type</th>
-                <th className="px-3 py-2 text-left">Amount</th>
-                <th className="px-3 py-2 text-left">Status</th>
-                <th className="px-3 py-2 text-left">Actions</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.name')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.type')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.amount')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.status')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -72,10 +74,10 @@ export function DueDefinitionsPage() {
                   <td className="px-3 py-2">
                     <div className="flex gap-2">
                       <Link className="text-violet-600" to={`/finance/due-definitions/${row.id}`}>
-                        Open
+                        {t('finance.common.open')}
                       </Link>
                       <Link className="text-violet-600" to={`/finance/due-definitions/${row.id}/edit`}>
-                        Edit
+                        {t('finance.common.edit')}
                       </Link>
                       {canDelete ? (
                         <button
@@ -83,7 +85,7 @@ export function DueDefinitionsPage() {
                           className="text-red-600"
                           onClick={() => setDeleteId(row.id)}
                         >
-                          Delete
+                          {t('finance.common.delete')}
                         </button>
                       ) : null}
                     </div>
@@ -101,31 +103,31 @@ export function DueDefinitionsPage() {
           disabled={page <= 1}
           onClick={() => setPage((p) => p - 1)}
         >
-          Prev
+          {t('common.pagination.prev')}
         </button>
-        <span className="text-sm">Page {page}</span>
+        <span className="text-sm">{t('finance.common.page')} {page}</span>
         <button
           type="button"
           className="rounded border px-2 py-1 text-sm"
           disabled={(query.data?.items?.length ?? 0) < 10}
           onClick={() => setPage((p) => p + 1)}
         >
-          Next
+          {t('common.pagination.next')}
         </button>
       </div>
       <ConfirmDialog
         isOpen={deleteId !== null}
-        title="Due definition silinsin mi?"
-        description="Bu islem geri alinamaz."
-        confirmText={del.isPending ? 'Deleting…' : 'Delete'}
-        cancelText="Vazgec"
+        title={t('finance.common.deleteConfirmTitle')}
+        description={t('common.confirm')}
+        confirmText={del.isPending ? t('finance.common.deleting') : t('finance.common.delete')}
+        cancelText={t('common.cancel')}
         variant="danger"
         onClose={() => setDeleteId(null)}
         onConfirm={() => {
           if (deleteId === null) return
           del.mutate(deleteId, {
             onSuccess: () => {
-              toast.success('Due definition silindi.')
+              toast.success(t('finance.common.deleteSuccess'))
               setDeleteId(null)
             },
             onError: (err) => toast.error(getErrorMessage(err)),

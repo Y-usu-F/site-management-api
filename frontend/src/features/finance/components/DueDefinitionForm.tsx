@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import type { DueDefinition } from '@/features/finance/types'
 
@@ -27,6 +28,7 @@ export function DueDefinitionForm({
   serverFieldErrors = {},
   onSubmit,
 }: Props) {
+  const { t } = useTranslation(['finance', 'common'])
   const [name, setName] = useState(defaultValues?.name ?? '')
   const [code, setCode] = useState(defaultValues?.code ?? '')
   const [calculationType, setCalculationType] = useState(defaultValues?.calculation_type ?? 'fixed')
@@ -43,9 +45,9 @@ export function DueDefinitionForm({
       onSubmit={(e) => {
         e.preventDefault()
         const next: Record<string, string> = {}
-        if (name.trim().length < 2) next.name = 'Name en az 2 karakter olmali.'
+        if (name.trim().length < 2) next.name = t('finance.common.validationNameMinLength')
         const parsedAmount = Number(amount)
-        if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) next.amount = 'Amount 0dan buyuk olmali.'
+        if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) next.amount = t('finance.common.validationAmountPositive')
         setClientErrors(next)
         if (Object.keys(next).length > 0) return
         onSubmit({
@@ -59,7 +61,7 @@ export function DueDefinitionForm({
       }}
     >
       <div>
-        <label className="block text-sm font-medium">Name</label>
+          <label className="block text-sm font-medium">{t('finance.common.name')}</label>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -69,7 +71,7 @@ export function DueDefinitionForm({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium">Code</label>
+          <label className="block text-sm font-medium">{t('finance.common.code')}</label>
           <input
             value={code}
             onChange={(e) => setCode(e.target.value)}
@@ -77,7 +79,7 @@ export function DueDefinitionForm({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium">Calculation type</label>
+          <label className="block text-sm font-medium">{t('finance.common.calculationType')}</label>
           <select
             value={calculationType}
             onChange={(e) => setCalculationType(e.target.value)}
@@ -93,7 +95,7 @@ export function DueDefinitionForm({
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <label className="block text-sm font-medium">Amount</label>
+          <label className="block text-sm font-medium">{t('finance.common.amount')}</label>
           <input
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
@@ -102,7 +104,7 @@ export function DueDefinitionForm({
           {errors.amount ? <p className="mt-1 text-xs text-red-600">{errors.amount}</p> : null}
         </div>
         <div>
-          <label className="block text-sm font-medium">Currency</label>
+          <label className="block text-sm font-medium">{t('finance.common.currency')}</label>
           <input
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
@@ -110,7 +112,7 @@ export function DueDefinitionForm({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium">Status</label>
+          <label className="block text-sm font-medium">{t('finance.common.status')}</label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -129,7 +131,7 @@ export function DueDefinitionForm({
         disabled={isSubmitting}
         className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
-        {isSubmitting ? 'Saving…' : submitLabel}
+        {isSubmitting ? t('common.pleaseWait') : submitLabel}
       </button>
     </form>
   )

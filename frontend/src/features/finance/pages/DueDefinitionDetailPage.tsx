@@ -1,4 +1,5 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { useDeleteDueDefinitionMutation } from '@/features/finance/hooks/useDueDefinitionMutations'
 import { useDueDefinitionQuery } from '@/features/finance/hooks/useDueDefinitionQuery'
@@ -14,6 +15,7 @@ import { parsePositiveInt } from '@/shared/lib/parseRouteId'
 import { useState } from 'react'
 
 export function DueDefinitionDetailPage() {
+  const { t } = useTranslation(['finance', 'common'])
   const { id } = useParams()
   const parsedId = parsePositiveInt(id)
   const canView = useEffectiveCan('due_definition.view')
@@ -25,8 +27,8 @@ export function DueDefinitionDetailPage() {
   const toast = useToast()
 
   if (!canView) return <PermissionDeniedNotice permission="due_definition.view" />
-  if (parsedId === null) return <div>Gecersiz ID.</div>
-  if (!query.data) return <div>Yukleniyor...</div>
+  if (parsedId === null) return <div>{t('common.errorGeneric')}</div>
+  if (!query.data) return <div>{t('common.loading')}</div>
 
   const row = query.data
   return (
@@ -34,36 +36,36 @@ export function DueDefinitionDetailPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{row.name}</h1>
         <div className="flex gap-3 text-sm">
-          <Link to="/finance/due-definitions">Back</Link>
+          <Link to="/finance/due-definitions">{t('finance.common.back')}</Link>
           <Link className="text-violet-600" to={`/finance/due-definitions/${row.id}/edit`}>
-            Edit
+            {t('finance.common.edit')}
           </Link>
           {canDelete ? (
             <button type="button" className="text-red-600" onClick={() => setOpen(true)}>
-              Delete
+              {t('finance.common.delete')}
             </button>
           ) : null}
         </div>
       </div>
       <div className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
         <div>ID: {row.id}</div>
-        <div>Code: {row.code ?? '-'}</div>
-        <div>Type: {formatDueType(row.calculation_type)}</div>
-        <div>Amount: <MoneyText amount={row.amount} currency={row.currency} /></div>
-        <div>Status: <FinanceStatusBadge status={row.status} /></div>
+        <div>{t('finance.common.code')}: {row.code ?? '-'}</div>
+        <div>{t('finance.common.type')}: {formatDueType(row.calculation_type)}</div>
+        <div>{t('finance.common.amount')}: <MoneyText amount={row.amount} currency={row.currency} /></div>
+        <div>{t('finance.common.status')}: <FinanceStatusBadge status={row.status} /></div>
       </div>
       <ConfirmDialog
         isOpen={open}
-        title="Due definition silinsin mi?"
-        description="Bu islem geri alinamaz."
-        confirmText={del.isPending ? 'Deleting…' : 'Delete'}
-        cancelText="Vazgec"
+        title={t('finance.common.deleteConfirmTitle')}
+        description={t('common.confirm')}
+        confirmText={del.isPending ? t('finance.common.deleting') : t('finance.common.delete')}
+        cancelText={t('common.cancel')}
         variant="danger"
         onClose={() => setOpen(false)}
         onConfirm={() => {
           del.mutate(row.id, {
             onSuccess: () => {
-              toast.success('Due definition silindi.')
+              toast.success(t('finance.common.deleteSuccess'))
               navigate('/finance/due-definitions')
             },
             onError: (err) => toast.error(getErrorMessage(err)),

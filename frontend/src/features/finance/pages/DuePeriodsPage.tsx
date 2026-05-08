@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 import {
@@ -16,6 +17,7 @@ import { useToast } from '@/shared/hooks/useToast'
 import { getErrorMessage } from '@/shared/lib/extractValidationErrors'
 
 export function DuePeriodsPage() {
+  const { t } = useTranslation(['finance', 'common'])
   const canList = useEffectiveCan('due_period.list')
   const canCreate = useEffectiveCan('due_period.create')
   const canDelete = useEffectiveCan('due_period.delete')
@@ -35,25 +37,25 @@ export function DuePeriodsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Due periods</h1>
+        <h1 className="text-xl font-semibold">{t('finance.common.duePeriods')}</h1>
         {canCreate ? (
           <Link to="/finance/due-periods/new" className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white">
-            New due period
+            {t('common.create')}
           </Link>
         ) : null}
       </div>
       {items.length === 0 ? (
-        <EmptyState title="Due period yok" description="Yeni period olusturabilirsiniz." />
+        <EmptyState title={t('finance.common.noDuePeriod')} description={t('common.emptyDescription')} />
       ) : (
         <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
           <table className="min-w-full text-sm">
             <thead className="bg-zinc-100 dark:bg-zinc-900">
               <tr>
                 <th className="px-3 py-2 text-left">ID</th>
-                <th className="px-3 py-2 text-left">Period key</th>
-                <th className="px-3 py-2 text-left">Dates</th>
-                <th className="px-3 py-2 text-left">Status</th>
-                <th className="px-3 py-2 text-left">Actions</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.periodKey')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.dates')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.status')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -68,10 +70,10 @@ export function DuePeriodsPage() {
                   <td className="px-3 py-2">
                     <div className="flex flex-wrap gap-2">
                       <Link className="text-violet-600" to={`/finance/due-periods/${row.id}`}>
-                        Open
+                        {t('finance.common.open')}
                       </Link>
                       <Link className="text-violet-600" to={`/finance/due-periods/${row.id}/edit`}>
-                        Edit
+                        {t('finance.common.edit')}
                       </Link>
                       {canClose ? (
                         <button
@@ -79,12 +81,12 @@ export function DuePeriodsPage() {
                           className="text-amber-600"
                           onClick={() =>
                             closeMutation.mutate(row.id, {
-                              onSuccess: () => toast.success('Due period kapatildi.'),
+                              onSuccess: () => toast.success(t('finance.common.closeSuccess')),
                               onError: (err) => toast.error(getErrorMessage(err)),
                             })
                           }
                         >
-                          Close
+                          {t('finance.common.close')}
                         </button>
                       ) : null}
                       {canLock ? (
@@ -93,17 +95,17 @@ export function DuePeriodsPage() {
                           className="text-orange-600"
                           onClick={() =>
                             lockMutation.mutate(row.id, {
-                              onSuccess: () => toast.success('Due period kilitlendi.'),
+                              onSuccess: () => toast.success(t('finance.common.lockSuccess')),
                               onError: (err) => toast.error(getErrorMessage(err)),
                             })
                           }
                         >
-                          Lock
+                          {t('finance.common.lock')}
                         </button>
                       ) : null}
                       {canDelete ? (
                         <button type="button" className="text-red-600" onClick={() => setDeleteId(row.id)}>
-                          Delete
+                          {t('finance.common.delete')}
                         </button>
                       ) : null}
                     </div>
@@ -115,23 +117,23 @@ export function DuePeriodsPage() {
         </div>
       )}
       <div className="flex items-center gap-2">
-        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>Prev</button>
-        <span className="text-sm">Page {page}</span>
-        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={(query.data?.items?.length ?? 0) < 10} onClick={() => setPage((p) => p + 1)}>Next</button>
+        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>{t('common.pagination.prev')}</button>
+        <span className="text-sm">{t('finance.common.page')} {page}</span>
+        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={(query.data?.items?.length ?? 0) < 10} onClick={() => setPage((p) => p + 1)}>{t('common.pagination.next')}</button>
       </div>
       <ConfirmDialog
         isOpen={deleteId !== null}
-        title="Due period silinsin mi?"
-        description="Bu islem geri alinamaz."
-        confirmText={del.isPending ? 'Deleting…' : 'Delete'}
-        cancelText="Vazgec"
+        title={t('finance.common.deleteConfirmTitle')}
+        description={t('common.confirm')}
+        confirmText={del.isPending ? t('finance.common.deleting') : t('finance.common.delete')}
+        cancelText={t('common.cancel')}
         variant="danger"
         onClose={() => setDeleteId(null)}
         onConfirm={() => {
           if (deleteId === null) return
           del.mutate(deleteId, {
             onSuccess: () => {
-              toast.success('Due period silindi.')
+              toast.success(t('finance.common.deleteSuccess'))
               setDeleteId(null)
             },
             onError: (err) => toast.error(getErrorMessage(err)),

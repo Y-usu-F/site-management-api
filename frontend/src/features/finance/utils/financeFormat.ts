@@ -18,9 +18,9 @@ export function formatFinanceStatus(status: string | null | undefined): string {
 
 export function formatPaymentMethod(method: string | null | undefined): string {
   const map: Record<string, string> = {
-    cash: 'Cash',
-    bank_transfer: 'Bank Transfer',
-    credit_card: 'Credit Card',
+    cash: 'Nakit',
+    bank_transfer: 'Havale/EFT',
+    credit_card: 'Kredi karti',
     online: 'Online',
   }
   if (!method) return '-'
@@ -29,10 +29,10 @@ export function formatPaymentMethod(method: string | null | undefined): string {
 
 export function formatDueType(type: string | null | undefined): string {
   const map: Record<string, string> = {
-    fixed: 'Fixed',
-    unit_area: 'Unit Area',
-    land_share: 'Land Share',
-    resident_count: 'Resident Count',
+    fixed: 'Sabit',
+    unit_area: 'Bagimsiz bolum alani',
+    land_share: 'Arsa payi',
+    resident_count: 'Sakin sayisi',
   }
   if (!type) return '-'
   return map[type] ?? formatFinanceStatus(type)

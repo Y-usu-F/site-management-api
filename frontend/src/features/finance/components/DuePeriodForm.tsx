@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import type { DuePeriod } from '@/features/finance/types'
 
@@ -26,6 +27,7 @@ export function DuePeriodForm({
   serverFieldErrors = {},
   onSubmit,
 }: Props) {
+  const { t } = useTranslation(['finance', 'common'])
   const [siteId, setSiteId] = useState(String(defaultValues?.site_id ?? ''))
   const [periodKey, setPeriodKey] = useState(defaultValues?.period_key ?? '')
   const [startDate, setStartDate] = useState(defaultValues?.start_date ?? '')
@@ -43,13 +45,13 @@ export function DuePeriodForm({
         e.preventDefault()
         const next: Record<string, string> = {}
         const parsedSiteId = Number(siteId)
-        if (!Number.isInteger(parsedSiteId) || parsedSiteId <= 0) next.site_id = 'Site id zorunludur.'
+        if (!Number.isInteger(parsedSiteId) || parsedSiteId <= 0) next.site_id = t('finance.common.validationSiteIdRequiredStrict')
         if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(periodKey)) {
-          next.period_key = 'Period key YYYY-MM formatinda olmali.'
+          next.period_key = t('finance.common.validationPeriodKeyFormat')
         }
-        if (!startDate) next.start_date = 'Start date zorunlu.'
-        if (!endDate) next.end_date = 'End date zorunlu.'
-        if (!dueDate) next.due_date = 'Due date zorunlu.'
+        if (!startDate) next.start_date = t('finance.common.validationStartDateRequired')
+        if (!endDate) next.end_date = t('finance.common.validationEndDateRequired')
+        if (!dueDate) next.due_date = t('finance.common.validationDueDateRequired')
         setClientErrors(next)
         if (Object.keys(next).length > 0) return
         onSubmit({
@@ -64,7 +66,7 @@ export function DuePeriodForm({
     >
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium">Site id</label>
+          <label className="block text-sm font-medium">{t('finance.common.siteId')}</label>
           <input
             value={siteId}
             onChange={(e) => setSiteId(e.target.value)}
@@ -73,7 +75,7 @@ export function DuePeriodForm({
           {errors.site_id ? <p className="mt-1 text-xs text-red-600">{errors.site_id}</p> : null}
         </div>
         <div>
-          <label className="block text-sm font-medium">Period key</label>
+          <label className="block text-sm font-medium">{t('finance.common.periodKey')}</label>
           <input
             placeholder="2026-05"
             value={periodKey}
@@ -85,7 +87,7 @@ export function DuePeriodForm({
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <label className="block text-sm font-medium">Start date</label>
+          <label className="block text-sm font-medium">{t('finance.common.startDate')}</label>
           <input
             type="date"
             value={startDate}
@@ -95,7 +97,7 @@ export function DuePeriodForm({
           {errors.start_date ? <p className="mt-1 text-xs text-red-600">{errors.start_date}</p> : null}
         </div>
         <div>
-          <label className="block text-sm font-medium">End date</label>
+          <label className="block text-sm font-medium">{t('finance.common.endDate')}</label>
           <input
             type="date"
             value={endDate}
@@ -105,7 +107,7 @@ export function DuePeriodForm({
           {errors.end_date ? <p className="mt-1 text-xs text-red-600">{errors.end_date}</p> : null}
         </div>
         <div>
-          <label className="block text-sm font-medium">Due date</label>
+          <label className="block text-sm font-medium">{t('finance.common.dueDate')}</label>
           <input
             type="date"
             value={dueDate}
@@ -116,7 +118,7 @@ export function DuePeriodForm({
         </div>
       </div>
       <div>
-        <label className="block text-sm font-medium">Status</label>
+        <label className="block text-sm font-medium">{t('finance.common.status')}</label>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
@@ -134,7 +136,7 @@ export function DuePeriodForm({
         disabled={isSubmitting}
         className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
-        {isSubmitting ? 'Saving…' : submitLabel}
+        {isSubmitting ? t('common.pleaseWait') : submitLabel}
       </button>
     </form>
   )

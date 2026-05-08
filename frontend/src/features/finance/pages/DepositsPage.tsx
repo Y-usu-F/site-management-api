@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 import { FinanceStatusBadge } from '@/features/finance/components/FinanceStatusBadge'
@@ -9,6 +10,7 @@ import { PermissionDeniedNotice } from '@/shared/components/PermissionDeniedNoti
 import { useEffectiveCan } from '@/shared/hooks/useEffectiveCan'
 
 export function DepositsPage() {
+  const { t } = useTranslation(['finance', 'common'])
   const canList = useEffectiveCan('deposit.list')
   const canCreate = useEffectiveCan('deposit.create')
   const [page, setPage] = useState(1)
@@ -20,28 +22,28 @@ export function DepositsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Deposits</h1>
+        <h1 className="text-xl font-semibold">{t('finance.common.deposits')}</h1>
         {canCreate ? (
           <Link to="/finance/deposits/new" className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white">
-            New deposit
+            {t('common.create')}
           </Link>
         ) : null}
       </div>
       {items.length === 0 ? (
-        <EmptyState title="Deposit yok" description="Ilk depozitoyu olusturabilirsiniz." />
+        <EmptyState title={t('finance.common.noDeposit')} description={t('common.emptyDescription')} />
       ) : (
         <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
           <table className="min-w-full text-sm">
             <thead className="bg-zinc-100 dark:bg-zinc-900">
               <tr>
                 <th className="px-3 py-2 text-left">ID</th>
-                <th className="px-3 py-2 text-left">No</th>
-                <th className="px-3 py-2 text-left">Resident</th>
-                <th className="px-3 py-2 text-left">Unit</th>
-                <th className="px-3 py-2 text-left">Initial</th>
-                <th className="px-3 py-2 text-left">Balance</th>
-                <th className="px-3 py-2 text-left">Status</th>
-                <th className="px-3 py-2 text-left">Action</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.paymentNo')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.resident')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.unit')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.initial')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.balance')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.status')}</th>
+                <th className="px-3 py-2 text-left">{t('finance.common.action')}</th>
               </tr>
             </thead>
             <tbody>
@@ -56,7 +58,7 @@ export function DepositsPage() {
                   <td className="px-3 py-2"><FinanceStatusBadge status={row.status} /></td>
                   <td className="px-3 py-2">
                     <Link to={`/finance/deposits/${row.id}`} className="text-violet-600">
-                      Open
+                      {t('finance.common.open')}
                     </Link>
                   </td>
                 </tr>
@@ -66,9 +68,9 @@ export function DepositsPage() {
         </div>
       )}
       <div className="flex items-center gap-2">
-        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>Prev</button>
-        <span className="text-sm">Page {page}</span>
-        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={(query.data?.items?.length ?? 0) < 10} onClick={() => setPage((p) => p + 1)}>Next</button>
+        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>{t('common.pagination.prev')}</button>
+        <span className="text-sm">{t('finance.common.page')} {page}</span>
+        <button type="button" className="rounded border px-2 py-1 text-sm" disabled={(query.data?.items?.length ?? 0) < 10} onClick={() => setPage((p) => p + 1)}>{t('common.pagination.next')}</button>
       </div>
     </div>
   )

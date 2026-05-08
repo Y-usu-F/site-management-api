@@ -1,4 +1,5 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { DueDefinitionForm } from '@/features/finance/components/DueDefinitionForm'
 import {
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function DueDefinitionFormPage({ mode }: Props) {
+  const { t } = useTranslation(['finance', 'common'])
   const navigate = useNavigate()
   const { id } = useParams()
   const parsedId = parsePositiveInt(id)
@@ -31,7 +33,7 @@ export function DueDefinitionFormPage({ mode }: Props) {
   if (!canAccess) {
     return <PermissionDeniedNotice permission={mode === 'create' ? 'due_definition.create' : 'due_definition.update'} />
   }
-  if (mode === 'edit' && parsedId === null) return <div>Gecersiz ID.</div>
+  if (mode === 'edit' && parsedId === null) return <div>{t('common.errorGeneric')}</div>
 
   const mutation = mode === 'create' ? createMutation : updateMutation
   const serverFieldErrors = extractValidationErrors(mutation.error)
@@ -40,22 +42,22 @@ export function DueDefinitionFormPage({ mode }: Props) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">
-          {mode === 'create' ? 'New due definition' : 'Edit due definition'}
+          {mode === 'create' ? `${t('common.create')} ${t('finance.common.dueDefinitions')}` : `${t('finance.common.edit')} ${t('finance.common.dueDefinitions')}`}
         </h1>
         <Link to="/finance/due-definitions" className="text-sm text-violet-600">
-          Back
+          {t('finance.common.back')}
         </Link>
       </div>
       <DueDefinitionForm
         defaultValues={mode === 'edit' ? query.data ?? undefined : undefined}
-        submitLabel={mode === 'create' ? 'Create' : 'Save'}
+        submitLabel={mode === 'create' ? t('finance.common.create') : t('finance.common.save')}
         isSubmitting={mutation.isPending}
         serverFieldErrors={serverFieldErrors}
         onSubmit={(values) => {
           if (mode === 'create') {
             createMutation.mutate(values, {
               onSuccess: (created) => {
-                toast.success('Due definition olusturuldu.')
+                toast.success(t('finance.common.createSuccess'))
                 navigate(`/finance/due-definitions/${created.id}`)
               },
               onError: (err) => toast.error(getErrorMessage(err)),
@@ -67,7 +69,7 @@ export function DueDefinitionFormPage({ mode }: Props) {
             { id: parsedId, body: values },
             {
               onSuccess: () => {
-                toast.success('Due definition guncellendi.')
+                toast.success(t('finance.common.updateSuccess'))
                 navigate(`/finance/due-definitions/${parsedId}`)
               },
               onError: (err) => toast.error(getErrorMessage(err)),
