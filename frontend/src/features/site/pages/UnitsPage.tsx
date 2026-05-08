@@ -150,7 +150,7 @@ export function UnitsPage() {
   if (floorId === null) {
     return (
       <p className="text-sm">
-        Invalid floor. <Link to="/sites">Sites</Link>
+        {t('site.common.invalidFloor')} <Link to="/sites">{t('site.common.sites')}</Link>
       </p>
     )
   }
@@ -168,7 +168,7 @@ export function UnitsPage() {
         <span className="mx-1">/</span>
         <Link to={`/blocks/${blockId}/floors`}>{t('site.common.floors')}</Link>
         <span className="mx-1">/</span>
-        <Link to={`/floors/${floorId}`}>Floor {floor?.number ?? ''}</Link>
+        <Link to={`/floors/${floorId}`}>{t('site.common.floorWithNumber', { number: floor?.number ?? '' })}</Link>
         <span className="mx-1">/</span>
         <span>{t('site.common.units')}</span>
       </nav>
@@ -176,12 +176,12 @@ export function UnitsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">{t('site.common.units')}</h1>
-          <p className="mt-1 text-sm text-zinc-600">{data?.total ?? 0} unit(s) on this floor.</p>
+          <p className="mt-1 text-sm text-zinc-600">{t('site.common.unitsOnFloor', { count: data?.total ?? 0 })}</p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="search"
-            placeholder="Search unit no or occupant…"
+            placeholder={t('site.common.searchUnitNoOrOccupant')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full rounded-lg border px-3 py-2 text-sm sm:w-72 dark:border-zinc-600 dark:bg-zinc-950"
@@ -226,10 +226,10 @@ export function UnitsPage() {
           description={
             canCreate ? (
               <Link className="text-violet-600 underline" to={`/floors/${floorId}/units/new`}>
-                Create unit
+                {t('site.common.createOne')}
               </Link>
             ) : (
-              'Create permission required to add units.'
+              t('site.common.createPermissionRequiredForUnits')
             )
           }
         />
@@ -245,12 +245,12 @@ export function UnitsPage() {
                     type="checkbox"
                     checked={allSelected}
                     onChange={toggleAllCurrentPage}
-                    aria-label="Select all units on page"
+                    aria-label={t('site.common.selectAllUnitsOnPage')}
                   />
                 </th>
                 <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.form.unitNumber')}</th>
                 <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.form.type')}</th>
-                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">Alan</th>
+                <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.common.area')}</th>
                 <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.common.status')}</th>
                 <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">{t('site.common.updated')}</th>
                 <th className="px-4 py-3 text-right text-xs uppercase text-zinc-500">{t('site.common.actions')}</th>
@@ -264,15 +264,15 @@ export function UnitsPage() {
                       type="checkbox"
                       checked={selectedIds.includes(row.id)}
                       onChange={() => toggleOne(row.id)}
-                      aria-label={`Select unit ${row.unit_no}`}
+                      aria-label={t('site.common.selectUnitWithNo', { no: row.unit_no })}
                     />
                   </td>
                   <td className="px-4 py-3 font-mono text-sm">{row.unit_no}</td>
                   <td className="px-4 py-3 text-sm">{row.type?.trim() ? row.type : '—'}</td>
                   <td className="px-4 py-3 text-xs text-zinc-600">
-                    G {row.gross_area ?? '—'} / N {row.net_area ?? '—'}
+                    {t('site.common.grossShort')} {row.gross_area ?? '—'} / {t('site.common.netShort')} {row.net_area ?? '—'}
                     {row.land_share != null && row.land_share !== '' ? (
-                      <span className="block">Land {String(row.land_share)}</span>
+                      <span className="block">{t('site.common.land')} {String(row.land_share)}</span>
                     ) : null}
                   </td>
                   <td className="px-4 py-3 text-sm">{row.status}</td>
@@ -281,7 +281,7 @@ export function UnitsPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link className="text-violet-600" to={`/units/${row.id}`}>
-                      Open
+                      {t('site.common.open')}
                     </Link>
                   </td>
                 </tr>
@@ -291,8 +291,8 @@ export function UnitsPage() {
           {totalPages > 1 ? (
             <div className="flex justify-between border-t px-4 py-3 text-xs">
               <span>
-                Page {data?.page ?? page} / {totalPages}
-                {isFetching ? ' …' : ''}
+                {t('common.pagination.page')} {data?.page ?? page} {t('common.pagination.of')} {totalPages}
+                {isFetching ? ` · ${t('common.pagination.refreshing')}` : ''}
               </span>
               <div className="flex gap-2">
                 <button
@@ -301,7 +301,7 @@ export function UnitsPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  Prev
+                  {t('common.pagination.prev')}
                 </button>
                 <button
                   type="button"
@@ -309,7 +309,7 @@ export function UnitsPage() {
                   onClick={() => setPage((p) => p + 1)}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  Next
+                  {t('common.pagination.next')}
                 </button>
               </div>
             </div>

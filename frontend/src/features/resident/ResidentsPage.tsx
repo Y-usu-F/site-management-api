@@ -57,6 +57,11 @@ export function ResidentsPage() {
   const total = data?.total ?? 0
   const totalPages = data?.total_pages ?? 0
   const deletingResident = residents.find((x) => x.id === selectedDeleteId) ?? null
+  const statusLabel = (value: string) => {
+    if (value === 'active') return t('residents.common.active')
+    if (value === 'passive') return t('residents.common.passive')
+    return value
+  }
 
   return (
     <div className="space-y-6">
@@ -67,7 +72,7 @@ export function ResidentsPage() {
           </h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
             {total} {t('residents.common.resident')}
-            {debouncedSearch ? ` matching "${debouncedSearch}"` : ''}.
+            {debouncedSearch ? ` ${t('residents.common.matching', { query: debouncedSearch })}` : ''}.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -111,12 +116,12 @@ export function ResidentsPage() {
             canCreate ? (
               <>
                 <Link to="/residents/new" className="text-violet-600 underline">
-                  Create a resident
+                  {t('residents.common.createResidentCta')}
                 </Link>{' '}
-                to get started.
+                {t('residents.common.getStarted')}
               </>
             ) : (
-              'Create permission required to add residents.'
+              t('residents.common.createPermissionRequiredToAddResidents')
             )
           }
         />
@@ -166,7 +171,7 @@ export function ResidentsPage() {
                     <td className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
                       {resident.email?.trim() ? resident.email : '—'}
                     </td>
-                    <td className="px-4 py-3 text-sm">{resident.status}</td>
+                    <td className="px-4 py-3 text-sm">{statusLabel(resident.status)}</td>
                     <td className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
                       {formatDateTime(resident.updated_at ?? resident.created_at)}
                     </td>
@@ -194,8 +199,8 @@ export function ResidentsPage() {
           {totalPages > 1 ? (
             <div className="flex items-center justify-between border-t border-zinc-200 px-4 py-3 dark:border-zinc-700">
               <span className="text-xs text-zinc-500">
-                Page {data?.page ?? page} of {totalPages}
-                {isFetching ? ' · Refreshing…' : ''}
+                {t('common.pagination.page')} {data?.page ?? page} {t('common.pagination.of')} {totalPages}
+                {isFetching ? ` · ${t('common.pagination.refreshing')}` : ''}
               </span>
               <div className="flex gap-2">
                 <button
@@ -222,14 +227,16 @@ export function ResidentsPage() {
 
       <ConfirmDialog
         isOpen={selectedDeleteId !== null}
-        title={t('residents.common.delete')}
+        title={t('residents.common.deleteResidentTitle')}
         description={
           deletingResident
-            ? `Delete "${deletingResident.first_name} ${deletingResident.last_name}"?`
-            : 'Delete selected resident?'
+            ? t('residents.common.deleteResidentDescriptionNamed', {
+                name: `${deletingResident.first_name} ${deletingResident.last_name}`,
+              })
+            : t('residents.common.deleteResidentDescriptionGeneric')
         }
         confirmText={t('residents.common.delete')}
-        cancelText="Cancel"
+        cancelText={t('common.cancel')}
         variant="danger"
         isLoading={deleteMutation.isPending}
         onClose={() => setSelectedDeleteId(null)}
@@ -237,10 +244,10 @@ export function ResidentsPage() {
           if (selectedDeleteId === null) return
           deleteMutation.mutate(selectedDeleteId, {
             onSuccess: () => {
-              toast.success('Resident deleted.')
+              toast.success(t('residents.common.residentDeleted'))
               setSelectedDeleteId(null)
             },
-            onError: (err) => toast.error(getErrorMessage(err, 'Could not delete resident.')),
+            onError: (err) => toast.error(getErrorMessage(err, t('residents.common.residentDeleteFailed'))),
           })
         }}
       />

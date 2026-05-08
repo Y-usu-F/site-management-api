@@ -42,6 +42,22 @@ export function ServiceRequestsPage() {
   if (!canList) return <PermissionDeniedNotice permission="service_request.list" />
   const items = query.data?.items ?? []
   const total = query.data?.total ?? 0
+  const statusOptionLabel = (value: string) => {
+    if (value === 'open') return t('operations.common.statusOpen')
+    if (value === 'assigned') return t('operations.common.statusAssigned')
+    if (value === 'in_progress') return t('operations.common.statusInProgress')
+    if (value === 'resolved') return t('operations.common.statusResolved')
+    if (value === 'closed') return t('operations.common.statusClosed')
+    if (value === 'cancelled') return t('operations.common.statusCancelled')
+    return value
+  }
+  const priorityLabel = (value: string | null | undefined) => {
+    if (value === 'low') return t('operations.common.priorityLow')
+    if (value === 'normal') return t('operations.common.priorityNormal')
+    if (value === 'high') return t('operations.common.priorityHigh')
+    if (value === 'urgent') return t('operations.common.priorityUrgent')
+    return value ?? '-'
+  }
 
   return (
     <div className="space-y-4">
@@ -66,12 +82,12 @@ export function ServiceRequestsPage() {
             className="rounded border border-zinc-300 px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
           >
             <option value="">{t('operations.common.all')}</option>
-            <option value="open">open</option>
-            <option value="assigned">assigned</option>
-            <option value="in_progress">in_progress</option>
-            <option value="resolved">resolved</option>
-            <option value="closed">closed</option>
-            <option value="cancelled">cancelled</option>
+            <option value="open">{statusOptionLabel('open')}</option>
+            <option value="assigned">{statusOptionLabel('assigned')}</option>
+            <option value="in_progress">{statusOptionLabel('in_progress')}</option>
+            <option value="resolved">{statusOptionLabel('resolved')}</option>
+            <option value="closed">{statusOptionLabel('closed')}</option>
+            <option value="cancelled">{statusOptionLabel('cancelled')}</option>
           </select>
         </label>
         <label className="text-sm">
@@ -112,14 +128,14 @@ export function ServiceRequestsPage() {
               <tr key={row.id} className="border-t border-zinc-200 dark:border-zinc-800">
                 <td className="px-3 py-2">{row.id}</td>
                 <td className="px-3 py-2">{row.title}</td>
-                <td className="px-3 py-2">{row.priority ?? '-'}</td>
+                <td className="px-3 py-2">{priorityLabel(row.priority)}</td>
                 <td className="px-3 py-2">
                   <OperationStatusBadge status={row.status} />
                 </td>
                 <td className="px-3 py-2">
                   <div className="text-xs text-zinc-500">
                     {t('operations.common.site')}: {siteMap[row.site_id] ?? `#${row.site_id}`} | {t('operations.common.unit')}:{' '}
-                    {row.unit_id ? (unitMap[row.unit_id] ?? `#${row.unit_id}`) : '-'} | Resident:{' '}
+                    {row.unit_id ? (unitMap[row.unit_id] ?? `#${row.unit_id}`) : '-'} | {t('operations.common.resident')}:{' '}
                     {row.resident_profile_id ? (residentMap[row.resident_profile_id] ?? `#${row.resident_profile_id}`) : '-'}
                   </div>
                   <div className="flex items-center gap-2">

@@ -142,7 +142,7 @@ export function BlocksPage() {
   if (siteId === null) {
     return (
       <p className="text-sm text-zinc-600">
-        Invalid site. <Link to="/sites">Sites</Link>
+        {t('site.common.invalidSite')} <Link to="/sites">{t('site.common.sites')}</Link>
       </p>
     )
   }
@@ -165,13 +165,13 @@ export function BlocksPage() {
         <div>
           <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t('site.common.blocks')}</h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            Blocks for this site ({data?.total ?? 0} total).
+            {t('site.common.blocksForSite', { count: data?.total ?? 0 })}
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="search"
-            placeholder="Search name or code…"
+            placeholder={t('site.common.searchNameOrCode')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950 sm:w-72"
@@ -216,10 +216,10 @@ export function BlocksPage() {
           description={
             canCreate ? (
               <Link className="text-violet-600 underline" to={`/sites/${siteId}/blocks/new`}>
-                Create one
+                {t('site.common.createOne')}
               </Link>
             ) : (
-              'Create permission required to add blocks.'
+              t('site.common.createPermissionRequiredForBlocks')
             )
           }
         />
@@ -236,7 +236,7 @@ export function BlocksPage() {
                       type="checkbox"
                       checked={allSelected}
                       onChange={toggleAllCurrentPage}
-                      aria-label="Select all blocks on page"
+                      aria-label={t('site.common.selectAllBlocksOnPage')}
                     />
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-zinc-500">
@@ -264,7 +264,7 @@ export function BlocksPage() {
                         type="checkbox"
                         checked={selectedIds.includes(row.id)}
                         onChange={() => toggleOne(row.id)}
-                        aria-label={`Select block ${row.code}`}
+                        aria-label={t('site.common.selectBlockWithCode', { code: row.code })}
                       />
                     </td>
                     <td className="px-4 py-3 font-mono text-sm">{row.code}</td>
@@ -286,8 +286,8 @@ export function BlocksPage() {
           {totalPages > 1 ? (
             <div className="flex items-center justify-between border-t px-4 py-3 text-xs">
               <span>
-                Page {data?.page ?? page} of {totalPages}
-                {isFetching ? ' · …' : ''}
+                {t('common.pagination.page')} {data?.page ?? page} {t('common.pagination.of')} {totalPages}
+                {isFetching ? ` · ${t('common.pagination.refreshing')}` : ''}
               </span>
               <div className="flex gap-2">
                 <button
@@ -296,7 +296,7 @@ export function BlocksPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  Prev
+                  {t('common.pagination.prev')}
                 </button>
                 <button
                   type="button"
@@ -304,7 +304,7 @@ export function BlocksPage() {
                   onClick={() => setPage((p) => p + 1)}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  Next
+                  {t('common.pagination.next')}
                 </button>
               </div>
             </div>

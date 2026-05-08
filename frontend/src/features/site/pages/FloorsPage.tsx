@@ -148,7 +148,7 @@ export function FloorsPage() {
   if (blockId === null) {
     return (
       <p className="text-sm">
-        Invalid block. <Link to="/sites">Sites</Link>
+        {t('site.common.invalidBlock')} <Link to="/sites">{t('site.common.sites')}</Link>
       </p>
     )
   }
@@ -170,12 +170,12 @@ export function FloorsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">{t('site.common.floors')}</h1>
-          <p className="mt-1 text-sm text-zinc-600">{data?.total ?? 0} floor(s).</p>
+          <p className="mt-1 text-sm text-zinc-600">{t('site.common.floorsCount', { count: data?.total ?? 0 })}</p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="search"
-            placeholder="Search label or number…"
+            placeholder={t('site.common.searchLabelOrNumber')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full rounded-lg border px-3 py-2 text-sm sm:w-72 dark:border-zinc-600 dark:bg-zinc-950"
@@ -220,10 +220,10 @@ export function FloorsPage() {
           description={
             canCreate ? (
               <Link className="text-violet-600 underline" to={`/blocks/${blockId}/floors/new`}>
-                Add floor
+                {t('site.common.addFloor')}
               </Link>
             ) : (
-              'Create permission required to add floors.'
+              t('site.common.createPermissionRequiredForFloors')
             )
           }
         />
@@ -239,7 +239,7 @@ export function FloorsPage() {
                     type="checkbox"
                     checked={allSelected}
                     onChange={toggleAllCurrentPage}
-                    aria-label="Select all floors on page"
+                    aria-label={t('site.common.selectAllFloorsOnPage')}
                   />
                 </th>
                 <th className="px-4 py-3 text-left text-xs uppercase text-zinc-500">#</th>
@@ -257,7 +257,7 @@ export function FloorsPage() {
                       type="checkbox"
                       checked={selectedIds.includes(row.id)}
                       onChange={() => toggleOne(row.id)}
-                      aria-label={`Select floor ${row.number}`}
+                      aria-label={t('site.common.selectFloorWithNumber', { number: row.number })}
                     />
                   </td>
                   <td className="px-4 py-3 font-mono text-sm">{row.number}</td>
@@ -268,7 +268,7 @@ export function FloorsPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link className="text-violet-600" to={`/floors/${row.id}`}>
-                      Open
+                      {t('site.common.open')}
                     </Link>
                   </td>
                 </tr>
@@ -278,8 +278,8 @@ export function FloorsPage() {
           {totalPages > 1 ? (
             <div className="flex justify-between border-t px-4 py-3 text-xs">
               <span>
-                Page {data?.page ?? page} / {totalPages}
-                {isFetching ? ' …' : ''}
+                {t('common.pagination.page')} {data?.page ?? page} {t('common.pagination.of')} {totalPages}
+                {isFetching ? ` · ${t('common.pagination.refreshing')}` : ''}
               </span>
               <div className="flex gap-2">
                 <button
@@ -288,7 +288,7 @@ export function FloorsPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  Prev
+                  {t('common.pagination.prev')}
                 </button>
                 <button
                   type="button"
@@ -296,7 +296,7 @@ export function FloorsPage() {
                   onClick={() => setPage((p) => p + 1)}
                   className="rounded border px-2 py-1 disabled:opacity-40"
                 >
-                  Next
+                  {t('common.pagination.next')}
                 </button>
               </div>
             </div>

@@ -24,6 +24,14 @@ export function CommonAreaReservationsPage() {
   if (!canList) return <PermissionDeniedNotice permission="common_area_reservation.list" />
   const items = query.data?.items ?? []
   const total = query.data?.total ?? 0
+  const statusOptionLabel = (value: string) => {
+    if (value === 'pending') return t('operations.common.statusOpen')
+    if (value === 'approved') return t('operations.actions.approve')
+    if (value === 'rejected') return t('operations.common.statusRejected')
+    if (value === 'cancelled') return t('operations.common.statusCancelled')
+    if (value === 'completed') return t('operations.common.statusCompleted')
+    return value
+  }
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -45,11 +53,11 @@ export function CommonAreaReservationsPage() {
           className="rounded border border-zinc-300 px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
         >
           <option value="">{t('operations.common.all')}</option>
-          <option value="pending">pending</option>
-          <option value="approved">approved</option>
-          <option value="rejected">rejected</option>
-          <option value="cancelled">cancelled</option>
-          <option value="completed">completed</option>
+          <option value="pending">{statusOptionLabel('pending')}</option>
+          <option value="approved">{statusOptionLabel('approved')}</option>
+          <option value="rejected">{statusOptionLabel('rejected')}</option>
+          <option value="cancelled">{statusOptionLabel('cancelled')}</option>
+          <option value="completed">{statusOptionLabel('completed')}</option>
         </select>
       </label>
       <p className="text-sm text-zinc-500">Toplam kayit: {total}</p>

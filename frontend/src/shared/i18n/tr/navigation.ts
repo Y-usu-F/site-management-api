@@ -11,6 +11,7 @@ const navigation = {
   communication: 'Iletisim',
   system: 'Sistem',
   roles: 'Roller',
+  rolesSubtitle: 'Rol ve yetki yonetimi arayuzu.',
   dueDefinitions: 'Aidat tanimlari',
   duePeriods: 'Aidat donemleri',
   dueItems: 'Aidat kalemleri',

@@ -22,6 +22,13 @@ export function WorkOrdersPage() {
 
   const items = query.data?.items ?? []
   const total = query.data?.total ?? 0
+  const statusOptionLabel = (value: string) => {
+    if (value === 'open') return t('operations.common.statusOpen')
+    if (value === 'in_progress') return t('operations.common.statusInProgress')
+    if (value === 'completed') return t('operations.common.statusCompleted')
+    if (value === 'cancelled') return t('operations.common.statusCancelled')
+    return value
+  }
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -43,10 +50,10 @@ export function WorkOrdersPage() {
           className="rounded border border-zinc-300 px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
         >
           <option value="">{t('operations.common.all')}</option>
-          <option value="open">open</option>
-          <option value="in_progress">in_progress</option>
-          <option value="completed">completed</option>
-          <option value="cancelled">cancelled</option>
+          <option value="open">{statusOptionLabel('open')}</option>
+          <option value="in_progress">{statusOptionLabel('in_progress')}</option>
+          <option value="completed">{statusOptionLabel('completed')}</option>
+          <option value="cancelled">{statusOptionLabel('cancelled')}</option>
         </select>
       </label>
       <p className="text-sm text-zinc-500">{t('operations.common.totalRecords')}: {total}</p>

@@ -78,18 +78,18 @@ export function ServiceRequestForm({
           queryKey="residents"
           queryFn={listLookupResidents}
         />
-        <input value={categoryId} onChange={(e) => setCategoryId(e.target.value)} placeholder="category_id" className="rounded border px-3 py-2 text-sm" />
+        <input value={categoryId} onChange={(e) => setCategoryId(e.target.value)} placeholder={t('operations.common.category')} className="rounded border px-3 py-2 text-sm" />
       </div>
       <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('operations.common.title')} className="w-full rounded border px-3 py-2 text-sm" />
       {errors.title ? <p className="text-xs text-red-600">{errors.title}</p> : null}
       <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('operations.common.description')} className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
       {errors.description ? <p className="text-xs text-red-600">{errors.description}</p> : null}
       <div className="grid gap-3 sm:grid-cols-2">
-        <select value={priority} onChange={(e) => setPriority(e.target.value)} className="rounded border px-3 py-2 text-sm">
-          <option value="low">low</option><option value="normal">normal</option><option value="high">high</option><option value="urgent">urgent</option>
+        <select value={priority} onChange={(e) => setPriority(e.target.value)} className="rounded border px-3 py-2 text-sm" aria-label={t('operations.common.priority')}>
+          <option value="low">{t('operations.common.priorityLow')}</option><option value="normal">{t('operations.common.priorityNormal')}</option><option value="high">{t('operations.common.priorityHigh')}</option><option value="urgent">{t('operations.common.priorityUrgent')}</option>
         </select>
-        <select value={source} onChange={(e) => setSource(e.target.value)} className="rounded border px-3 py-2 text-sm">
-          <option value="panel">panel</option><option value="mobile">mobile</option><option value="admin">admin</option>
+        <select value={source} onChange={(e) => setSource(e.target.value)} className="rounded border px-3 py-2 text-sm" aria-label={t('operations.common.sourcePanel')}>
+          <option value="panel">{t('operations.common.sourcePanel')}</option><option value="mobile">{t('operations.common.sourceMobile')}</option><option value="admin">{t('operations.common.sourceAdmin')}</option>
         </select>
       </div>
       <button type="submit" disabled={isSubmitting} className="rounded bg-violet-600 px-4 py-2 text-sm text-white disabled:opacity-50">

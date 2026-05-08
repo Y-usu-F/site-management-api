@@ -29,6 +29,8 @@ const common = {
     next: 'Sonraki',
     page: 'Sayfa',
     total: 'Toplam',
+    of: '/',
+    refreshing: 'Yenileniyor...',
   },
   filters: {
     all: 'Tum',
@@ -36,7 +38,7 @@ const common = {
     read: 'Okunmus',
   },
   bulk: {
-    selected: '{{count}} selected',
+    selected: '{{count}} secili',
     clear: 'Temizle',
     deleting: 'Siliniyor…',
     bulkDelete: 'Toplu sil',

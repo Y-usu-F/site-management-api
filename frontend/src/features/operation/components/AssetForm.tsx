@@ -54,7 +54,7 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
           queryKey="sites"
           queryFn={listLookupSites}
         />
-        <input value={blockId} onChange={(e) => setBlockId(e.target.value)} placeholder="block_id" className="rounded border px-3 py-2 text-sm" />
+        <input value={blockId} onChange={(e) => setBlockId(e.target.value)} placeholder={t('operations.common.block')} className="rounded border px-3 py-2 text-sm" />
         <SearchableLookupSelect
           label={t('operations.common.unit')}
           placeholder={t('operations.common.unit')}
@@ -68,8 +68,8 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
         <input type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} className="rounded border px-3 py-2 text-sm" />
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <select value={assetType} onChange={(e) => setAssetType(e.target.value)} className="rounded border px-3 py-2 text-sm">
-          <option value="elevator">elevator</option><option value="generator">generator</option><option value="camera">camera</option><option value="fire_system">fire_system</option><option value="hydrophore">hydrophore</option><option value="door_system">door_system</option><option value="garden_equipment">garden_equipment</option><option value="cleaning_equipment">cleaning_equipment</option><option value="other">other</option>
+        <select value={assetType} onChange={(e) => setAssetType(e.target.value)} className="rounded border px-3 py-2 text-sm" aria-label={t('operations.common.assetType')}>
+          <option value="elevator">{t('operations.common.assetTypeElevator')}</option><option value="generator">{t('operations.common.assetTypeGenerator')}</option><option value="camera">{t('operations.common.assetTypeCamera')}</option><option value="fire_system">{t('operations.common.assetTypeFireSystem')}</option><option value="hydrophore">{t('operations.common.assetTypeHydrophore')}</option><option value="door_system">{t('operations.common.assetTypeDoorSystem')}</option><option value="garden_equipment">{t('operations.common.assetTypeGardenEquipment')}</option><option value="cleaning_equipment">{t('operations.common.assetTypeCleaningEquipment')}</option><option value="other">{t('operations.common.assetTypeOther')}</option>
         </select>
         <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded border px-3 py-2 text-sm">
           <option value="active">active</option><option value="maintenance">maintenance</option><option value="broken">broken</option><option value="retired">retired</option>
