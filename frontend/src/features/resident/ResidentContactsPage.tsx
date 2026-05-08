@@ -141,7 +141,7 @@ export function ResidentContactsPage() {
           }}
         >
           <div>
-            <label className="block text-sm font-medium">Tip</label>
+            <label className="block text-sm font-medium">{t('residents.common.type')}</label>
             <select
               value={form.type}
               onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))}
@@ -153,7 +153,7 @@ export function ResidentContactsPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">Etiket</label>
+            <label className="block text-sm font-medium">{t('residents.common.label')}</label>
             <input
               value={form.label ?? ''}
               onChange={(e) => setForm((p) => ({ ...p, label: e.target.value }))}
@@ -161,7 +161,7 @@ export function ResidentContactsPage() {
             />
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium">Deger</label>
+            <label className="block text-sm font-medium">{t('residents.common.value')}</label>
             <input
               value={form.value}
               onChange={(e) => setForm((p) => ({ ...p, value: e.target.value }))}
@@ -175,7 +175,7 @@ export function ResidentContactsPage() {
               checked={Boolean(form.is_primary)}
               onChange={(e) => setForm((p) => ({ ...p, is_primary: e.target.checked }))}
             />
-            Birincil
+            {t('residents.common.primary')}
           </label>
           <div className="sm:col-span-2 flex gap-2">
             <button
@@ -212,11 +212,11 @@ export function ResidentContactsPage() {
             <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
               <thead className="bg-zinc-50 dark:bg-zinc-800/80">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Label</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Value</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Primary</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.type')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.label')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.value')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.primary')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -225,7 +225,7 @@ export function ResidentContactsPage() {
                     <td className="px-4 py-3 text-sm">{row.type}</td>
                     <td className="px-4 py-3 text-sm">{row.label?.trim() ? row.label : '—'}</td>
                     <td className="px-4 py-3 text-sm">{row.value}</td>
-                    <td className="px-4 py-3 text-sm">{Number(row.is_primary) === 1 ? 'yes' : 'no'}</td>
+                    <td className="px-4 py-3 text-sm">{Number(row.is_primary) === 1 ? t('residents.common.yes') : t('residents.common.no')}</td>
                     <td className="px-4 py-3 text-right text-sm">
                       <div className="flex justify-end gap-3">
                         {canUpdate ? (

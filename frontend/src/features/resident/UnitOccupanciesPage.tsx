@@ -130,7 +130,7 @@ export function UnitOccupanciesPage() {
     <div className="space-y-6">
       <nav className="text-xs text-zinc-500">
         <Link to={`/units/${unitId}`} className="hover:text-violet-600">
-          Birim {unitId}
+          {t('residents.common.unitWithId', { id: unitId })}
         </Link>
         <span className="mx-1">/</span>
         <span>{t('residents.common.occupancies')}</span>
@@ -156,13 +156,13 @@ export function UnitOccupanciesPage() {
           }}
         >
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium">Resident</label>
+            <label className="block text-sm font-medium">{t('residents.common.resident')}</label>
             <select
               value={form.resident_profile_id}
               onChange={(e) => setForm((p) => ({ ...p, resident_profile_id: Number(e.target.value) }))}
               className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-950"
             >
-              <option value={0}>Sakin secin</option>
+              <option value={0}>{t('residents.common.selectResident')}</option>
               {residentOptions.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.first_name} {r.last_name}
@@ -174,7 +174,7 @@ export function UnitOccupanciesPage() {
             ) : null}
           </div>
           <div>
-            <label className="block text-sm font-medium">Relationship type</label>
+            <label className="block text-sm font-medium">{t('residents.common.relationshipType')}</label>
             <select
               value={form.relationship_type}
               onChange={(e) => setForm((p) => ({ ...p, relationship_type: e.target.value }))}
@@ -187,7 +187,7 @@ export function UnitOccupanciesPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">Status</label>
+            <label className="block text-sm font-medium">{t('residents.common.status')}</label>
             <select
               value={form.status}
               onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))}
@@ -198,7 +198,7 @@ export function UnitOccupanciesPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">Start date</label>
+            <label className="block text-sm font-medium">{t('residents.common.startDate')}</label>
             <input
               type="date"
               value={form.start_date}
@@ -208,7 +208,7 @@ export function UnitOccupanciesPage() {
             {serverErrors.start_date ? <p className="mt-1 text-xs text-red-600">{serverErrors.start_date}</p> : null}
           </div>
           <div>
-            <label className="block text-sm font-medium">End date</label>
+            <label className="block text-sm font-medium">{t('residents.common.endDate')}</label>
             <input
               type="date"
               value={form.end_date ?? ''}
@@ -223,7 +223,7 @@ export function UnitOccupanciesPage() {
               checked={Boolean(form.is_primary)}
               onChange={(e) => setForm((p) => ({ ...p, is_primary: e.target.checked }))}
             />
-            is_primary
+            {t('residents.common.primary')}
           </label>
           <div className="sm:col-span-2 flex gap-2">
             <button
@@ -267,12 +267,12 @@ export function UnitOccupanciesPage() {
             <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
               <thead className="bg-zinc-50 dark:bg-zinc-800/80">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Resident</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Primary</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Status</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.resident')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.type')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.date')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.primary')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.status')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -283,7 +283,7 @@ export function UnitOccupanciesPage() {
                     <td className="px-4 py-3 text-sm">
                       {row.start_date} {row.end_date ? `- ${row.end_date}` : ''}
                     </td>
-                    <td className="px-4 py-3 text-sm">{Number(row.is_primary) === 1 ? 'yes' : 'no'}</td>
+                    <td className="px-4 py-3 text-sm">{Number(row.is_primary) === 1 ? t('residents.common.yes') : t('residents.common.no')}</td>
                     <td className="px-4 py-3 text-sm">{row.status}</td>
                     <td className="px-4 py-3 text-right text-sm">
                       <div className="flex justify-end gap-3">

@@ -145,7 +145,7 @@ export function ResidentVehiclesPage() {
           }}
         >
           <div>
-            <label className="block text-sm font-medium">Plate</label>
+            <label className="block text-sm font-medium">{t('residents.common.plate')}</label>
             <input
               value={form.plate_number}
               onChange={(e) => setForm((p) => ({ ...p, plate_number: e.target.value }))}
@@ -156,7 +156,7 @@ export function ResidentVehiclesPage() {
             ) : null}
           </div>
           <div>
-            <label className="block text-sm font-medium">Status</label>
+            <label className="block text-sm font-medium">{t('residents.common.status')}</label>
             <select
               value={form.status}
               onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))}
@@ -167,7 +167,7 @@ export function ResidentVehiclesPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">Brand</label>
+            <label className="block text-sm font-medium">{t('residents.common.brand')}</label>
             <input
               value={form.brand ?? ''}
               onChange={(e) => setForm((p) => ({ ...p, brand: e.target.value }))}
@@ -175,7 +175,7 @@ export function ResidentVehiclesPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Model</label>
+            <label className="block text-sm font-medium">{t('residents.common.model')}</label>
             <input
               value={form.model ?? ''}
               onChange={(e) => setForm((p) => ({ ...p, model: e.target.value }))}
@@ -183,7 +183,7 @@ export function ResidentVehiclesPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Color</label>
+            <label className="block text-sm font-medium">{t('residents.common.color')}</label>
             <input
               value={form.color ?? ''}
               onChange={(e) => setForm((p) => ({ ...p, color: e.target.value }))}
@@ -225,11 +225,11 @@ export function ResidentVehiclesPage() {
             <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
               <thead className="bg-zinc-50 dark:bg-zinc-800/80">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Plate</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Brand / model</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Color</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">Status</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.plate')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.brandModel')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.color')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.status')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-500">{t('residents.common.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
