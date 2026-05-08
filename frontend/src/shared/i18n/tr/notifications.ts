@@ -1,5 +1,7 @@
 const notifications = {
   title: 'Bildirimler',
+  announcementsTitle: 'Duyurular',
+  announcementsSubtitle: 'Site duyurulari ve okunma durumlari.',
   notificationLabel: 'Bildirim',
   listFailed: 'Bildirimler alinamadi.',
   emptyTitle: 'Bildirim bulunamadi',
