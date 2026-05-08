@@ -59,7 +59,7 @@ export function NotificationsPage() {
   }
 
   if (!canList) {
-    return <PermissionDeniedNotice permission="notification_recipient.list" title={t('navigation.notifications')} />
+    return <PermissionDeniedNotice permission="notification_recipient.list" title={t('notifications', { ns: 'navigation' })} />
   }
 
   return (
@@ -90,10 +90,10 @@ export function NotificationsPage() {
                 ].join(' ')}
               >
                 {value === 'all'
-                  ? t('common.filters.all')
+                  ? t('filters.all', { ns: 'common' })
                   : value === 'unread'
-                    ? t('common.filters.unread')
-                    : t('common.filters.read')}
+                    ? t('filters.unread', { ns: 'common' })
+                    : t('filters.read', { ns: 'common' })}
               </button>
             ))}
           </div>
@@ -104,14 +104,14 @@ export function NotificationsPage() {
               disabled={(unread.data?.unread_count ?? 0) <= 0 || markAllRead.isPending}
               className="rounded-lg border border-zinc-300 px-3 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
             >
-              {t('common.markAllRead')}
+              {t('markAllRead', { ns: 'common' })}
             </button>
           ) : null}
         </div>
       </div>
 
       {list.isLoading ? (
-        <div className="text-sm text-zinc-500">{t('common.loading')}</div>
+        <div className="text-sm text-zinc-500">{t('loading', { ns: 'common' })}</div>
       ) : list.isError ? (
         <div className="text-sm text-red-600">{t('notifications.listFailed')}</div>
       ) : items.length === 0 ? (
@@ -139,11 +139,11 @@ export function NotificationsPage() {
                   <td className="px-3 py-2">{n.status ?? '-'}</td>
                   <td className="px-3 py-2">
                     {n.read_at ? (
-                      t('common.status.read')
+                      t('status.read', { ns: 'common' })
                     ) : (
                       <span className="inline-flex items-center gap-2">
                         <span className="h-2 w-2 rounded-full bg-violet-600" />
-                        <span className="font-semibold text-violet-700 dark:text-violet-300">{t('common.status.unread')}</span>
+                        <span className="font-semibold text-violet-700 dark:text-violet-300">{t('status.unread', { ns: 'common' })}</span>
                       </span>
                     )}
                   </td>
@@ -155,7 +155,7 @@ export function NotificationsPage() {
                         disabled={markRead.isPending}
                         className="rounded-lg border border-zinc-300 px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-950"
                       >
-                        {t('common.markAsRead')}
+                        {t('markAsRead', { ns: 'common' })}
                       </button>
                     ) : (
                       <span className="text-xs text-zinc-500">—</span>
@@ -167,7 +167,7 @@ export function NotificationsPage() {
           </table>
           <div className="flex items-center justify-between border-t border-zinc-200 px-3 py-2 text-xs text-zinc-500 dark:border-zinc-800">
             <span>
-              {t('common.pagination.total')}:{' '}
+              {t('pagination.total', { ns: 'common' })}:{' '}
               <span className="font-medium text-zinc-900 dark:text-zinc-100">{list.data?.total ?? 0}</span>
             </span>
             <div className="flex items-center gap-2">
@@ -177,10 +177,10 @@ export function NotificationsPage() {
                 disabled={page <= 1}
                 className="rounded border border-zinc-300 px-2 py-1 disabled:opacity-60 dark:border-zinc-700"
               >
-                {t('common.pagination.prev')}
+                {t('pagination.prev', { ns: 'common' })}
               </button>
               <span>
-                {t('common.pagination.page')} {page}
+                {t('pagination.page', { ns: 'common' })} {page}
               </span>
               <button
                 type="button"
@@ -188,7 +188,7 @@ export function NotificationsPage() {
                 disabled={items.length === 0}
                 className="rounded border border-zinc-300 px-2 py-1 disabled:opacity-60 dark:border-zinc-700"
               >
-                {t('common.pagination.next')}
+                {t('pagination.next', { ns: 'common' })}
               </button>
             </div>
           </div>

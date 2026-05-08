@@ -72,7 +72,7 @@ export function NotificationBell() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="relative rounded-lg border border-zinc-300 p-2 text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-900"
-        aria-label={t('navigation.notifications', { ns: 'navigation' })}
+        aria-label={t('notifications', { ns: 'navigation' })}
       >
         <BellIcon className="h-5 w-5" />
         {unreadCount > 0 ? (
@@ -94,7 +94,7 @@ export function NotificationBell() {
                   disabled={unreadCount <= 0 || markAllRead.isPending}
                   className="text-xs font-medium text-zinc-600 hover:text-zinc-900 disabled:opacity-50 dark:text-zinc-300 dark:hover:text-zinc-100"
                 >
-                  {t('common.markAllRead')}
+                  {t('markAllRead', { ns: 'common' })}
                 </button>
               ) : null}
               <Link
@@ -102,13 +102,13 @@ export function NotificationBell() {
                 className="text-xs font-medium text-violet-600 hover:underline"
                 onClick={() => setOpen(false)}
               >
-                {t('common.viewAll')}
+                {t('viewAll', { ns: 'common' })}
               </Link>
             </div>
           </div>
 
           {list.isLoading ? (
-            <div className="px-4 py-3 text-sm text-zinc-500">{t('common.loading')}</div>
+            <div className="px-4 py-3 text-sm text-zinc-500">{t('loading', { ns: 'common' })}</div>
           ) : list.isError ? (
             <div className="px-4 py-3 text-sm text-red-600">{t('notifications.listFailed')}</div>
           ) : items.length === 0 ? (
@@ -137,7 +137,7 @@ export function NotificationBell() {
                       {t('notifications.notificationLabel')} #{n.id}
                     </div>
                     <div className="mt-0.5 text-xs text-zinc-500">
-                      message_id: {n.message_id} • {n.read_at ? t('common.status.read') : t('common.status.unread')}
+                      message_id: {n.message_id} • {n.read_at ? t('status.read', { ns: 'common' }) : t('status.unread', { ns: 'common' })}
                     </div>
                   </div>
                   {!n.read_at && canMarkRead ? (
@@ -147,7 +147,7 @@ export function NotificationBell() {
                       disabled={markRead.isPending}
                       className="shrink-0 rounded-lg border border-zinc-300 px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
                     >
-                      {t('common.status.read')}
+                      {t('status.read', { ns: 'common' })}
                     </button>
                   ) : null}
                 </div>

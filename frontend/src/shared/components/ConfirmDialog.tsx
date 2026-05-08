@@ -51,7 +51,7 @@ export function ConfirmDialog({
             disabled={isLoading}
             className={`rounded-lg px-3 py-2 text-sm disabled:opacity-60 ${confirmClass}`}
           >
-            {isLoading ? t('common.pleaseWait') : confirmText}
+            {isLoading ? t('pleaseWait') : confirmText}
           </button>
         </div>
       </div>

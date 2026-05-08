@@ -11,11 +11,11 @@ export function DashboardHomePage() {
   const analyticsQuery = useDashboardAnalyticsQuery(range)
 
   if (analyticsQuery.isLoading) {
-    return <div className="text-sm text-zinc-500">{t('common.loading')}</div>
+    return <div className="text-sm text-zinc-500">{t('loading', { ns: 'common' })}</div>
   }
 
   if (analyticsQuery.isError) {
-    return <div className="text-sm text-red-600">{t('common.errorGeneric')}</div>
+    return <div className="text-sm text-red-600">{t('errorGeneric', { ns: 'common' })}</div>
   }
 
   const analytics = analyticsQuery.data
@@ -23,8 +23,8 @@ export function DashboardHomePage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-xl font-semibold">{t('navigation.dashboard')}</h1>
-        <p className="text-sm text-zinc-500">{t('navigation.analytics')}</p>
+        <h1 className="text-xl font-semibold">{t('dashboard', { ns: 'navigation' })}</h1>
+        <p className="text-sm text-zinc-500">{t('analytics', { ns: 'navigation' })}</p>
       </div>
 
       <div className="inline-flex rounded-lg border border-zinc-300 p-1 dark:border-zinc-700">
@@ -41,10 +41,10 @@ export function DashboardHomePage() {
             ].join(' ')}
           >
             {value === '7d'
-              ? t('analytics.range.last7Days')
+              ? t('range.last7Days', { ns: 'analytics' })
               : value === '30d'
-                ? t('analytics.range.last30Days')
-                : t('analytics.range.last90Days')}
+                ? t('range.last30Days', { ns: 'analytics' })
+                : t('range.last90Days', { ns: 'analytics' })}
           </button>
         ))}
       </div>
@@ -52,63 +52,63 @@ export function DashboardHomePage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <FinanceStatCard
           to="/finance/due-items"
-          title={t('finance.widgets.dashboardDueTotalTitle')}
+          title={t('widgets.dashboardDueTotalTitle', { ns: 'finance' })}
           value={(analytics?.finance.due_total ?? 0).toFixed(2)}
-          description={t('navigation.finance')}
+          description={t('finance', { ns: 'navigation' })}
         />
         <FinanceStatCard
           to="/finance/payments"
-          title={t('finance.widgets.dashboardPaidTotalTitle')}
+          title={t('widgets.dashboardPaidTotalTitle', { ns: 'finance' })}
           value={(analytics?.finance.paid_total ?? 0).toFixed(2)}
-          description={t('navigation.finance')}
+          description={t('finance', { ns: 'navigation' })}
         />
         <FinanceStatCard
           to="/finance/due-items"
-          title={t('finance.widgets.dashboardUnpaidTotalTitle')}
+          title={t('widgets.dashboardUnpaidTotalTitle', { ns: 'finance' })}
           value={(analytics?.finance.unpaid_total ?? 0).toFixed(2)}
-          description={t('navigation.finance')}
+          description={t('finance', { ns: 'navigation' })}
         />
         <FinanceStatCard
           to="/finance/payments"
-          title={t('finance.widgets.dashboardPaymentCountTitle')}
+          title={t('widgets.dashboardPaymentCountTitle', { ns: 'finance' })}
           value={analytics?.finance.payment_count ?? 0}
-          description={t('navigation.finance')}
+          description={t('finance', { ns: 'navigation' })}
         />
         <FinanceStatCard
           to="/operations/service-requests"
-          title={t('operations.widgets.dashboardOpenServiceRequestsTitle')}
+          title={t('widgets.dashboardOpenServiceRequestsTitle', { ns: 'operations' })}
           value={analytics?.operations.open_service_requests ?? 0}
-          description={t('navigation.operations')}
+          description={t('operations', { ns: 'navigation' })}
         />
         <FinanceStatCard
           to="/operations/work-orders"
-          title={t('operations.widgets.dashboardActiveWorkOrdersTitle')}
+          title={t('widgets.dashboardActiveWorkOrdersTitle', { ns: 'operations' })}
           value={analytics?.operations.active_work_orders ?? 0}
-          description={t('navigation.operations')}
+          description={t('operations', { ns: 'navigation' })}
         />
         <FinanceStatCard
           to="/operations/common-area-reservations"
-          title={t('operations.widgets.dashboardUpcomingReservationsTitle')}
+          title={t('widgets.dashboardUpcomingReservationsTitle', { ns: 'operations' })}
           value={analytics?.operations.upcoming_reservations ?? 0}
-          description={t('navigation.operations')}
+          description={t('operations', { ns: 'navigation' })}
         />
         <FinanceStatCard
           to="/residents"
-          title={t('residents.widgets.residentCountTitle')}
+          title={t('widgets.residentCountTitle', { ns: 'residents' })}
           value={analytics?.residents.resident_count ?? 0}
-          description={t('navigation.residents')}
+          description={t('residents', { ns: 'navigation' })}
         />
         <FinanceStatCard
           to="/units"
-          title={t('residents.widgets.unitCountTitle')}
+          title={t('widgets.unitCountTitle', { ns: 'residents' })}
           value={analytics?.residents.unit_count ?? 0}
-          description={t('navigation.residents')}
+          description={t('residents', { ns: 'navigation' })}
         />
         <FinanceStatCard
           to="/units"
-          title={t('residents.widgets.activeOccupancyCountTitle')}
+          title={t('widgets.activeOccupancyCountTitle', { ns: 'residents' })}
           value={analytics?.residents.active_occupancy_count ?? 0}
-          description={t('navigation.residents')}
+          description={t('residents', { ns: 'navigation' })}
         />
       </div>
 
@@ -116,12 +116,12 @@ export function DashboardHomePage() {
         <AnalyticsCharts
           analytics={analytics}
           labels={{
-            paymentsTrend: t('analytics.trends.payments'),
-            serviceRequestsTrend: t('analytics.trends.serviceRequests'),
-            serviceRequestDistribution: t('analytics.distributions.serviceRequests'),
-            workOrderDistribution: t('analytics.distributions.workOrders'),
-            totalAxis: t('analytics.axes.total'),
-            countAxis: t('analytics.axes.count'),
+            paymentsTrend: t('trends.payments', { ns: 'analytics' }),
+            serviceRequestsTrend: t('trends.serviceRequests', { ns: 'analytics' }),
+            serviceRequestDistribution: t('distributions.serviceRequests', { ns: 'analytics' }),
+            workOrderDistribution: t('distributions.workOrders', { ns: 'analytics' }),
+            totalAxis: t('axes.total', { ns: 'analytics' }),
+            countAxis: t('axes.count', { ns: 'analytics' }),
           }}
         />
       ) : null}

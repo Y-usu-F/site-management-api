@@ -25,7 +25,7 @@ export function Topbar() {
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-200 bg-white px-6 dark:border-zinc-800 dark:bg-zinc-950">
       <span className="text-sm text-zinc-500 dark:text-zinc-400">
-        {t('common.signedInAs', 'Giris yapan')}{' '}
+        {t('signedInAs', { ns: 'common', defaultValue: 'Giris yapan' })}{' '}
         <span className="font-medium text-zinc-900 dark:text-zinc-100">
           {user?.email ?? '—'}
         </span>
@@ -37,7 +37,7 @@ export function Topbar() {
           onClick={() => void handleLogout()}
           className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-900"
         >
-          {t('common.logout')}
+          {t('logout')}
         </button>
       </div>
     </header>

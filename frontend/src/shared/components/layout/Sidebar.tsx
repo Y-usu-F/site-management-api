@@ -14,10 +14,10 @@ export function Sidebar() {
     <aside className="flex w-56 shrink-0 flex-col border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
       <div className="border-b border-zinc-200 px-4 py-4 dark:border-zinc-800">
         <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-          {t('navigation.appName')}
+          {t('appName')}
         </div>
         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-          {t('navigation.dashboard')}
+          {t('dashboard')}
         </div>
       </div>
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-3">
@@ -26,120 +26,120 @@ export function Sidebar() {
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
           end
         >
-          {t('navigation.overview')}
+          {t('overview')}
         </NavLink>
         <div className="pt-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-          {t('navigation.site')}
+          {t('site')}
         </div>
         <NavLink
           to="/sites"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.sites')}
+          {t('sites')}
         </NavLink>
         <NavLink
           to="/residents"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.residents')}
+          {t('residents')}
         </NavLink>
         <div className="pt-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-          {t('navigation.finance')}
+          {t('finance')}
         </div>
         <NavLink
           to="/finance"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
           end
         >
-          {t('navigation.dashboard')}
+          {t('dashboard')}
         </NavLink>
         <NavLink
           to="/finance/due-definitions"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.dueDefinitions')}
+          {t('dueDefinitions')}
         </NavLink>
         <NavLink
           to="/finance/due-periods"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.duePeriods')}
+          {t('duePeriods')}
         </NavLink>
         <NavLink
           to="/finance/due-items"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.dueItems')}
+          {t('dueItems')}
         </NavLink>
         <NavLink
           to="/finance/payments"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.payments')}
+          {t('payments')}
         </NavLink>
         <NavLink
           to="/finance/deposits"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.deposits')}
+          {t('deposits')}
         </NavLink>
         <div className="pt-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-          {t('navigation.operations')}
+          {t('operations')}
         </div>
         <NavLink
           to="/operations"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
           end
         >
-          {t('navigation.dashboard')}
+          {t('dashboard')}
         </NavLink>
         <NavLink
           to="/operations/service-requests"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.serviceRequests')}
+          {t('serviceRequests')}
         </NavLink>
         <NavLink to="/operations/work-orders" className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}>
-          {t('navigation.workOrders')}
+          {t('workOrders')}
         </NavLink>
         <NavLink to="/operations/common-areas" className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}>
-          {t('navigation.commonAreas')}
+          {t('commonAreas')}
         </NavLink>
         <NavLink to="/operations/common-area-reservations" className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}>
-          {t('navigation.reservations')}
+          {t('reservations')}
         </NavLink>
         <NavLink to="/operations/assets" className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}>
-          {t('navigation.assets')}
+          {t('assets')}
         </NavLink>
         <NavLink to="/operations/asset-maintenance-plans" className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}>
-          {t('navigation.maintenancePlans')}
+          {t('maintenancePlans')}
         </NavLink>
         <NavLink to="/operations/asset-maintenance-records" className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}>
-          {t('navigation.maintenanceRecords')}
+          {t('maintenanceRecords')}
         </NavLink>
         <div className="pt-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-          {t('navigation.communication')}
+          {t('communication')}
         </div>
         <NavLink
           to="/communication/announcements"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.announcements')}
+          {t('announcements')}
         </NavLink>
         <NavLink
           to="/communication/notifications"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.notifications')}
+          {t('notifications')}
         </NavLink>
         <div className="pt-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-          {t('navigation.system')}
+          {t('system')}
         </div>
         <NavLink
           to="/system/roles"
           className={({ isActive }) => `${navClass} ${isActive ? activeClass : ''}`}
         >
-          {t('navigation.roles')}
+          {t('roles')}
         </NavLink>
       </nav>
     </aside>
