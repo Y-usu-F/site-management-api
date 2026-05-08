@@ -85,55 +85,59 @@ export function FloorsPage() {
   const bulkDeleteMutation = useMutation({
     mutationFn: (ids: number[]) => bulkDeleteFloors(ids),
     onSuccess: () => {
-      toast.success('Selected floors deleted.')
+      toast.success(t('site.common.bulkDeleteFloorsSuccess'))
       clearSelection()
       void qc.invalidateQueries({ queryKey: ['floors'] })
     },
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error('Bulk delete endpoint is not available yet.')
+        toast.error(t('site.common.bulkDeleteEndpointNotAvailableYet'))
         return
       }
-      toast.error(getErrorMessage(err, 'Could not delete selected floors.'))
+      toast.error(getErrorMessage(err, t('site.common.couldNotDeleteSelectedFloors')))
     },
   })
   const exportMutation = useMutation({
     mutationFn: () => exportFloorsExcel(params),
-    onSuccess: () => toast.success('Excel export started.'),
+    onSuccess: () => toast.success(t('site.common.exportStarted')),
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error('Export endpoint is not available yet.')
+        toast.error(t('site.common.exportEndpointNotAvailableYet'))
         return
       }
-      toast.error(getErrorMessage(err, 'Could not export floors.'))
+      toast.error(getErrorMessage(err, t('site.common.couldNotExportFloors')))
     },
   })
   const templateMutation = useMutation({
     mutationFn: () => downloadFloorTemplate(),
-    onSuccess: () => toast.success('Template downloaded.'),
+    onSuccess: () => toast.success(t('site.common.templateDownloaded')),
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error('Template endpoint is not available yet.')
+        toast.error(t('site.common.templateEndpointNotAvailableYet'))
         return
       }
-      toast.error(getErrorMessage(err, 'Could not download template.'))
+      toast.error(getErrorMessage(err, t('site.common.couldNotDownloadTemplate')))
     },
   })
   const importMutation = useMutation({
     mutationFn: (file: File) => importFloorsExcel(file),
     onSuccess: (result) => {
       toast.success(
-        `Import done: +${result.inserted_count ?? 0} / updated ${result.updated_count ?? 0} / skipped ${result.skipped_count ?? 0}`,
+        t('site.common.importDone', {
+          inserted: result.inserted_count ?? 0,
+          updated: result.updated_count ?? 0,
+          skipped: result.skipped_count ?? 0,
+        }),
       )
       setImportOpen(false)
       void qc.invalidateQueries({ queryKey: ['floors'] })
     },
     onError: (err) => {
       if (err instanceof ApiClientError && (err.status === 404 || err.status === 405)) {
-        toast.error('Import endpoint is not available yet.')
+        toast.error(t('site.common.importEndpointNotAvailableYet'))
         return
       }
-      toast.error(getErrorMessage(err, 'Could not import floors.'))
+      toast.error(getErrorMessage(err, t('site.common.couldNotImportFloors')))
     },
   })
 
@@ -301,10 +305,10 @@ export function FloorsPage() {
       ) : null}
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
-        title="Delete selected floors"
-        description={`Delete ${selectedCount} selected floor(s)?`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        title={t('site.common.deleteSelectedFloorsTitle')}
+        description={t('site.common.deleteSelectedFloorsDescription', { count: selectedCount })}
+        confirmText={t('site.common.delete')}
+        cancelText={t('common.cancel')}
         variant="danger"
         isLoading={bulkDeleteMutation.isPending}
         onClose={() => setDeleteConfirmOpen(false)}
@@ -312,7 +316,7 @@ export function FloorsPage() {
       />
       <ImportExcelDialog
         isOpen={importOpen}
-        title="Import Floors from Excel"
+        title={t('site.common.importFloorsFromExcel')}
         isSubmitting={importMutation.isPending}
         onClose={() => setImportOpen(false)}
         onSubmit={(file) => importMutation.mutate(file)}
