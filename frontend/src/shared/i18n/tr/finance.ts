@@ -99,10 +99,10 @@ const finance = {
     duePeriodsDescription: 'Donem yonetimi',
     dueDefinitionsTitle: 'Aidat tanimlari',
     dueDefinitionsDescription: 'Aidat/borc tanimlari.',
-    dashboardDueTotalTitle: 'Toplam tahakkuk',
-    dashboardPaidTotalTitle: 'Toplam odeme',
-    dashboardUnpaidTotalTitle: 'Kalan borc',
-    dashboardPaymentCountTitle: 'Odeme adedi',
+    dashboardDueTotalTitle: 'Toplam Borç',
+    dashboardPaidTotalTitle: 'Toplam Tahsilat',
+    dashboardUnpaidTotalTitle: 'Kalan Borç',
+    dashboardPaymentCountTitle: 'Ödeme Sayısı',
   },
 } as const
 

@@ -106,9 +106,9 @@ const residents = {
     saveChanges: 'Degisiklikleri kaydet',
   },
   widgets: {
-    residentCountTitle: 'Sakin sayisi',
-    activeOccupancyCountTitle: 'Aktif oturum sayisi',
-    unitCountTitle: 'Bagli bagimsiz bolum sayisi',
+    residentCountTitle: 'Sakin Sayısı',
+    activeOccupancyCountTitle: 'Aktif Oturum Sayısı',
+    unitCountTitle: 'Bağımsız Bölüm Sayısı',
   },
 } as const
 

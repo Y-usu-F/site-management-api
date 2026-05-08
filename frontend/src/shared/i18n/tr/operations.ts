@@ -9,9 +9,9 @@ const operations = {
     upcomingReservationsDescription: 'Bekleyen + onayli rezervasyonlar',
     activeMaintenancePlansTitle: 'Aktif bakim planlari',
     activeMaintenancePlansDescription: 'Etkin bakim planlari',
-    dashboardOpenServiceRequestsTitle: 'Acik servis talepleri',
-    dashboardActiveWorkOrdersTitle: 'Aktif is emirleri',
-    dashboardUpcomingReservationsTitle: 'Yaklasan rezervasyonlar',
+    dashboardOpenServiceRequestsTitle: 'Açık Servis Talepleri',
+    dashboardActiveWorkOrdersTitle: 'Aktif İş Emirleri',
+    dashboardUpcomingReservationsTitle: 'Yaklaşan Rezervasyonlar',
   },
   cards: {
     serviceRequests: 'Servis talepleri',

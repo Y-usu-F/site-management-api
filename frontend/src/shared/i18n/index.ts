@@ -11,6 +11,13 @@ import residents from '@/shared/i18n/tr/residents'
 import analytics from '@/shared/i18n/tr/analytics'
 import site from '@/shared/i18n/tr/site'
 
+function withNamespaceAlias<T extends Record<string, unknown>>(namespace: string, resource: T): T & Record<string, T> {
+  return {
+    ...resource,
+    [namespace]: resource,
+  }
+}
+
 if (!i18n.isInitialized) {
   void i18n.use(initReactI18next).init({
     lng: 'tr',
@@ -21,15 +28,15 @@ if (!i18n.isInitialized) {
     },
     resources: {
       tr: {
-        common,
-        auth,
-        navigation,
-        finance,
-        operations,
-        residents,
-        analytics,
-        notifications,
-        site,
+        common: withNamespaceAlias('common', common),
+        auth: withNamespaceAlias('auth', auth),
+        navigation: withNamespaceAlias('navigation', navigation),
+        finance: withNamespaceAlias('finance', finance),
+        operations: withNamespaceAlias('operations', operations),
+        residents: withNamespaceAlias('residents', residents),
+        analytics: withNamespaceAlias('analytics', analytics),
+        notifications: withNamespaceAlias('notifications', notifications),
+        site: withNamespaceAlias('site', site),
       },
     },
   })
