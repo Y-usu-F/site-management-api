@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { listLookupAssets } from '@/features/operation/api/lookupsApi'
 import { SearchableLookupSelect } from '@/features/operation/components/SearchableLookupSelect'
 
@@ -15,6 +16,7 @@ export function AssetMaintenancePlanForm({
   submitLabel,
   onSubmit,
 }: Props) {
+  const { t } = useTranslation(['operations', 'common'])
   const [assetId, setAssetId] = useState(String(defaultValues?.asset_id ?? ''))
   const [frequencyType, setFrequencyType] = useState(String(defaultValues?.frequency_type ?? 'monthly'))
   const [frequencyInterval, setFrequencyInterval] = useState(String(defaultValues?.frequency_interval ?? ''))
@@ -28,11 +30,11 @@ export function AssetMaintenancePlanForm({
     <form className="space-y-4" onSubmit={(e) => {
       e.preventDefault()
       if (!assetId || Number(assetId) <= 0) {
-        setClientError('asset_id zorunlu.')
+        setClientError(t('operations.common.validationAssetRequired'))
         return
       }
       if (!nextDueDate) {
-        setClientError('next_due_date zorunlu.')
+        setClientError(t('operations.common.validationNextDueRequired'))
         return
       }
       setClientError(null)
@@ -48,16 +50,16 @@ export function AssetMaintenancePlanForm({
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
         <SearchableLookupSelect
-          label="Asset"
-          placeholder="asset_id seciniz"
+          label={t('operations.common.assets')}
+          placeholder={t('operations.common.assets')}
           value={assetId}
           onChange={setAssetId}
           queryKey="assets"
           queryFn={listLookupAssets}
         />
-        <input value={frequencyInterval} onChange={(e) => setFrequencyInterval(e.target.value)} placeholder="frequency_interval" className="rounded border px-3 py-2 text-sm" />
+        <input value={frequencyInterval} onChange={(e) => setFrequencyInterval(e.target.value)} placeholder={t('operations.common.interval')} className="rounded border px-3 py-2 text-sm" />
         <input type="date" value={nextDueDate} onChange={(e) => setNextDueDate(e.target.value)} className="rounded border px-3 py-2 text-sm" />
-        <input value={vendorName} onChange={(e) => setVendorName(e.target.value)} placeholder="vendor_name" className="rounded border px-3 py-2 text-sm" />
+        <input value={vendorName} onChange={(e) => setVendorName(e.target.value)} placeholder={t('operations.common.vendor')} className="rounded border px-3 py-2 text-sm" />
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <select value={frequencyType} onChange={(e) => setFrequencyType(e.target.value)} className="rounded border px-3 py-2 text-sm">
@@ -67,10 +69,10 @@ export function AssetMaintenancePlanForm({
           <option value="active">active</option><option value="paused">paused</option><option value="cancelled">cancelled</option>
         </select>
       </div>
-      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="notes" className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
+      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('operations.common.notes')} className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
       {clientError ? <p className="text-xs text-red-600">{clientError}</p> : null}
       <button type="submit" disabled={isSubmitting} className="rounded bg-violet-600 px-4 py-2 text-sm text-white disabled:opacity-50">
-        {isSubmitting ? 'Saving…' : submitLabel}
+        {isSubmitting ? t('common.pleaseWait') : submitLabel}
       </button>
     </form>
   )

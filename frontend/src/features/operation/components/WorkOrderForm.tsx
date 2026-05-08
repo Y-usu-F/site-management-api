@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   defaultValues?: Record<string, unknown>
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export function WorkOrderForm({ defaultValues, isSubmitting, submitLabel, onSubmit }: Props) {
+  const { t } = useTranslation(['operations', 'common'])
   const [serviceRequestId, setServiceRequestId] = useState(String(defaultValues?.service_request_id ?? ''))
   const [assignedToUserId, setAssignedToUserId] = useState(String(defaultValues?.assigned_to_user_id ?? ''))
   const [vendorName, setVendorName] = useState(String(defaultValues?.vendor_name ?? ''))
@@ -22,7 +24,7 @@ export function WorkOrderForm({ defaultValues, isSubmitting, submitLabel, onSubm
     <form className="space-y-4" onSubmit={(e) => {
       e.preventDefault()
       if (!serviceRequestId || Number(serviceRequestId) <= 0) {
-        setClientError('service_request_id zorunlu.')
+        setClientError(t('operations.common.validationServiceRequestRequired'))
         return
       }
       setClientError(null)
@@ -38,18 +40,18 @@ export function WorkOrderForm({ defaultValues, isSubmitting, submitLabel, onSubm
       })
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
-        <input value={serviceRequestId} onChange={(e) => setServiceRequestId(e.target.value)} placeholder="service_request_id" className="rounded border px-3 py-2 text-sm" />
-        <input value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} placeholder="assigned_to_user_id" className="rounded border px-3 py-2 text-sm" />
-        <input value={vendorName} onChange={(e) => setVendorName(e.target.value)} placeholder="vendor_name" className="rounded border px-3 py-2 text-sm" />
-        <input value={costAmount} onChange={(e) => setCostAmount(e.target.value)} placeholder="cost_amount" className="rounded border px-3 py-2 text-sm" />
+        <input value={serviceRequestId} onChange={(e) => setServiceRequestId(e.target.value)} placeholder={t('operations.common.serviceRequest')} className="rounded border px-3 py-2 text-sm" />
+        <input value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} placeholder={t('operations.common.assignedUser')} className="rounded border px-3 py-2 text-sm" />
+        <input value={vendorName} onChange={(e) => setVendorName(e.target.value)} placeholder={t('operations.common.vendor')} className="rounded border px-3 py-2 text-sm" />
+        <input value={costAmount} onChange={(e) => setCostAmount(e.target.value)} placeholder={t('operations.common.cost')} className="rounded border px-3 py-2 text-sm" />
         <input type="datetime-local" value={plannedStartAt} onChange={(e) => setPlannedStartAt(e.target.value)} className="rounded border px-3 py-2 text-sm" />
         <input type="datetime-local" value={plannedEndAt} onChange={(e) => setPlannedEndAt(e.target.value)} className="rounded border px-3 py-2 text-sm" />
       </div>
-      <input value={currency} onChange={(e) => setCurrency(e.target.value)} placeholder="currency" className="w-full rounded border px-3 py-2 text-sm" />
-      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="notes" className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
+      <input value={currency} onChange={(e) => setCurrency(e.target.value)} placeholder={t('operations.common.currency')} className="w-full rounded border px-3 py-2 text-sm" />
+      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('operations.common.notes')} className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
       {clientError ? <p className="text-xs text-red-600">{clientError}</p> : null}
       <button type="submit" disabled={isSubmitting} className="rounded bg-violet-600 px-4 py-2 text-sm text-white disabled:opacity-50">
-        {isSubmitting ? 'Saving…' : submitLabel}
+        {isSubmitting ? t('common.pleaseWait') : submitLabel}
       </button>
     </form>
   )

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { listLookupCommonAreas, listLookupResidents, listLookupUnits } from '@/features/operation/api/lookupsApi'
 import { SearchableLookupSelect } from '@/features/operation/components/SearchableLookupSelect'
 
@@ -15,6 +16,7 @@ export function CommonAreaReservationForm({
   submitLabel,
   onSubmit,
 }: Props) {
+  const { t } = useTranslation(['operations', 'common'])
   const [commonAreaId, setCommonAreaId] = useState(String(defaultValues?.common_area_id ?? ''))
   const [residentId, setResidentId] = useState(String(defaultValues?.resident_profile_id ?? ''))
   const [unitId, setUnitId] = useState(String(defaultValues?.unit_id ?? ''))
@@ -28,11 +30,11 @@ export function CommonAreaReservationForm({
     <form className="space-y-4" onSubmit={(e) => {
       e.preventDefault()
       if (!commonAreaId || Number(commonAreaId) <= 0) {
-        setClientError('common_area_id zorunlu.')
+        setClientError(t('operations.common.validationCommonAreaRequired'))
         return
       }
       if (!startAt || !endAt) {
-        setClientError('start_at ve end_at zorunlu.')
+        setClientError(t('operations.common.validationDateRangeRequired'))
         return
       }
       setClientError(null)
@@ -48,37 +50,37 @@ export function CommonAreaReservationForm({
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
         <SearchableLookupSelect
-          label="Common area"
-          placeholder="common_area_id seciniz"
+          label={t('operations.common.commonAreas')}
+          placeholder={t('operations.common.commonAreas')}
           value={commonAreaId}
           onChange={setCommonAreaId}
           queryKey="common-areas"
           queryFn={listLookupCommonAreas}
         />
         <SearchableLookupSelect
-          label="Resident"
-          placeholder="resident_profile_id seciniz"
+          label={t('operations.common.resident')}
+          placeholder={t('operations.common.resident')}
           value={residentId}
           onChange={setResidentId}
           queryKey="residents"
           queryFn={listLookupResidents}
         />
         <SearchableLookupSelect
-          label="Unit"
-          placeholder="unit_id seciniz"
+          label={t('operations.common.unit')}
+          placeholder={t('operations.common.unit')}
           value={unitId}
           onChange={setUnitId}
           queryKey="units"
           queryFn={listLookupUnits}
         />
-        <input value={participantCount} onChange={(e) => setParticipantCount(e.target.value)} placeholder="participant_count" className="rounded border px-3 py-2 text-sm" />
+        <input value={participantCount} onChange={(e) => setParticipantCount(e.target.value)} placeholder={t('operations.common.participantCount')} className="rounded border px-3 py-2 text-sm" />
         <input type="datetime-local" value={startAt} onChange={(e) => setStartAt(e.target.value)} className="rounded border px-3 py-2 text-sm" />
         <input type="datetime-local" value={endAt} onChange={(e) => setEndAt(e.target.value)} className="rounded border px-3 py-2 text-sm" />
       </div>
-      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="notes" className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
+      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('operations.common.notes')} className="min-h-24 w-full rounded border px-3 py-2 text-sm" />
       {clientError ? <p className="text-xs text-red-600">{clientError}</p> : null}
       <button type="submit" disabled={isSubmitting} className="rounded bg-violet-600 px-4 py-2 text-sm text-white disabled:opacity-50">
-        {isSubmitting ? 'Saving…' : submitLabel}
+        {isSubmitting ? t('common.pleaseWait') : submitLabel}
       </button>
     </form>
   )

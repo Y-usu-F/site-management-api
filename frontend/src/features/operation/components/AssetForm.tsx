@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { listLookupSites, listLookupUnits } from '@/features/operation/api/lookupsApi'
 import { SearchableLookupSelect } from '@/features/operation/components/SearchableLookupSelect'
 
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }: Props) {
+  const { t } = useTranslation(['operations', 'common'])
   const [siteId, setSiteId] = useState(String(defaultValues?.site_id ?? ''))
   const [blockId, setBlockId] = useState(String(defaultValues?.block_id ?? ''))
   const [unitId, setUnitId] = useState(String(defaultValues?.unit_id ?? ''))
@@ -24,11 +26,11 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
     <form className="space-y-4" onSubmit={(e) => {
       e.preventDefault()
       if (!siteId || Number(siteId) <= 0) {
-        setClientError('site_id zorunlu.')
+        setClientError(t('operations.common.validationSiteRequired'))
         return
       }
       if (name.trim().length < 2) {
-        setClientError('name en az 2 karakter olmali.')
+        setClientError(t('operations.common.validationNameMin'))
         return
       }
       setClientError(null)
@@ -45,8 +47,8 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
     }}>
       <div className="grid gap-3 sm:grid-cols-2">
         <SearchableLookupSelect
-          label="Site"
-          placeholder="site_id seciniz"
+          label={t('operations.common.site')}
+          placeholder={t('operations.common.site')}
           value={siteId}
           onChange={setSiteId}
           queryKey="sites"
@@ -54,15 +56,15 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
         />
         <input value={blockId} onChange={(e) => setBlockId(e.target.value)} placeholder="block_id" className="rounded border px-3 py-2 text-sm" />
         <SearchableLookupSelect
-          label="Unit"
-          placeholder="unit_id seciniz"
+          label={t('operations.common.unit')}
+          placeholder={t('operations.common.unit')}
           value={unitId}
           onChange={setUnitId}
           queryKey="units"
           queryFn={listLookupUnits}
         />
-        <input value={assetNo} onChange={(e) => setAssetNo(e.target.value)} placeholder="asset_no/code" className="rounded border px-3 py-2 text-sm" />
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="name" className="rounded border px-3 py-2 text-sm" />
+        <input value={assetNo} onChange={(e) => setAssetNo(e.target.value)} placeholder={t('operations.common.code')} className="rounded border px-3 py-2 text-sm" />
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('operations.common.name')} className="rounded border px-3 py-2 text-sm" />
         <input type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} className="rounded border px-3 py-2 text-sm" />
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
@@ -75,7 +77,7 @@ export function AssetForm({ defaultValues, isSubmitting, submitLabel, onSubmit }
       </div>
       {clientError ? <p className="text-xs text-red-600">{clientError}</p> : null}
       <button type="submit" disabled={isSubmitting} className="rounded bg-violet-600 px-4 py-2 text-sm text-white disabled:opacity-50">
-        {isSubmitting ? 'Saving…' : submitLabel}
+        {isSubmitting ? t('common.pleaseWait') : submitLabel}
       </button>
     </form>
   )
