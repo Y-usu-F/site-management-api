@@ -87,7 +87,7 @@ export function ResidentFormPage({ mode }: { mode: 'create' | 'edit' }) {
 
       {mutationError ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-          <p>{getErrorMessage(mutationError, 'Request failed')}</p>
+          <p>{getErrorMessage(mutationError, t('residents.common.requestFailed'))}</p>
         </div>
       ) : null}
 
@@ -101,12 +101,12 @@ export function ResidentFormPage({ mode }: { mode: 'create' | 'edit' }) {
           if (mode === 'create') {
             createMut.mutate(values, {
               onSuccess: (created) => {
-                toast.success('Resident created.')
+                toast.success(t('residents.common.residentCreated'))
                 navigate(`/residents/${created.id}`)
               },
               onError: (err) => {
                 setServerErrors(extractValidationErrors(err))
-                toast.error(getErrorMessage(err, 'Could not create resident.'))
+                toast.error(getErrorMessage(err, t('residents.common.residentCreateFailed')))
               },
             })
           } else if (id !== null) {
@@ -114,12 +114,12 @@ export function ResidentFormPage({ mode }: { mode: 'create' | 'edit' }) {
               { id, body: values },
               {
                 onSuccess: (updated) => {
-                  toast.success('Resident updated.')
+                  toast.success(t('residents.common.residentUpdated'))
                   navigate(`/residents/${updated.id}`)
                 },
                 onError: (err) => {
                   setServerErrors(extractValidationErrors(err))
-                  toast.error(getErrorMessage(err, 'Could not update resident.'))
+                  toast.error(getErrorMessage(err, t('residents.common.residentUpdateFailed')))
                 },
               },
             )

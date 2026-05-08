@@ -59,14 +59,14 @@ export function ResidentContactsPage() {
   const createMut = useMutation({
     mutationFn: createResidentContact,
     onSuccess: () => {
-      toast.success('Contact created.')
+      toast.success(t('residents.common.contactCreated'))
       setServerErrors({})
       setForm(emptyPayload(residentId ?? 0))
       void qc.invalidateQueries({ queryKey: ['resident-contacts'] })
     },
     onError: (err) => {
       setServerErrors(extractValidationErrors(err))
-      toast.error(getErrorMessage(err, 'Could not create contact.'))
+      toast.error(getErrorMessage(err, t('residents.common.contactCreateFailed')))
     },
   })
 
@@ -74,7 +74,7 @@ export function ResidentContactsPage() {
     mutationFn: ({ id, body }: { id: number; body: Partial<ContactPayload> }) =>
       updateResidentContact(id, body),
     onSuccess: () => {
-      toast.success('Contact updated.')
+      toast.success(t('residents.common.contactUpdated'))
       setEditId(null)
       setServerErrors({})
       setForm(emptyPayload(residentId ?? 0))
@@ -82,18 +82,18 @@ export function ResidentContactsPage() {
     },
     onError: (err) => {
       setServerErrors(extractValidationErrors(err))
-      toast.error(getErrorMessage(err, 'Could not update contact.'))
+      toast.error(getErrorMessage(err, t('residents.common.contactUpdateFailed')))
     },
   })
 
   const deleteMut = useMutation({
     mutationFn: deleteResidentContact,
     onSuccess: () => {
-      toast.success('Contact deleted.')
+      toast.success(t('residents.common.contactDeleted'))
       setConfirmDeleteId(null)
       void qc.invalidateQueries({ queryKey: ['resident-contacts'] })
     },
-    onError: (err) => toast.error(getErrorMessage(err, 'Could not delete contact.')),
+    onError: (err) => toast.error(getErrorMessage(err, t('residents.common.contactDeleteFailed'))),
   })
 
   if (!canList) return <PermissionDeniedNotice permission="resident_contact.list" />
@@ -183,7 +183,7 @@ export function ResidentContactsPage() {
               disabled={isSubmitting}
               className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
-              {isSubmitting ? t('residents.common.saving') : editId === null ? 'Iletisim olustur' : t('residents.common.save')}
+              {isSubmitting ? t('residents.common.saving') : editId === null ? t('residents.common.createContact') : t('residents.common.save')}
             </button>
             {editId !== null ? (
               <button
@@ -230,12 +230,12 @@ export function ResidentContactsPage() {
                       <div className="flex justify-end gap-3">
                         {canUpdate ? (
                           <button type="button" className="text-violet-600 hover:underline" onClick={() => loadForEdit(row)}>
-                            Edit
+                            {t('common.edit')}
                           </button>
                         ) : null}
                         {canDelete ? (
                           <button type="button" className="text-red-600 hover:underline" onClick={() => setConfirmDeleteId(row.id)}>
-                            Delete
+                            {t('common.delete')}
                           </button>
                         ) : null}
                       </div>
@@ -250,10 +250,10 @@ export function ResidentContactsPage() {
 
       <ConfirmDialog
         isOpen={confirmDeleteId !== null}
-        title="Delete contact"
-        description="Delete this contact?"
-        confirmText="Delete"
-        cancelText="Cancel"
+        title={t('residents.common.deleteContactTitle')}
+        description={t('residents.common.deleteContactDescription')}
+        confirmText={t('common.delete')}
+        cancelText={t('common.cancel')}
         variant="danger"
         isLoading={deleteMut.isPending}
         onClose={() => setConfirmDeleteId(null)}
