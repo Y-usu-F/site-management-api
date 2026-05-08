@@ -35,6 +35,29 @@ const common = {
     unread: 'Okunmamis',
     read: 'Okunmus',
   },
+  bulk: {
+    selected: '{{count}} selected',
+    clear: 'Temizle',
+    deleting: 'Siliniyor…',
+    bulkDelete: 'Toplu sil',
+    exporting: 'Dışa aktariliyor…',
+    exportExcel: 'Excel\'i dışa aktar',
+    importExcel: 'Excel\'i iceri aktar',
+    downloadTemplate: 'Sablonu indir',
+  },
+  import: {
+    fileSelectPrefix: 'Lutfen bir',
+    fileSelectSuffix: 'dosya secin.',
+    cancel: 'Iptal',
+    importing: 'Iceri aktariliyor…',
+    import: 'Iceri aktar',
+  },
+  permission: {
+    requiredTitle: 'Izin gerekli',
+    youNeedPrefix: 'Izin gerekli: ',
+    youNeedSuffix: ' islemine izin verilmiyor. Lütfen yetkili bir admin erişim izni versin veya gelistirme ortamininda katı izin kontrollerini kapatin (',
+    developmentSuffix: ').',
+  },
 } as const
 
 export default common

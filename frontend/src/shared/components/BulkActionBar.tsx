@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 interface BulkActionBarProps {
   selectedCount: number
   canDelete: boolean
@@ -25,16 +27,17 @@ export function BulkActionBar({
   onTemplateDownload,
   onClearSelection,
 }: BulkActionBarProps) {
+  const { t } = useTranslation(['common'])
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/60">
-      <span className="text-sm text-zinc-600 dark:text-zinc-300">{selectedCount} selected</span>
+      <span className="text-sm text-zinc-600 dark:text-zinc-300">{t('common.bulk.selected', { count: selectedCount })}</span>
       <button
         type="button"
         onClick={onClearSelection}
         disabled={selectedCount === 0}
         className="rounded border border-zinc-300 px-3 py-1 text-xs disabled:opacity-50 dark:border-zinc-600"
       >
-        Clear
+        {t('common.bulk.clear')}
       </button>
       {canDelete ? (
         <button
@@ -43,7 +46,7 @@ export function BulkActionBar({
           disabled={selectedCount === 0 || isBulkDeleting}
           className="rounded border border-red-300 px-3 py-1 text-xs text-red-700 disabled:opacity-50 dark:border-red-800"
         >
-          {isBulkDeleting ? 'Deleting…' : 'Bulk Delete'}
+          {isBulkDeleting ? t('common.bulk.deleting') : t('common.bulk.bulkDelete')}
         </button>
       ) : null}
       {canExport ? (
@@ -53,7 +56,7 @@ export function BulkActionBar({
           disabled={isExporting}
           className="rounded border border-zinc-300 px-3 py-1 text-xs disabled:opacity-50 dark:border-zinc-600"
         >
-          {isExporting ? 'Exporting…' : 'Export Excel'}
+          {isExporting ? t('common.bulk.exporting') : t('common.bulk.exportExcel')}
         </button>
       ) : null}
       {canImport ? (
@@ -63,14 +66,14 @@ export function BulkActionBar({
             onClick={onImport}
             className="rounded border border-zinc-300 px-3 py-1 text-xs dark:border-zinc-600"
           >
-            Import Excel
+            {t('common.bulk.importExcel')}
           </button>
           <button
             type="button"
             onClick={onTemplateDownload}
             className="rounded border border-zinc-300 px-3 py-1 text-xs dark:border-zinc-600"
           >
-            Download Template
+            {t('common.bulk.downloadTemplate')}
           </button>
         </>
       ) : null}

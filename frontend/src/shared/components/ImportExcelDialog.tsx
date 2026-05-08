@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface ImportExcelDialogProps {
   isOpen: boolean
@@ -15,6 +16,7 @@ export function ImportExcelDialog({
   onClose,
   onSubmit,
 }: ImportExcelDialogProps) {
+  const { t } = useTranslation(['common'])
   const [file, setFile] = useState<File | null>(null)
 
   if (!isOpen) return null
@@ -24,7 +26,8 @@ export function ImportExcelDialog({
       <div className="w-full max-w-md rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
-          Please select an <code>.xlsx</code> file.
+          {t('common.import.fileSelectPrefix')} <code>.xlsx</code>
+          {t('common.import.fileSelectSuffix')}
         </p>
         <input
           type="file"
@@ -39,7 +42,7 @@ export function ImportExcelDialog({
             disabled={isSubmitting}
             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-600"
           >
-            Cancel
+            {t('common.import.cancel')}
           </button>
           <button
             type="button"
@@ -47,7 +50,7 @@ export function ImportExcelDialog({
             disabled={!file || isSubmitting}
             className="rounded-lg bg-violet-600 px-3 py-2 text-sm text-white disabled:opacity-60"
           >
-            {isSubmitting ? 'Importing…' : 'Import'}
+            {isSubmitting ? t('common.import.importing') : t('common.import.import')}
           </button>
         </div>
       </div>
