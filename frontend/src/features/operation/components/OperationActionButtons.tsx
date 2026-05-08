@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import type { OperationActionEntity, OperationActionName } from '@/features/operation/actions/config'
 import { useOperationAction } from '@/features/operation/hooks/useOperationAction'
@@ -12,22 +13,23 @@ interface OperationActionButtonsProps {
   className?: string
 }
 
-function labelForAction(action: OperationActionName): string {
+function labelForAction(action: OperationActionName, t: (key: string) => string): string {
   switch (action) {
     case 'approve':
-      return 'Approve'
+      return t('operations.actions.approve')
     case 'reject':
-      return 'Reject'
+      return t('operations.actions.reject')
     case 'cancel':
-      return 'Cancel'
+      return t('operations.actions.cancel')
     case 'start':
-      return 'Start'
+      return t('operations.actions.start')
     case 'complete':
-      return 'Complete'
+      return t('operations.actions.complete')
   }
 }
 
 export function OperationActionButtons({ entity, id, className }: OperationActionButtonsProps) {
+  const { t } = useTranslation(['operations'])
   const toast = useToast()
   const [pendingAction, setPendingAction] = useState<OperationActionName | null>(null)
 
@@ -61,16 +63,16 @@ export function OperationActionButtons({ entity, id, className }: OperationActio
             disabled={actionMap[actionName].isPending}
             className="rounded border border-zinc-300 px-2 py-1 text-xs hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
           >
-            {labelForAction(actionName)}
+            {labelForAction(actionName, t)}
           </button>
         ))}
       </div>
       <ConfirmDialog
         isOpen={pendingAction !== null}
-        title="Aksiyon Onayi"
+        title={t('operations.actions.confirmTitle')}
         description={pendingAction ? actionMap[pendingAction].actionConfig?.confirmText ?? '' : ''}
-        confirmText={pendingAction ? labelForAction(pendingAction) : 'Onayla'}
-        cancelText="Vazgec"
+        confirmText={pendingAction ? labelForAction(pendingAction, t) : t('operations.actions.fallbackConfirm')}
+        cancelText={t('operations.actions.fallbackCancel')}
         variant="danger"
         isLoading={isLoading}
         onClose={() => setPendingAction(null)}
@@ -78,7 +80,7 @@ export function OperationActionButtons({ entity, id, className }: OperationActio
           if (!pendingAction) return
           actionMap[pendingAction].run(id, {
             onSuccess: () => {
-              toast.success('Aksiyon basariyla tamamlandi.')
+              toast.success(t('operations.actions.success'))
               setPendingAction(null)
             },
             onError: (error) => {

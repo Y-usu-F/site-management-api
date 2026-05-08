@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 import { OperationActionButtons } from '@/features/operation/components/OperationActionButtons'
@@ -9,6 +10,7 @@ import { PermissionDeniedNotice } from '@/shared/components/PermissionDeniedNoti
 import { useEffectiveCan } from '@/shared/hooks/useEffectiveCan'
 
 export function WorkOrdersPage() {
+  const { t } = useTranslation(['operations', 'common'])
   const canList = useEffectiveCan('work_order.list')
   const canCreate = useEffectiveCan('work_order.create')
   const canView = useEffectiveCan('work_order.view')
@@ -23,15 +25,15 @@ export function WorkOrdersPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Work orders</h1>
+        <h1 className="text-xl font-semibold">{t('operations.common.workOrders')}</h1>
         {canCreate ? (
           <Link to="/operations/work-orders/new" className="rounded bg-violet-600 px-3 py-2 text-sm text-white">
-            New
+            {t('operations.common.new')}
           </Link>
         ) : null}
       </div>
       <label className="text-sm">
-        <span className="mb-1 block text-zinc-600 dark:text-zinc-300">Status</span>
+        <span className="mb-1 block text-zinc-600 dark:text-zinc-300">{t('operations.common.status')}</span>
         <select
           value={status}
           onChange={(event) => {
@@ -40,28 +42,28 @@ export function WorkOrdersPage() {
           }}
           className="rounded border border-zinc-300 px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
         >
-          <option value="">All</option>
+          <option value="">{t('operations.common.all')}</option>
           <option value="open">open</option>
           <option value="in_progress">in_progress</option>
           <option value="completed">completed</option>
           <option value="cancelled">cancelled</option>
         </select>
       </label>
-      <p className="text-sm text-zinc-500">Toplam kayit: {total}</p>
+      <p className="text-sm text-zinc-500">{t('operations.common.totalRecords')}: {total}</p>
       {query.isLoading ? <div className="text-sm text-zinc-500">Yukleniyor...</div> : null}
-      {query.isError ? <EmptyState title="Liste alinamadi" description="Lutfen tekrar deneyin." /> : null}
+      {query.isError ? <EmptyState title={t('operations.common.listFailed')} description={t('common.errorGeneric')} /> : null}
       {!query.isLoading && !query.isError && items.length === 0 ? (
-        <EmptyState title="Work order yok" description="Ilk kaydi olusturun." />
+        <EmptyState title={t('common.emptyTitle')} description={t('operations.common.createFirst')} />
       ) : null}
       {!query.isLoading && !query.isError && items.length > 0 ? (
         <table className="min-w-full overflow-hidden rounded-xl border border-zinc-200 text-sm dark:border-zinc-800">
           <thead className="bg-zinc-100 dark:bg-zinc-900">
             <tr>
               <th className="px-3 py-2 text-left">ID</th>
-              <th className="px-3 py-2 text-left">Service request</th>
-              <th className="px-3 py-2 text-left">Vendor</th>
-              <th className="px-3 py-2 text-left">Status</th>
-              <th className="px-3 py-2 text-left">Action</th>
+              <th className="px-3 py-2 text-left">{t('operations.common.serviceRequests')}</th>
+              <th className="px-3 py-2 text-left">{t('operations.common.vendor')}</th>
+              <th className="px-3 py-2 text-left">{t('operations.common.status')}</th>
+              <th className="px-3 py-2 text-left">{t('operations.common.action')}</th>
             </tr>
           </thead>
           <tbody>
@@ -75,7 +77,7 @@ export function WorkOrdersPage() {
                   <div className="flex items-center gap-2">
                     {canView ? (
                       <Link className="text-violet-600" to={`/operations/work-orders/${row.id}`}>
-                        Open
+                        {t('operations.common.open')}
                       </Link>
                     ) : null}
                     <OperationActionButtons entity="work_order" id={row.id} />
@@ -93,16 +95,16 @@ export function WorkOrdersPage() {
           onClick={() => setPage((p) => p - 1)}
           className="rounded border px-2 py-1 text-sm"
         >
-          Prev
+          {t('common.pagination.prev')}
         </button>
-        <span className="text-sm">Page {page}</span>
+        <span className="text-sm">{t('operations.common.page')} {page}</span>
         <button
           type="button"
           disabled={(query.data?.items?.length ?? 0) < 10}
           onClick={() => setPage((p) => p + 1)}
           className="rounded border px-2 py-1 text-sm"
         >
-          Next
+          {t('common.pagination.next')}
         </button>
       </div>
     </div>

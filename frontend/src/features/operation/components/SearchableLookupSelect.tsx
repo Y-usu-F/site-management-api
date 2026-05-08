@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 
 import type { LookupOption } from '@/features/operation/api/lookupsApi'
 import { useDebouncedValue } from '@/shared/hooks/useDebouncedValue'
@@ -21,6 +22,7 @@ export function SearchableLookupSelect({
   queryKey,
   queryFn,
 }: SearchableLookupSelectProps) {
+  const { t } = useTranslation(['operations', 'common'])
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebouncedValue(search, 300)
   const lookupQuery = useQuery({
@@ -40,7 +42,7 @@ export function SearchableLookupSelect({
       <input
         value={search}
         onChange={(event) => setSearch(event.target.value)}
-        placeholder={`${placeholder} ara`}
+        placeholder={`${placeholder} ${t('common.search')}`}
         className="w-full rounded border px-3 py-2 text-sm"
       />
       <select
@@ -57,9 +59,9 @@ export function SearchableLookupSelect({
           </option>
         ))}
       </select>
-      {lookupQuery.isLoading ? <p className="text-xs text-zinc-500">Secenekler yukleniyor...</p> : null}
-      {lookupQuery.isError ? <p className="text-xs text-red-600">Secenekler alinamadi.</p> : null}
-      {value && selectedLabel ? <p className="text-xs text-zinc-500">Secili: {selectedLabel}</p> : null}
+      {lookupQuery.isLoading ? <p className="text-xs text-zinc-500">{t('operations.common.loadingOptions')}</p> : null}
+      {lookupQuery.isError ? <p className="text-xs text-red-600">{t('operations.common.optionsFailed')}</p> : null}
+      {value && selectedLabel ? <p className="text-xs text-zinc-500">{t('operations.common.selected')}: {selectedLabel}</p> : null}
     </div>
   )
 }
